@@ -39,16 +39,6 @@ DB_NAME=bachelor_society
 
 # JWT Secret (generate a secure random string)
 JWT_SECRET=your_secure_jwt_secret_key
-
-# Optional: Cloudinary Configuration for Image Uploads
-CLOUDINARY_CLOUD_NAME=your_cloud_name
-CLOUDINARY_API_KEY=your_api_key
-CLOUDINARY_API_SECRET=your_api_secret
-
-# Optional: Email Service Configuration
-EMAIL_SERVICE=gmail
-EMAIL_USER=your_email@gmail.com
-EMAIL_PASS=your_app_password
 ```
 
 ### 4. Database Setup
@@ -184,7 +174,7 @@ bachelor-society/
 - **Database**: MySQL/MariaDB
 - **Authentication**: JSON Web Tokens (JWT)
 - **Frontend**: EJS templating, Tailwind CSS
-- **File Storage**: Local storage with optional Cloudinary integration
+- **File Storage**: Local storage
 - **Testing**: Jest, Supertest
 
 ## Contributing
