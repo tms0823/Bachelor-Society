@@ -1,37 +1,35 @@
-# Bachelor-Society
-CSE470 Project
+# Bachelor Society
 
-## 🚀 **Bachelor Society - Complete Setup Guide**
+**CSE470 Project**
 
-### **📋 Prerequisites**
-- **Node.js** (v14 or higher) - [Download here](https://nodejs.org/)
-- **MySQL** or **MariaDB** database server - [Download MySQL](https://dev.mysql.com/downloads/mysql/)
-- **Git** for cloning the repository
+A comprehensive web application for roommate and housing matching, built with Node.js, Express, and MySQL.
 
-### **⚡ Quick Start (3 minutes)**
+## Prerequisites
+
+- Node.js (version 14 or higher)
+- MySQL or MariaDB database server
+- Git version control system
+
+## Installation and Setup
+
+### 1. Clone the Repository
 ```bash
-# 1. Clone the repository
 git clone https://github.com/tms0823/Bachelor-Society.git
 cd bachelor-society
-
-# 2. Install dependencies
-npm install
-
-# 3. Set up environment variables
-cp .env.example .env
-# Edit .env with your database credentials (see below)
-
-# 4. Set up the database automatically
-npm run setup
-
-# 5. Start the application
-npm start
 ```
 
-Open `http://localhost:3000` and register your first account! 🎉
+### 2. Install Dependencies
+```bash
+npm install
+```
 
-### **🔧 Environment Configuration**
-Edit `.env` with your actual values:
+### 3. Environment Configuration
+Create a `.env` file by copying the example:
+```bash
+cp .env.example .env
+```
+
+Configure the following environment variables in `.env`:
 ```env
 # Database Configuration
 DB_HOST=localhost
@@ -39,76 +37,165 @@ DB_USER=your_mysql_username
 DB_PASSWORD=your_mysql_password
 DB_NAME=bachelor_society
 
-# JWT Secret (generate a random string)
-JWT_SECRET=your_super_secret_jwt_key_here
+# JWT Secret (generate a secure random string)
+JWT_SECRET=your_secure_jwt_secret_key
 
-# Optional: Cloudinary for image uploads
+# Optional: Cloudinary Configuration for Image Uploads
 CLOUDINARY_CLOUD_NAME=your_cloud_name
 CLOUDINARY_API_KEY=your_api_key
 CLOUDINARY_API_SECRET=your_api_secret
 
-# Optional: Email service
+# Optional: Email Service Configuration
 EMAIL_SERVICE=gmail
 EMAIL_USER=your_email@gmail.com
 EMAIL_PASS=your_app_password
 ```
 
-### **🗄️ Database Setup**
-**Automatic (Recommended):**
+### 4. Database Setup
+Initialize the database automatically:
 ```bash
-npm run setup  # Creates database, tables, and everything automatically
+npm run setup
 ```
 
-### **📱 Features**
-- 👥 **User Registration & Authentication** (JWT-based)
-- 🏠 **Housing Listings** with photo uploads
-- 🤝 **Roommate Finding** with detailed profiles
-- 🎯 **Activity Buddy System** for social connections
-- 💬 **Messaging System** between users
-- 👨‍💼 **Admin Dashboard** for moderation
-- 📱 **Responsive Design** with Tailwind CSS
+This command creates the database, tables, and sets up the application for use.
 
-### **📦 Available Commands**
+### 5. Start the Application
+For production:
 ```bash
-# Development
-npm run dev          # Start with auto-restart (nodemon)
+npm start
+```
+
+For development with auto-restart:
+```bash
+npm run dev
+```
+
+Access the application at `http://localhost:3000` and create your first user account.
+
+## Features
+
+- **User Authentication and Authorization** (JWT-based)
+- **Housing Listings Management** with image upload capabilities
+- **Roommate Matching System** with detailed user profiles
+- **Activity Buddy Finder** for social connections
+- **Real-time Messaging** between users
+- **Administrative Dashboard** for content moderation
+- **Responsive Web Design** using Tailwind CSS
+
+## Available Commands
+
+### Development Commands
+```bash
+npm run dev          # Start development server with auto-restart
 npm start            # Start production server
-npm test             # Run tests
-
-# Database
-npm run setup        # Fresh setup (creates DB + tables)
-npm run db:backup    # Backup current data
-npm run db:restore   # Restore from backup
+npm test             # Execute test suite
 ```
 
-### **🔍 Troubleshooting**
-- **Database Connection:** Ensure MySQL is running and credentials are correct
-- **Port Issues:** Change PORT in .env if 3000 is in use
-- **Permission Errors:** Check file upload directory permissions
+### Database Commands
+```bash
+npm run setup        # Complete database initialization
+npm run db:backup    # Create database backup
+npm run db:restore   # Restore database from backup
+```
 
-### **📂 Project Structure**
+## Project Structure
+
 ```
 bachelor-society/
-├── controllers/     # API route handlers
-├── models/         # Database models
-├── views/          # EJS templates
-├── routes/         # Express routes
-├── public/         # Static files (CSS, JS, images)
-├── scripts/        # Utility scripts
-├── sql/           # Database schema and seed data
-└── utils/         # Helper functions
+├── controllers/      # API route handlers
+├── models/          # Database models and schemas
+├── views/           # EJS template files
+├── routes/          # Express routing configuration
+├── public/          # Static assets (CSS, JS, images)
+├── scripts/         # Database and utility scripts
+├── sql/            # Database schema and seed data
+├── utils/           # Helper functions and utilities
+├── config/          # Application configuration
+├── middlewares/     # Express middleware functions
+└── __tests__/       # Test suite files
 ```
 
-### **🤝 Contributing**
-1. Fork the repository
-2. Create a feature branch: `git checkout -b feature-name`
-3. Make your changes and test thoroughly
-4. Commit: `git commit -am 'Add new feature'`
-5. Push: `git push origin feature-name`
-6. Submit a pull request
+## API Endpoints
 
-**Happy coding! 🎯**
-=======
-# Bachelor-Society
-CSE470 Project
->>>>>>> 642d8e9ab697c2f3121225f2c3ec1e1f2ccaf2a0
+### Authentication
+- `POST /api/auth/register` - User registration
+- `POST /api/auth/login` - User login
+- `POST /api/auth/logout` - User logout
+
+### User Management
+- `GET /api/users/me` - Get current user profile (authenticated)
+- `PUT /api/users/me` - Update user profile (authenticated)
+
+### Housing
+- `GET /api/housing` - List housing listings
+- `POST /api/housing` - Create housing listing (authenticated)
+- `GET /api/housing/:id` - Get housing details
+- `PUT /api/housing/:id` - Update housing listing (authenticated, owner only)
+- `DELETE /api/housing/:id` - Delete housing listing (authenticated, owner only)
+
+### Roommates
+- `GET /api/roommates` - List roommate requests
+- `POST /api/roommates` - Create roommate request (authenticated)
+- `GET /api/roommates/:id` - Get roommate request details
+- `PUT /api/roommates/:id` - Update roommate request (authenticated, owner only)
+- `DELETE /api/roommates/:id` - Delete roommate request (authenticated, owner only)
+- `POST /api/roommates/:id/contact` - Contact roommate owner (authenticated)
+
+### Buddies
+- `GET /api/buddies` - List activity buddy requests
+- `POST /api/buddies` - Create buddy request (authenticated)
+- `GET /api/buddies/:id` - Get buddy request details
+- `PUT /api/buddies/:id` - Update buddy request (authenticated, owner only)
+- `DELETE /api/buddies/:id` - Delete buddy request (authenticated, owner only)
+
+### Administrative (Admin role required)
+- `GET /api/admin/stats` - System statistics
+- `GET /api/admin/users` - User management
+- `DELETE /api/admin/users/:id` - Delete user account
+- `GET /api/admin/housing` - Housing content moderation
+- `DELETE /api/admin/housing/:id` - Delete housing listing
+- `GET /api/admin/roommates` - Roommate content moderation
+- `DELETE /api/admin/roommates/:id` - Delete roommate request
+- `GET /api/admin/buddies` - Buddy content moderation
+- `DELETE /api/admin/buddies/:id` - Delete buddy request
+
+## Troubleshooting
+
+### Database Connection Issues
+- Verify MySQL/MariaDB service is running
+- Confirm database credentials in `.env` file are correct
+- Ensure database user has proper permissions
+
+### Port Conflicts
+- Default port is 3000; modify `PORT` in `.env` if needed
+- Check for other applications using the same port
+
+### File Upload Permissions
+- Ensure write permissions on the `uploads/` directory
+- Check file system permissions for the application user
+
+### Testing
+- Execute test suite: `npm test`
+- Ensure all prerequisites are installed before testing
+
+## Technology Stack
+
+- **Backend**: Node.js, Express.js
+- **Database**: MySQL/MariaDB
+- **Authentication**: JSON Web Tokens (JWT)
+- **Frontend**: EJS templating, Tailwind CSS
+- **File Storage**: Local storage with optional Cloudinary integration
+- **Testing**: Jest, Supertest
+
+## Contributing
+
+1. Fork the repository
+2. Create a feature branch from `main`
+3. Implement changes with comprehensive testing
+4. Commit changes with descriptive messages
+5. Push to your feature branch
+6. Submit a pull request for review
+
+## License
+
+This project is developed as part of CSE470 coursework.
