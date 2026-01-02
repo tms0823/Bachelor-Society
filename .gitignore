@@ -151,3 +151,4 @@ Thumbs.db
 *.bak
 *.backup
 *.old
+database_backup.json

@@ -75,6 +75,7 @@
                         <option value="Narayanganj Sadar, Narayanganj">Narayanganj Sadar, Narayanganj</option>
                         <option value="Gazipur Sadar, Gazipur">Gazipur Sadar, Gazipur</option>
                       </optgroup>
+                      <option value="other"><strong>Other</strong></option>
                     </select>
                     <div class="absolute inset-y-0 right-0 flex items-center px-2 pointer-events-none">
                       <svg class="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -82,6 +83,7 @@
                       </svg>
                     </div>
                   </div>
+                  <input id="custom_area" name="custom_area" type="text" class="hidden w-full border border-gray-300 px-3 py-2 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent mt-2" placeholder="Enter custom area/location" />
                   <p id="area_error" class="text-red-600 text-sm mt-1 hidden"></p>
                 </div>
                 <div>
@@ -239,6 +241,22 @@
           tokenField.value = localStorage.getItem('token') || '';
         }
 
+        // Custom area functionality
+        const customAreaInput = document.getElementById('custom_area');
+        areaSelect.addEventListener('change', function() {
+          const selectedValue = this.value;
+          if (selectedValue === 'other') {
+            customAreaInput.classList.remove('hidden');
+            customAreaInput.required = true;
+            customAreaInput.value = '';
+            customAreaInput.focus();
+          } else {
+            customAreaInput.value = selectedValue;
+            customAreaInput.classList.add('hidden');
+            customAreaInput.required = false;
+          }
+        });
+
         // Form validation for area and address fields
         const form = document.getElementById('createHousingForm');
         const areaSelect = document.getElementById('areaSelect');
@@ -331,8 +349,28 @@
         const availableFromInput = document.getElementById('available_from');
         const roomsInput = document.getElementById('rooms');
 
+        // Client-side validation for required fields
+        let missingFields = [];
+        if (!areaSelect.value || areaSelect.value === '') missingFields.push('Area/Location');
+        if (!addressInput.value.trim()) missingFields.push('Full Address');
+        if (!rentInput.value || isNaN(Number(rentInput.value)) || Number(rentInput.value) <= 0) missingFields.push('Rent (must be > 0)');
+        if (!availableFromInput.value) missingFields.push('Available From date');
+        if (!roomsInput.value || isNaN(Number(roomsInput.value)) || Number(roomsInput.value) < 1) missingFields.push('Number of Rooms (must be >= 1)');
+
+        // If area is 'other', check custom area
+        if (areaSelect.value === 'other') {
+          const customAreaInput = document.getElementById('custom_area');
+          if (!customAreaInput.value.trim()) missingFields.push('Custom Area/Location');
+        }
+
+        if (missingFields.length > 0) {
+          createMsg.innerHTML = '<div class="p-4 rounded-lg text-sm font-medium text-red-700 bg-red-50 border border-red-200">❌ Please fill in the following required fields: ' + missingFields.join(', ') + '</div>';
+          return;
+        }
+
         // Validate required fields
         let hasErrors = false;
+        let finalArea = areaSelect.value;
 
         if (!areaSelect.value) {
           const errorMsg = document.getElementById('area_error');
@@ -381,6 +419,18 @@
           document.getElementById('rooms_error').classList.add('hidden');
         }
 
+        const customAreaInput = document.getElementById('custom_area');
+
+        if (areaSelect.value === 'other') {
+          finalArea = customAreaInput.value.trim();
+          if (!finalArea) {
+            const errorMsg = document.getElementById('area_error');
+            errorMsg.textContent = 'Please enter a custom area.';
+            errorMsg.classList.remove('hidden');
+            hasErrors = true;
+          }
+        }
+
         if (hasErrors) return;
 
         // Disable submit button
@@ -389,6 +439,11 @@
 
         try {
           const formData = new FormData(housingForm);
+
+          // Set custom area if selected
+          if (areaSelect.value === 'other') {
+            formData.set('area', finalArea);
+          }
           const token = localStorage.getItem('token');
 
           const response = await fetch('/api/housing', {
@@ -398,12 +453,17 @@
           });
 
           const result = await response.json();
+          console.log('Response status:', response.status);
+          console.log('Response result:', result);
 
           if (response.ok) {
             // Redirect to housing list on success
             window.location.href = '/housing';
           } else {
-            createMsg.innerHTML = '<div class="p-4 rounded-lg text-sm font-medium text-red-700 bg-red-50 border border-red-200">❌ ' + (result.message || 'Failed to create housing listing') + '</div>';
+            const errorMsg = result.message || 'Failed to create housing listing. Response status: ' + response.status;
+            const fullError = 'Server Error: ' + errorMsg + ' (Status: ' + response.status + ')';
+            createMsg.innerHTML = '<div class="p-4 rounded-lg text-sm font-medium text-red-700 bg-red-50 border border-red-200">❌ ' + fullError + '<br><br><strong>Full response:</strong> ' + JSON.stringify(result, null, 2) + '</div>';
+            console.log('Error details:', result);
           }
         } catch (error) {
           createMsg.innerHTML = '<div class="p-4 rounded-lg text-sm font-medium text-red-700 bg-red-50 border border-red-200">❌ Network error. Please try again.</div>';

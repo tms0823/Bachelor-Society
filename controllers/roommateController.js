@@ -246,6 +246,10 @@ const RoommateController = {
       if (r.photos) {
         try {
           existingPhotos = typeof r.photos === 'string' ? JSON.parse(r.photos) : r.photos;
+          // Handle double-encoded JSON strings
+          if (typeof existingPhotos === 'string') {
+            existingPhotos = JSON.parse(existingPhotos);
+          }
         } catch (parseError) {
           console.warn('Failed to parse existing photos:', parseError);
           existingPhotos = [];

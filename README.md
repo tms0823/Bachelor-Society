@@ -12,7 +12,7 @@ A modern web application connecting people for housing, roommates, and social ac
 
 ### One-Command Setup
 ```bash
-git clone YOUR_REPO_URL
+git clone https://github.com/tms0823/Bachelor-Society.git
 cd bachelor-society
 npm run quick-start
 ```
@@ -25,7 +25,7 @@ If `quick-start` doesn't work for your environment:
 
 ```bash
 # 1. Clone and install
-git clone YOUR_REPO_URL
+git clone https://github.com/tms0823/Bachelor-Society.git
 cd bachelor-society
 npm install
 

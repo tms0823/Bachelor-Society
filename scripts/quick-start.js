@@ -36,6 +36,15 @@ JWT_SECRET=change_this_to_random_string
   console.log('✅ .env file already exists');
 }
 
+// Create uploads directory if it doesn't exist
+const uploadsPath = path.join(__dirname, '..', 'uploads');
+if (!fs.existsSync(uploadsPath)) {
+  fs.mkdirSync(uploadsPath, { recursive: true });
+  console.log('📁 Created uploads directory');
+} else {
+  console.log('✅ Uploads directory already exists');
+}
+
 // Install dependencies
 console.log('\n📦 Installing dependencies...');
 try {

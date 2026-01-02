@@ -22,6 +22,7 @@ CREATE TABLE IF NOT EXISTS housing (
   id INT AUTO_INCREMENT PRIMARY KEY,
   user_id INT,
   address VARCHAR(500) NOT NULL,
+  area VARCHAR(255),
   rent DECIMAL(10,2) NOT NULL,
   available_from DATE,
   rooms INT,
