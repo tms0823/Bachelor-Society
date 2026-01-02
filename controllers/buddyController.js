@@ -36,7 +36,7 @@ const BuddyController = {
         min_age: min_age || 18,
         max_age: max_age || 99,
         cost_per_person: cost_per_person || 0,
-        photos,
+        photos: photos ? JSON.stringify(photos) : null,
         is_private: is_private || false
       };
 

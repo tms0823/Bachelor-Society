@@ -14,9 +14,9 @@
     <div class="flex-1 overflow-y-auto py-4">
       <!-- Home -->
       <div class="mb-6">
-        <a href="<%= user && user.role === 'admin' ? '/admin/dashboard' : '/dashboard' %>" class="nav-item flex items-center space-x-3 px-4 py-2 text-sm text-gray-300 hover:text-white hover:bg-gray-800">
+        <a href="/dashboard" class="nav-item flex items-center space-x-3 px-4 py-2 text-sm text-gray-300 hover:text-white hover:bg-gray-800">
           <i data-lucide="home" class="w-4 h-4"></i>
-          <span><%= user && user.role === 'admin' ? 'Admin Dashboard' : 'Home' %></span>
+          <span>Home</span>
         </a>
       </div>
 

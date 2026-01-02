@@ -392,6 +392,10 @@
       // Load initial activities
       getCurrentUser().then(() => {
         loadActivities();
+      }).catch(() => {
+        // Authentication failed, but still try to load activities
+        console.log('Authentication failed, loading public activities only');
+        loadActivities();
       });
 
       async function deletePost(type, id) {

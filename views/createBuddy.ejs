@@ -3,7 +3,8 @@
 <div class="max-w-4xl mx-auto bg-white p-8 rounded-lg shadow-lg">
   <h2 class="text-2xl font-bold mb-6 text-gray-800">Create Activity</h2>
 
-  <form id="createBuddyForm" enctype="multipart/form-data" class="space-y-6">
+  <form id="createBuddyForm" action="/api/buddies" method="POST" enctype="multipart/form-data" class="space-y-6">
+    <input type="hidden" name="token" id="tokenField" value="" />
     <!-- Basic Information -->
     <div class="bg-gray-50 p-6 rounded-lg">
       <h3 class="text-lg font-semibold mb-4 text-gray-700">Basic Information</h3>
@@ -150,19 +151,22 @@ locationSelect.addEventListener('change', function() {
   }
 });
 
-// Handle form submission to ensure location is set
+// Handle form submission with AJAX
 const buddyForm = document.getElementById('createBuddyForm');
-buddyForm.addEventListener('submit', function(e) {
+const createMsg = document.getElementById('createMsg');
+const submitBtn = buddyForm.querySelector('button[type="submit"]');
+
+buddyForm.addEventListener('submit', async function(e) {
+  e.preventDefault();
+
   const selectedValue = locationSelect.value;
   if (!selectedValue) {
-    e.preventDefault();
     alert('Please select a location or enter a custom one.');
     locationSelect.focus();
     return false;
   }
 
   if (selectedValue === 'custom' && !locationInput.value.trim()) {
-    e.preventDefault();
     alert('Please enter a custom location.');
     locationInput.focus();
     return false;
@@ -171,6 +175,39 @@ buddyForm.addEventListener('submit', function(e) {
   // Ensure the location field has the correct value
   if (selectedValue !== 'custom') {
     locationInput.value = selectedValue;
+  }
+
+  // Clear previous messages
+  createMsg.innerHTML = '';
+
+  // Disable submit button
+  submitBtn.disabled = true;
+  submitBtn.innerHTML = '<span class="flex items-center"><svg class="animate-spin -ml-1 mr-3 h-5 w-5 text-white" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>Creating...</span>';
+
+  try {
+    const formData = new FormData(buddyForm);
+    const token = localStorage.getItem('token');
+
+    const response = await fetch('/api/buddies', {
+      method: 'POST',
+      headers: token ? { 'Authorization': `Bearer ${token}` } : {},
+      body: formData
+    });
+
+    const result = await response.json();
+
+          if (response.ok) {
+            // Redirect to buddy list on success
+            window.location.href = '/buddies';
+          } else {
+      createMsg.innerHTML = '<div class="p-4 rounded-lg text-sm font-medium text-red-700 bg-red-50 border border-red-200">❌ ' + (result.message || 'Failed to create activity') + '</div>';
+    }
+  } catch (error) {
+    createMsg.innerHTML = '<div class="p-4 rounded-lg text-sm font-medium text-red-700 bg-red-50 border border-red-200">❌ Network error. Please try again.</div>';
+  } finally {
+    // Re-enable submit button
+    submitBtn.disabled = false;
+    submitBtn.innerHTML = 'Create Activity';
   }
 });
 
@@ -226,6 +263,12 @@ function removePhoto(index) {
     }
   });
 }
-</script>
 
-<script src="/js/buddy.js"></script>
+// Set token field value
+document.addEventListener('DOMContentLoaded', function() {
+  const tokenField = document.getElementById('tokenField');
+  if (tokenField) {
+    tokenField.value = localStorage.getItem('token') || '';
+  }
+});
+</script>

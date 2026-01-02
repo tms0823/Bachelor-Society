@@ -21,11 +21,7 @@
   </head>
   <body class="bg-gray-50 font-sans">
     <!-- Include Sidebar -->
-    <% if (user && user.role === 'admin') { %>
-      <%- include('partials/admin-sidebar', { user: user }) %>
-    <% } else { %>
-      <%- include('partials/sidebar', { user: user }) %>
-    <% } %>
+    <%- include('partials/sidebar', { user: user }) %>
 
     <!-- Main Content -->
     <div class="lg:ml-80 min-h-screen">

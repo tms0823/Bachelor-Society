@@ -73,7 +73,7 @@ async function main() {
     console.log('🚀 Starting Bachelor Society database setup...');
 
     // Check required environment variables
-    if (!process.env.DB_HOST || !process.env.DB_USER || !process.env.DB_PASSWORD || !process.env.DB_NAME) {
+    if (!process.env.DB_HOST || !process.env.DB_USER || process.env.DB_PASSWORD === undefined || !process.env.DB_NAME) {
       console.error('❌ Missing required environment variables:');
       console.error('   DB_HOST, DB_USER, DB_PASSWORD, DB_NAME');
       console.error('   Please check your .env file');

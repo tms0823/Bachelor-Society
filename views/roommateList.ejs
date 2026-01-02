@@ -395,20 +395,13 @@
         loadRequests();
       });
 
-      // Load initial requests after ensuring auth is ready
-      function initializePage() {
-        // Wait for auth to be ready
-        if (typeof window.authManager !== 'undefined') {
-          getCurrentUser().then(() => {
-            loadRequests();
-          });
-        } else {
-          // Wait a bit for auth to initialize
-          setTimeout(initializePage, 100);
-        }
-      }
-
-      initializePage();
+      // Load initial requests - simplified like housing/buddy
+      getCurrentUser().then(() => {
+        loadRequests();
+      }).catch(() => {
+        // Authentication failed, but still load public requests
+        loadRequests();
+      });
 
       async function deletePost(type, id) {
         if (!confirm('Are you sure you want to delete this post?')) return;

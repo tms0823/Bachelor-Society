@@ -312,6 +312,107 @@
       }
     </script>
 
-    <script src="/js/housing.js"></script>
+    <script>
+      // Handle form submission with AJAX
+      const housingForm = document.getElementById('createHousingForm');
+      const createMsg = document.getElementById('createMsg');
+      const submitBtn = housingForm.querySelector('button[type="submit"]');
+
+      housingForm.addEventListener('submit', async function(e) {
+        e.preventDefault();
+
+        // Clear previous messages
+        createMsg.innerHTML = '';
+
+        // Get form values for validation
+        const areaSelect = document.getElementById('areaSelect');
+        const addressInput = document.getElementById('address');
+        const rentInput = document.getElementById('rent');
+        const availableFromInput = document.getElementById('available_from');
+        const roomsInput = document.getElementById('rooms');
+
+        // Validate required fields
+        let hasErrors = false;
+
+        if (!areaSelect.value) {
+          const errorMsg = document.getElementById('area_error');
+          errorMsg.textContent = 'Please select an area.';
+          errorMsg.classList.remove('hidden');
+          hasErrors = true;
+        } else {
+          document.getElementById('area_error').classList.add('hidden');
+        }
+
+        if (!addressInput.value.trim()) {
+          const errorMsg = document.getElementById('address_error');
+          errorMsg.textContent = 'Please enter a complete address.';
+          errorMsg.classList.remove('hidden');
+          hasErrors = true;
+        } else {
+          document.getElementById('address_error').classList.add('hidden');
+        }
+
+        const rent = Number(rentInput.value);
+        if (!rentInput.value || isNaN(rent) || rent <= 0) {
+          const errorMsg = document.getElementById('rent_error');
+          errorMsg.textContent = 'Please enter a valid rent amount greater than 0.';
+          errorMsg.classList.remove('hidden');
+          hasErrors = true;
+        } else {
+          document.getElementById('rent_error').classList.add('hidden');
+        }
+
+        if (!availableFromInput.value) {
+          const errorMsg = document.getElementById('available_from_error');
+          errorMsg.textContent = 'Please select an available from date.';
+          errorMsg.classList.remove('hidden');
+          hasErrors = true;
+        } else {
+          document.getElementById('available_from_error').classList.add('hidden');
+        }
+
+        const rooms = parseInt(roomsInput.value);
+        if (!roomsInput.value || isNaN(rooms) || rooms < 1) {
+          const errorMsg = document.getElementById('rooms_error');
+          errorMsg.textContent = 'Please enter a valid number of rooms (at least 1).';
+          errorMsg.classList.remove('hidden');
+          hasErrors = true;
+        } else {
+          document.getElementById('rooms_error').classList.add('hidden');
+        }
+
+        if (hasErrors) return;
+
+        // Disable submit button
+        submitBtn.disabled = true;
+        submitBtn.innerHTML = '<span class="flex items-center"><svg class="animate-spin -ml-1 mr-3 h-5 w-5 text-white" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>Creating...</span>';
+
+        try {
+          const formData = new FormData(housingForm);
+          const token = localStorage.getItem('token');
+
+          const response = await fetch('/api/housing', {
+            method: 'POST',
+            headers: token ? { 'Authorization': `Bearer ${token}` } : {},
+            body: formData
+          });
+
+          const result = await response.json();
+
+          if (response.ok) {
+            // Redirect to housing list on success
+            window.location.href = '/housing';
+          } else {
+            createMsg.innerHTML = '<div class="p-4 rounded-lg text-sm font-medium text-red-700 bg-red-50 border border-red-200">❌ ' + (result.message || 'Failed to create housing listing') + '</div>';
+          }
+        } catch (error) {
+          createMsg.innerHTML = '<div class="p-4 rounded-lg text-sm font-medium text-red-700 bg-red-50 border border-red-200">❌ Network error. Please try again.</div>';
+        } finally {
+          // Re-enable submit button
+          submitBtn.disabled = false;
+          submitBtn.innerHTML = 'Create Listing';
+        }
+      });
+    </script>
   </body>
 </html>

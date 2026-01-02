@@ -7,20 +7,19 @@ const UserModel = {
       email,
       phone,
       password_hash,
-      role,
       profile_picture,
     } = data;
 
     const sql = `
-      INSERT INTO users (username, email, phone, password_hash, role, profile_picture)
-      VALUES (?, ?, ?, ?, ?, ?)
+      INSERT INTO users (username, email, phone, password_hash, profile_picture)
+      VALUES (?, ?, ?, ?, ?)
     `;
 
-    console.log('Creating user with data:', { username, email, phone, password_hash: '[HIDDEN]', role, profile_picture });
+    console.log('Creating user with data:', { username, email, phone, password_hash: '[HIDDEN]', profile_picture });
 
     db.query(
       sql,
-      [username, email, phone, password_hash, role || 'user', profile_picture],
+      [username, email, phone, password_hash, profile_picture],
       (err, result) => {
         if (err) {
           console.error('Database error creating user:', err);
@@ -50,7 +49,7 @@ const UserModel = {
   },
 
   findAll: (callback) => {
-    const sql = `SELECT id, username, email, phone, role, name, created_at FROM users ORDER BY id`;
+    const sql = `SELECT id, username, email, phone, name, created_at FROM users ORDER BY id`;
     db.query(sql, callback);
   },
 

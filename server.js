@@ -48,7 +48,6 @@ const userRoutes = require('./routes/userRoutes');
 const housingRoutes = require('./routes/housingRoutes');
 const roommateRoutes = require('./routes/roommateRoutes');
 const buddyRoutes = require('./routes/buddyRoutes');
-const adminRoutes = require('./routes/adminRoutes');
 const messageRoutes = require('./routes/messageRoutes');
 
 // API routes (no auth middleware - handled in controllers)
@@ -57,7 +56,6 @@ app.use('/api/users', userRoutes);
 app.use('/api/housing', housingRoutes);
 app.use('/api/roommates', roommateRoutes);
 app.use('/api/buddies', buddyRoutes);
-app.use('/api/admin', adminRoutes);
 app.use('/api/messages', messageRoutes);
 
 // Protected routes - require authentication
@@ -105,7 +103,7 @@ app.get('/roommates', requireAuth, (req, res) => {
   res.render('roommateList', { user: req.user || { id: 1, username: 'test' } });
 });
 app.get('/roommates/create', requireAuth, (req, res) => res.render('createRoommate', { user: req.user || { id: 1, username: 'test' }, edit: false }));
-app.get('/roommates/:id/view', requireAuth, (req, res) => res.render('roommateDetail', { user: req.user || { id: 1, username: 'test' } }));
+app.get('/roommates/:id/view', (req, res) => res.render('roommateDetail', { user: req.user || null }));
 app.get('/roommates/:id/edit', requireAuth, (req, res) => res.render('editRoommate', { user: req.user || { id: 1, username: 'test' }, id: req.params.id }));
 
 // Dashboard

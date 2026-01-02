@@ -208,7 +208,7 @@
 
             // Phase 3: Instant redirect after showing success
             setTimeout(() => {
-              window.location.href = '/dashboard?token=' + encodeURIComponent(data.token);
+              window.location.href = '/dashboard';
             }, 500);
           }, 1000);
         } else {

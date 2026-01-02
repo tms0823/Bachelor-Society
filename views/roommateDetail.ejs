@@ -289,8 +289,33 @@ async function loadRoommateDetail() {
     if (!response.ok) throw new Error('Roommate request not found');
 
     const data = await response.json();
-    currentRoommate = data;
-    currentPhotos = currentRoommate.photos || [];
+    currentRoommate = data.roommate || data;
+    // Handle photos field - it might be already parsed or a JSON string
+    if (currentRoommate.photos) {
+      if (Array.isArray(currentRoommate.photos)) {
+        currentPhotos = currentRoommate.photos;
+      } else {
+        try {
+          // Handle double-encoded JSON strings
+          let photosStr = currentRoommate.photos;
+          if (typeof photosStr === 'string' && photosStr.startsWith('"') && photosStr.endsWith('"')) {
+            photosStr = JSON.parse(photosStr); // Unescape the outer JSON encoding
+          }
+          if (typeof photosStr === 'string') {
+            currentPhotos = JSON.parse(photosStr); // Parse the actual JSON
+          } else if (Array.isArray(photosStr)) {
+            currentPhotos = photosStr;
+          } else {
+            currentPhotos = [];
+          }
+        } catch (e) {
+          console.warn('Failed to parse photos:', currentRoommate.photos, e);
+          currentPhotos = [];
+        }
+      }
+    } else {
+      currentPhotos = [];
+    }
 
     displayRoommateDetails();
   } catch (error) {

@@ -9,7 +9,6 @@
   "dependencies": {
     "bcryptjs": "^3.0.3",
     "body-parser": "^1.20.2",
-    "cloudinary": "^2.8.0",
     "cookie-parser": "^1.4.7",
     "dotenv": "^17.2.3",
     "ejs": "^3.1.9",
@@ -32,6 +31,7 @@
     "start": "node server.js",
     "dev": "nodemon server.js",
     "setup": "node scripts/setup.js",
+    "quick-start": "node scripts/quick-start.js",
     "db:backup": "node scripts/backup_data.js",
     "db:restore": "node scripts/restore_backup.js",
     "db:fresh-install": "node scripts/fresh_install.js",

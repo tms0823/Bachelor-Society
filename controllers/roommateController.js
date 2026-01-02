@@ -39,7 +39,7 @@ const RoommateController = {
         religion,
         pet_preference: pet_preference || 'any_pets',
         max_roommates: max_roommates || 1,
-        photos,
+        photos: photos ? JSON.stringify(photos) : null,
         is_private: is_private || false
       };
 
@@ -158,9 +158,14 @@ const RoommateController = {
       if (!token && req.cookies && req.cookies.token) token = req.cookies.token;
 
       if (token) {
-        const jwtHelper = require('../utils/jwtHelper');
-        const decoded = jwtHelper.verify(token);
-        user = decoded;
+        try {
+          const jwtHelper = require('../utils/jwtHelper');
+          const decoded = jwtHelper.verify(token);
+          user = decoded;
+        } catch (tokenError) {
+          // Invalid token, user remains null
+          console.log('Invalid token in roommate get:', tokenError.message);
+        }
       }
     } catch (e) {
       // Token invalid, user remains null
@@ -179,21 +184,11 @@ const RoommateController = {
       const roommate = results[0];
       const is_owner = user && user.id === roommate.owner_id;
 
-      // Parse photos if they exist
-      let parsedPhotos = null;
-      if (roommate.photos) {
-        try {
-          parsedPhotos = typeof roommate.photos === 'string' ? JSON.parse(roommate.photos) : roommate.photos;
-        } catch (parseError) {
-          console.warn('Failed to parse photos:', parseError);
-          parsedPhotos = null;
-        }
-      }
-
       return res.json({
-        ...roommate,
-        photos: parsedPhotos,
-        is_owner
+        roommate: {
+          ...roommate,
+          is_owner
+        }
       });
     });
   },
@@ -232,83 +227,135 @@ const RoommateController = {
       if (budget_min !== undefined && budget_max !== undefined && Number(budget_min) > Number(budget_max)) return res.status(400).json({ message: 'budget_min cannot exceed budget_max' });
       if (move_in_date !== undefined && move_in_date !== '' && Number.isNaN(Date.parse(move_in_date))) return res.status(400).json({ message: 'move_in_date must be a valid date' });
 
-      const updateData = {
-        preferred_location, budget_min, budget_max, lifestyle, move_in_date, description,
-        gender_preference: gender_preference || 'any',
-        room_type: room_type || 'any',
-        lease_duration_preference: lease_duration_preference || 12,
-        occupation,
-        smoking_preference: smoking_preference || 'any',
-        religion,
-        pet_preference: pet_preference || 'any_pets',
-        max_roommates: max_roommates || 1
-      };
+      console.log('Update data will be prepared from req.body');
 
-      console.log('Update data prepared:', Object.keys(updateData));
+      // Handle photos: frontend sends the complete final photos array
+      let finalPhotos = [];
+      if (req.body.photos) {
+        try {
+          finalPhotos = JSON.parse(req.body.photos);
+          console.log('Final photos from frontend:', finalPhotos.length);
+        } catch (parseError) {
+          console.warn('Failed to parse photos from request:', parseError);
+          finalPhotos = [];
+        }
+      }
 
-      // Handle photo deletions first
+      // Get existing photos for cleanup
       let existingPhotos = [];
       if (r.photos) {
         try {
           existingPhotos = typeof r.photos === 'string' ? JSON.parse(r.photos) : r.photos;
-          console.log('Existing photos parsed:', existingPhotos.length);
         } catch (parseError) {
           console.warn('Failed to parse existing photos:', parseError);
           existingPhotos = [];
         }
       }
 
-      // Handle photo deletions if specified
-      if (req.body.photos_to_delete) {
-        console.log('Photos to delete:', req.body.photos_to_delete);
-        try {
-          const photosToDelete = JSON.parse(req.body.photos_to_delete);
-          if (Array.isArray(photosToDelete)) {
-            console.log('Deleting photos from Cloudinary:', photosToDelete.length);
-            // Delete photos from Cloudinary
-            for (const publicId of photosToDelete) {
-              await deleteFromCloudinary(publicId);
-            }
-            // Remove from existing photos array
-            existingPhotos = existingPhotos.filter(photo => !photosToDelete.includes(photo.public_id));
-            console.log('Photos after deletion:', existingPhotos.length);
-          }
-        } catch (deleteError) {
-          console.warn('Failed to delete photos:', deleteError);
-        }
-      }
-
-      // Handle photo uploads if files are present
+      // Handle photo uploads if files are present (append to final photos)
       if (req.files && req.files.length > 0) {
         try {
           console.log('Uploading new photos:', req.files.length);
           const uploadedPhotos = await handleMultipleUploads(req.files, 'roommates');
-          // Combine existing and new photos
-          updateData.photos = [...existingPhotos, ...uploadedPhotos];
-          console.log('Total photos after upload:', updateData.photos.length);
+          finalPhotos = [...finalPhotos, ...uploadedPhotos];
+          console.log('Total photos after upload:', finalPhotos.length);
         } catch (uploadError) {
           console.error('Photo upload error:', uploadError);
           return res.status(500).json({ message: "Failed to upload photos", error: uploadError.message });
         }
-      } else if (req.body.photos_to_delete) {
-        // Only deletions, no new uploads - still need to update photos array
-        updateData.photos = existingPhotos;
-        console.log('Photos updated with deletions only:', existingPhotos.length);
       }
+
+      // Clean up photos that are no longer in the final list
+      const finalPhotoUrls = finalPhotos.map(p => p.url);
+      const photosToDelete = existingPhotos.filter(existing => !finalPhotoUrls.includes(existing.url));
+
+      if (photosToDelete.length > 0) {
+        console.log('Deleting removed photos:', photosToDelete.length);
+        for (const photo of photosToDelete) {
+          // Delete from both Cloudinary (if configured) and local storage
+          if (photo.public_id) {
+            await deleteFromCloudinary(photo.public_id);
+          }
+          // Also try to delete local file
+          if (photo.url && photo.url.startsWith('/uploads/')) {
+            const fs = require('fs');
+            const path = require('path');
+            const filePath = path.join(__dirname, '..', photo.url);
+            try {
+              if (fs.existsSync(filePath)) {
+                fs.unlinkSync(filePath);
+                console.log('Deleted local file:', filePath);
+              }
+            } catch (fileError) {
+              console.warn('Failed to delete local file:', filePath, fileError.message);
+            }
+          }
+        }
+      }
+
+      let photos = finalPhotos;
+
+      const updateData = { ...req.body };
+      if (photos !== undefined) {
+        updateData.photos = JSON.stringify(photos);
+      }
+
+      // Validate and sanitize updateData fields
+      if (updateData.budget_min !== undefined) {
+        const min = Number(updateData.budget_min);
+        if (isNaN(min) || min < 0) return res.status(400).json({ message: 'budget_min must be a non-negative number' });
+        updateData.budget_min = min;
+      }
+      if (updateData.budget_max !== undefined) {
+        const max = Number(updateData.budget_max);
+        if (isNaN(max) || max < 0) return res.status(400).json({ message: 'budget_max must be a non-negative number' });
+        updateData.budget_max = max;
+      }
+      if (updateData.max_roommates !== undefined) {
+        const max = parseInt(updateData.max_roommates, 10);
+        if (isNaN(max) || max < 1) return res.status(400).json({ message: 'max_roommates must be an integer >= 1' });
+        updateData.max_roommates = max;
+      }
+      if (updateData.lease_duration_preference !== undefined) {
+        const duration = parseInt(updateData.lease_duration_preference, 10);
+        if (isNaN(duration) || duration < 1) return res.status(400).json({ message: 'lease_duration_preference must be an integer >= 1' });
+        updateData.lease_duration_preference = duration;
+      }
+      if (updateData.move_in_date !== undefined && updateData.move_in_date !== '' && Number.isNaN(Date.parse(updateData.move_in_date))) {
+        return res.status(400).json({ message: 'move_in_date must be a valid date' });
+      }
+
+      // Remove any fields that shouldn't be in the update
+      delete updateData.photos_to_delete; // This is handled separately
 
       console.log('Final update data keys:', Object.keys(updateData));
 
-      RoommateModel.update(id, updateData, (err2, result) => {
+      RoommateModel.update(id, updateData, async (err2, result) => {
         if (err2) {
           console.error('Database update error:', err2);
           // Clean up newly uploaded photos if database update fails
-          if (req.files && req.files.length > 0 && updateData.photos) {
-            const newPhotos = updateData.photos.slice(-req.files.length); // Get only the newly uploaded ones
-            newPhotos.forEach(photo => {
+          if (req.files && req.files.length > 0) {
+            // Clean up newly uploaded files from both storage types
+            const newlyUploaded = finalPhotos.slice(-req.files.length); // Get only the newly uploaded ones
+            for (const photo of newlyUploaded) {
               if (photo.public_id) {
-                deleteFromCloudinary(photo.public_id);
+                await deleteFromCloudinary(photo.public_id);
               }
-            });
+              // Also delete local file
+              if (photo.url && photo.url.startsWith('/uploads/')) {
+                const fs = require('fs');
+                const path = require('path');
+                const filePath = path.join(__dirname, '..', photo.url);
+                try {
+                  if (fs.existsSync(filePath)) {
+                    fs.unlinkSync(filePath);
+                    console.log('Cleaned up local file after failed update:', filePath);
+                  }
+                } catch (fileError) {
+                  console.warn('Failed to clean up local file after failed update:', filePath, fileError.message);
+                }
+              }
+            }
           }
           return res.status(500).json({ message: 'DB error', error: err2.message });
         }
@@ -326,14 +373,29 @@ const RoommateController = {
       const r = results[0];
       if (!req.user || req.user.id !== r.owner_id) return res.status(403).json({ message: 'Forbidden' });
 
-      // Clean up photos from Cloudinary before deleting the record
+      // Clean up photos from both Cloudinary and local storage before deleting the record
       if (r.photos) {
         try {
           let photos = typeof r.photos === 'string' ? JSON.parse(r.photos) : r.photos;
           if (Array.isArray(photos)) {
             for (const photo of photos) {
+              // Delete from Cloudinary (if configured)
               if (photo.public_id) {
                 await deleteFromCloudinary(photo.public_id);
+              }
+              // Delete local file
+              if (photo.url && photo.url.startsWith('/uploads/')) {
+                const fs = require('fs');
+                const path = require('path');
+                const filePath = path.join(__dirname, '..', photo.url);
+                try {
+                  if (fs.existsSync(filePath)) {
+                    fs.unlinkSync(filePath);
+                    console.log('Deleted local file during roommate removal:', filePath);
+                  }
+                } catch (fileError) {
+                  console.warn('Failed to delete local file during removal:', filePath, fileError.message);
+                }
               }
             }
           }

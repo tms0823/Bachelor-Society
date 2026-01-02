@@ -265,7 +265,7 @@ async function loadListingDetails() {
     if (!response.ok) throw new Error('Listing not found');
 
     const data = await response.json();
-    currentListing = data.listing || data;
+    currentListing = data.housing || data.listing || data;
     // Handle photos field - it might be already parsed or a JSON string
     if (currentListing.photos) {
       if (Array.isArray(currentListing.photos)) {

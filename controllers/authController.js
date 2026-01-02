@@ -41,7 +41,7 @@ const AuthController = {
         }
 
         // Generate token
-        const token = jwtHelper.sign({ id: user.id, username: user.username, role: user.role });
+        const token = jwtHelper.sign({ id: user.id, username: user.username });
         console.log('Token generated, length:', token.length);
 
         try {
@@ -94,34 +94,13 @@ const AuthController = {
         const saltRounds = 10;
         const hashedPassword = await bcrypt.hash(password, saltRounds);
 
-        // Handle profile picture upload
+        // Handle profile picture upload (local storage only)
         let profilePictureUrl = null;
         const profilePictureFile = req.files ? req.files.find(f => f.fieldname === 'profilePicture') : null;
 
         if (profilePictureFile) {
-          // If Cloudinary is configured, upload to cloud, otherwise use local path
-          const cloudinary = require('cloudinary').v2;
-          const { uploadToCloudinary, handleMultipleUploads } = require('../utils/fileUpload');
-
-          try {
-            if (process.env.CLOUDINARY_CLOUD_NAME &&
-                process.env.CLOUDINARY_API_KEY &&
-                process.env.CLOUDINARY_API_SECRET &&
-                process.env.CLOUDINARY_CLOUD_NAME !== 'demo_cloud' &&
-                process.env.CLOUDINARY_API_KEY !== 'demo_key' &&
-                process.env.CLOUDINARY_API_SECRET !== 'demo_secret') {
-
-              // Upload to Cloudinary
-              const uploadResult = await uploadToCloudinary(profilePictureFile.path, 'profile-pictures');
-              profilePictureUrl = uploadResult.url;
-            } else {
-              // Use local path for development
-              profilePictureUrl = `/uploads/${profilePictureFile.filename}`;
-            }
-          } catch (uploadError) {
-            console.error('Profile picture upload failed:', uploadError);
-            // Continue with registration even if upload fails
-          }
+          // Use local path for storage
+          profilePictureUrl = `/uploads/${profilePictureFile.filename}`;
         }
 
         const userData = {
@@ -138,7 +117,7 @@ const AuthController = {
           }
 
           // Auto-login after registration
-          const token = jwtHelper.sign({ id: result.insertId, username, role: 'user' });
+          const token = jwtHelper.sign({ id: result.insertId, username });
 
           res.cookie('token', token, {
             httpOnly: false,

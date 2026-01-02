@@ -35,8 +35,125 @@
         <div class="w-6"></div> <!-- Spacer -->
       </div>
 
-      <div id="content">
-        <!-- Edit Form will be loaded here by JavaScript -->
+      <!-- Edit Housing Form -->
+      <div class="p-6 lg:p-8">
+        <div class="max-w-4xl mx-auto bg-white p-8 rounded-lg shadow-lg">
+          <h2 class="text-2xl font-bold mb-6 text-gray-800">Edit Housing Listing</h2>
+
+          <form id="editHousingForm" enctype="multipart/form-data" class="space-y-6">
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div>
+                <label class="block text-sm font-medium text-gray-700 mb-1">Area/Location *</label>
+                <div class="relative">
+                  <select id="areaSelect" name="area" class="w-full border border-gray-300 px-3 py-2 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent appearance-none bg-white" required>
+                    <option value="">Select an area</option>
+                    <optgroup label="Dhaka Areas">
+                      <option value="Dhanmondi, Dhaka">Dhanmondi, Dhaka</option>
+                      <option value="Bashundhara, Dhaka">Bashundhara, Dhaka</option>
+                      <option value="Gulshan, Dhaka">Gulshan, Dhaka</option>
+                      <option value="Banani, Dhaka">Banani, Dhaka</option>
+                      <option value="Uttara, Dhaka">Uttara, Dhaka</option>
+                      <option value="Mirpur, Dhaka">Mirpur, Dhaka</option>
+                      <option value="Mohammadpur, Dhaka">Mohammadpur, Dhaka</option>
+                      <option value="Lalmatia, Dhaka">Lalmatia, Dhaka</option>
+                      <option value="Badda, Dhaka">Badda, Dhaka</option>
+                      <option value="Wari, Dhaka">Wari, Dhaka</option>
+                    </optgroup>
+                    <optgroup label="Other Cities">
+                      <option value="Agrabad, Chittagong">Agrabad, Chittagong</option>
+                      <option value="Lake Circus, Khulna">Lake Circus, Khulna</option>
+                      <option value="Circuit House, Rajshahi">Circuit House, Rajshahi</option>
+                      <option value="Sylhet Sadar, Sylhet">Sylhet Sadar, Sylhet</option>
+                      <option value="Barisal Sadar, Barisal">Barisal Sadar, Barisal</option>
+                      <option value="Rangpur Sadar, Rangpur">Rangpur Sadar, Rangpur</option>
+                      <option value="Comilla Sadar, Comilla">Comilla Sadar, Comilla</option>
+                      <option value="Narayanganj Sadar, Narayanganj">Narayanganj Sadar, Narayanganj</option>
+                      <option value="Gazipur Sadar, Gazipur">Gazipur Sadar, Gazipur</option>
+                    </optgroup>
+                  </select>
+                  <div class="absolute inset-y-0 right-0 flex items-center px-2 pointer-events-none">
+                    <svg class="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+                    </svg>
+                  </div>
+                </div>
+                <p id="area_error" class="text-red-600 text-sm mt-1 hidden"></p>
+              </div>
+              <div>
+                <label class="block text-sm font-medium text-gray-700 mb-1">Full Address *</label>
+                <input id="address" name="address" class="w-full border border-gray-300 px-3 py-2 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent" placeholder="Enter complete address" required />
+                <p id="address_error" class="text-red-600 text-sm mt-1 hidden"></p>
+              </div>
+              <div>
+                <label class="block text-sm font-medium text-gray-700 mb-1">Rent (monthly) *</label>
+                <input id="rent" name="rent" type="number" class="w-full border border-gray-300 px-3 py-2 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent" placeholder="0" min="0" required />
+                <p id="rent_error" class="text-red-600 text-sm mt-1 hidden"></p>
+              </div>
+              <div>
+                <label class="block text-sm font-medium text-gray-700 mb-1">Available From *</label>
+                <input id="available_from" name="available_from" type="date" class="w-full border border-gray-300 px-3 py-2 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent" required />
+                <p id="available_from_error" class="text-red-600 text-sm mt-1 hidden"></p>
+              </div>
+              <div>
+                <label class="block text-sm font-medium text-gray-700 mb-1">Number of Rooms *</label>
+                <input id="rooms" name="rooms" type="number" class="w-full border border-gray-300 px-3 py-2 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent" min="1" required />
+                <p id="rooms_error" class="text-red-600 text-sm mt-1 hidden"></p>
+              </div>
+              <div>
+                <label class="block text-sm font-medium text-gray-700 mb-1">Property Type</label>
+                <select id="property_type" name="property_type" class="w-full border border-gray-300 px-3 py-2 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+                  <option value="apartment">Apartment</option>
+                  <option value="house">House</option>
+                  <option value="room">Room</option>
+                  <option value="studio">Studio</option>
+                </select>
+              </div>
+            </div>
+
+            <div class="bg-gray-50 p-6 rounded-lg">
+              <h3 class="text-lg font-semibold mb-4 text-gray-700">Tenant Preferences</h3>
+              <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                  <label class="block text-sm font-medium text-gray-700 mb-1">Gender Preference</label>
+                  <select id="gender_preference" name="gender_preference" class="w-full border border-gray-300 px-3 py-2 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+                    <option value="any">Any</option>
+                    <option value="male">Male</option>
+                    <option value="female">Female</option>
+                  </select>
+                </div>
+                <div>
+                  <label class="block text-sm font-medium text-gray-700 mb-1">Allowed Residents</label>
+                  <select id="allowed_residents" name="allowed_residents" class="w-full border border-gray-300 px-3 py-2 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+                    <option value="anyone">Anyone</option>
+                    <option value="students">Students Only</option>
+                    <option value="working">Working Professionals</option>
+                    <option value="families">Families</option>
+                  </select>
+                </div>
+              </div>
+            </div>
+
+            <div class="bg-gray-50 p-6 rounded-lg">
+              <h3 class="text-lg font-semibold mb-4 text-gray-700">Photos</h3>
+              <div>
+                <label class="block text-sm font-medium text-gray-700 mb-1">Current Photos</label>
+                <div id="currentPhotos" class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-4"></div>
+                <label class="block text-sm font-medium text-gray-700 mb-1">Add New Photos</label>
+                <input id="photos" name="photos" type="file" multiple accept="image/*" class="w-full border border-gray-300 px-3 py-2 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent" />
+                <p class="text-sm text-gray-500 mt-1">You can select multiple photos. Supported formats: JPG, PNG, GIF</p>
+              </div>
+            </div>
+
+            <div id="editMsg" class="hidden p-4 rounded-lg text-sm font-medium"></div>
+
+            <div class="flex justify-end space-x-4">
+              <a href="/housing" class="bg-gray-500 text-white px-6 py-2 rounded-md hover:bg-gray-600 transition-colors">Cancel</a>
+              <button type="submit" id="editBtn" class="bg-blue-600 text-white px-6 py-2 rounded-md hover:bg-blue-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed">
+                Save Changes
+              </button>
+            </div>
+          </form>
+        </div>
       </div>
     </div>
 
@@ -69,8 +186,207 @@
           }
         });
       });
-    </script>
 
-    <script src="/js/housing.js"></script>
+      document.addEventListener('DOMContentLoaded', () => {
+        const editForm = document.getElementById('editHousingForm');
+        const editMsg = document.getElementById('editMsg');
+        const editBtn = document.getElementById('editBtn');
+
+        // Get housing ID from URL
+        const housingId = window.location.pathname.split('/')[2];
+        let existingPhotos = [];
+
+        // Photo preview functionality
+        const photoInput = document.getElementById('photos');
+        const currentPhotosDiv = document.getElementById('currentPhotos');
+
+        photoInput.addEventListener('change', (e) => {
+          const files = Array.from(e.target.files);
+          files.forEach(file => {
+            if (file.type.startsWith('image/')) {
+              const reader = new FileReader();
+              reader.onload = (e) => {
+                const previewDiv = document.createElement('div');
+                previewDiv.className = 'relative';
+                previewDiv.innerHTML = `
+                  <img src="${e.target.result}" alt="New photo preview" class="w-full h-32 object-cover rounded-md border-2 border-blue-500 bg-gray-100">
+                  <button type="button" onclick="removeNewPhoto(this)" class="absolute -top-2 -right-2 bg-red-500 text-white rounded-full w-6 h-6 flex items-center justify-center text-xs hover:bg-red-600 shadow-lg">
+                    ×
+                  </button>
+                `;
+                currentPhotosDiv.appendChild(previewDiv);
+              };
+              reader.readAsDataURL(file);
+            }
+          });
+        });
+
+        // Function to show existing photos
+        function showExistingPhotos(photos) {
+          // Clear only existing photos, keep new photo previews
+          const existingPhotoElements = currentPhotosDiv.querySelectorAll('.existing-photo');
+          existingPhotoElements.forEach(el => el.remove());
+
+          if (photos && Array.isArray(photos)) {
+            // Add existing photos at the beginning
+            photos.forEach((photo, index) => {
+              if (photo && photo.url) {
+                const div = document.createElement('div');
+                div.className = 'relative existing-photo';
+                div.setAttribute('data-photo-index', index);
+                div.innerHTML = `
+                  <img src="${photo.url}" alt="Property photo ${index + 1}" class="w-full h-32 object-cover rounded-md border bg-gray-100">
+                  <button type="button" onclick="removeExistingPhoto(${index})" class="absolute top-1 right-1 bg-red-500 text-white rounded-full w-6 h-6 flex items-center justify-center text-xs hover:bg-red-600">
+                    ×
+                  </button>
+                `;
+                // Insert at the beginning, before new photo previews
+                currentPhotosDiv.insertBefore(div, currentPhotosDiv.firstChild);
+              }
+            });
+          }
+        }
+
+        // Function to remove existing photo from UI and array
+        window.removeExistingPhoto = function(index) {
+          // Remove from existingPhotos array
+          if (index >= 0 && index < existingPhotos.length) {
+            existingPhotos.splice(index, 1);
+            // Re-render existing photos to update indices
+            showExistingPhotos(existingPhotos);
+          }
+        };
+
+        // Function to remove new photo preview
+        window.removeNewPhoto = function(buttonElement) {
+          buttonElement.parentElement.remove();
+        };
+
+        editForm.addEventListener('submit', async (e) => {
+          e.preventDefault();
+
+          // Clear previous errors
+          ['area_error', 'address_error', 'rent_error', 'available_from_error', 'rooms_error'].forEach(id => {
+            const el = document.getElementById(id);
+            if (el) { el.textContent = ''; el.classList.add('hidden'); }
+          });
+
+          const area = document.getElementById('areaSelect').value;
+          const address = document.getElementById('address').value.trim();
+          const rent = document.getElementById('rent').value;
+          const available_from = document.getElementById('available_from').value;
+          const rooms = document.getElementById('rooms').value;
+
+          let hasError = false;
+          if (!area) {
+            const el = document.getElementById('area_error'); el.textContent = 'Please select an area'; el.classList.remove('hidden'); hasError = true;
+          }
+          if (!address) {
+            const el = document.getElementById('address_error'); el.textContent = 'Address is required'; el.classList.remove('hidden'); hasError = true;
+          }
+          if (!rent || isNaN(Number(rent)) || Number(rent) < 0) {
+            const el = document.getElementById('rent_error'); el.textContent = 'Please enter a valid rent amount'; el.classList.remove('hidden'); hasError = true;
+          }
+          if (!available_from) {
+            const el = document.getElementById('available_from_error'); el.textContent = 'Available from date is required'; el.classList.remove('hidden'); hasError = true;
+          }
+          if (!rooms || isNaN(Number(rooms)) || Number(rooms) < 1) {
+            const el = document.getElementById('rooms_error'); el.textContent = 'Please enter a valid number of rooms'; el.classList.remove('hidden'); hasError = true;
+          }
+
+          if (hasError) return;
+
+          editBtn.disabled = true;
+          editBtn.innerHTML = '<span class="flex items-center"><svg class="animate-spin -ml-1 mr-3 h-5 w-5 text-white" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>Saving...</span>';
+
+          try {
+            const token = localStorage.getItem('token');
+            const formData = new FormData(editForm);
+
+            // Send the complete final photos array
+            formData.append('photos', JSON.stringify(existingPhotos));
+
+            const response = await fetch(`/api/housing/${housingId}`, {
+              method: 'PUT',
+              headers: {
+                'Authorization': `Bearer ${token}`
+              },
+              body: formData
+            });
+
+            const result = await response.json();
+
+            if (response.ok) {
+              editMsg.className = 'p-4 rounded-lg text-sm font-medium text-green-700 bg-green-50 border border-green-200';
+              editMsg.textContent = '✅ Housing listing updated successfully!';
+              editMsg.classList.remove('hidden');
+
+              // Redirect after success
+              setTimeout(() => {
+                window.location.href = `/housing/${housingId}/view`;
+              }, 1500);
+            } else {
+              editMsg.className = 'p-4 rounded-lg text-sm font-medium text-red-700 bg-red-50 border border-red-200';
+              editMsg.textContent = result.message || '❌ Failed to update housing listing';
+              editMsg.classList.remove('hidden');
+            }
+          } catch (error) {
+            editMsg.className = 'p-4 rounded-lg text-sm font-medium text-red-700 bg-red-50 border border-red-200';
+            editMsg.textContent = '❌ Network error. Please try again.';
+            editMsg.classList.remove('hidden');
+          } finally {
+            editBtn.disabled = false;
+            editBtn.innerHTML = '💾 Save Changes';
+          }
+        });
+
+        async function loadHousingData(id) {
+          try {
+            const response = await fetch(`/api/housing/${id}`);
+            if (response.ok) {
+              const data = await response.json();
+              const housing = data.housing;
+
+              // Populate form fields
+              document.getElementById('areaSelect').value = housing.area;
+              document.getElementById('address').value = housing.address;
+              document.getElementById('rent').value = housing.rent;
+              document.getElementById('available_from').value = housing.available_from ? new Date(housing.available_from).toISOString().split('T')[0] : '';
+              document.getElementById('rooms').value = housing.rooms;
+              document.getElementById('property_type').value = housing.property_type || 'apartment';
+              document.getElementById('gender_preference').value = housing.gender_preference || 'any';
+              document.getElementById('allowed_residents').value = housing.allowed_residents || 'anyone';
+
+              // Show existing photos if any
+              if (housing.photos) {
+                let photos = housing.photos;
+                if (typeof photos === 'string') {
+                  try {
+                    photos = JSON.parse(photos);
+                  } catch (e) {
+                    console.error('Failed to parse photos JSON string:', e);
+                    photos = [];
+                  }
+                }
+                // Populate the existingPhotos array with the loaded photos
+                existingPhotos = photos || [];
+                showExistingPhotos(photos);
+              }
+            } else {
+              editMsg.className = 'p-4 rounded-lg text-sm font-medium text-red-700 bg-red-50 border border-red-200';
+              editMsg.textContent = '❌ Failed to load housing data';
+              editMsg.classList.remove('hidden');
+            }
+          } catch (error) {
+            editMsg.className = 'p-4 rounded-lg text-sm font-medium text-red-700 bg-red-50 border border-red-200';
+            editMsg.textContent = '❌ Network error loading housing data';
+            editMsg.classList.remove('hidden');
+          }
+        }
+
+        // Load housing data on page load
+        loadHousingData(housingId);
+      });
+    </script>
   </body>
 </html>

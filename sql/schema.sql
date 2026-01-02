@@ -6,7 +6,6 @@ CREATE TABLE IF NOT EXISTS users (
   email VARCHAR(255) UNIQUE,
   phone VARCHAR(50) UNIQUE,
   password_hash VARCHAR(255) NOT NULL,
-  role VARCHAR(20) DEFAULT 'user',
   name VARCHAR(255),
   age INT,
   gender VARCHAR(50),

@@ -193,25 +193,7 @@
     });
   }
 
-  // Intercept navigation to protected routes and add token
-  document.addEventListener('click', (e) => {
-    const link = e.target.closest('a[href]');
-    if (!link) return;
-
-    const href = link.getAttribute('href');
-    const protectedRoutes = ['/housing', '/buddies', '/roommates', '/profile'];
-
-    const isProtectedRoute = protectedRoutes.some(route =>
-      href === route || href.startsWith(route + '/')
-    );
-
-    if (isProtectedRoute && token) {
-      e.preventDefault();
-      // Add token as query parameter for view routes
-      const separator = href.includes('?') ? '&' : '?';
-      window.location.href = href + separator + 'token=' + encodeURIComponent(token);
-    }
-  });
+  // Navigation is handled normally - tokens are sent in Authorization headers for API calls
 
   async function loadNotifications() {
     if (!token) return;

@@ -196,33 +196,12 @@ const UserController = {
       const payload = {};
       allowed.forEach(k => { if (req.body[k] !== undefined) payload[k] = req.body[k]; });
 
-      // Handle profile picture upload if present
+      // Handle profile picture upload if present (local storage only)
       if (req.files && req.files.length > 0) {
         const profilePictureFile = req.files.find(f => f.fieldname === 'profilePicture');
         if (profilePictureFile) {
-          // If Cloudinary is configured, upload to cloud, otherwise use local path
-          const cloudinary = require('cloudinary').v2;
-          const { uploadToCloudinary, handleMultipleUploads } = require("../utils/fileUpload");
-
-          try {
-            if (process.env.CLOUDINARY_CLOUD_NAME &&
-                process.env.CLOUDINARY_API_KEY &&
-                process.env.CLOUDINARY_API_SECRET &&
-                process.env.CLOUDINARY_CLOUD_NAME !== 'demo_cloud' &&
-                process.env.CLOUDINARY_API_KEY !== 'demo_key' &&
-                process.env.CLOUDINARY_API_SECRET !== 'demo_secret') {
-
-              // Upload to Cloudinary
-              const uploadResult = await uploadToCloudinary(profilePictureFile.path, 'profile-pictures');
-              payload.profile_picture = uploadResult.url;
-            } else {
-              // Use local path for development
-              payload.profile_picture = `/uploads/${profilePictureFile.filename}`;
-            }
-          } catch (uploadError) {
-            console.error('Profile picture upload failed:', uploadError);
-            // Continue with update even if upload fails
-          }
+          // Use local path for storage
+          payload.profile_picture = `/uploads/${profilePictureFile.filename}`;
         }
       }
 

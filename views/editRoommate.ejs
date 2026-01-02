@@ -35,8 +35,165 @@
         <div class="w-6"></div> <!-- Spacer -->
       </div>
 
-      <div id="content">
-        <!-- Edit Form will be loaded here by JavaScript -->
+      <!-- Edit Roommate Form -->
+      <div class="p-6 lg:p-8">
+        <div class="max-w-4xl mx-auto bg-white p-8 rounded-lg shadow-lg">
+          <h2 class="text-2xl font-bold mb-6 text-gray-800">Edit Roommate Request</h2>
+
+          <form id="editRoommateForm" enctype="multipart/form-data" class="space-y-6">
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div>
+                <label class="block text-sm font-medium text-gray-700 mb-1">Preferred Location *</label>
+                <div class="relative">
+                  <select id="locationSelect" name="preferred_location" class="w-full border border-gray-300 px-3 py-2 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent appearance-none bg-white">
+                    <option value="">Select a location or enter custom location</option>
+                    <optgroup label="Popular Cities">
+                      <option value="Dhaka">Dhaka</option>
+                      <option value="Chittagong">Chittagong</option>
+                      <option value="Khulna">Khulna</option>
+                      <option value="Rajshahi">Rajshahi</option>
+                      <option value="Sylhet">Sylhet</option>
+                      <option value="Barisal">Barisal</option>
+                      <option value="Rangpur">Rangpur</option>
+                      <option value="Comilla">Comilla</option>
+                      <option value="Narayanganj">Narayanganj</option>
+                      <option value="Gazipur">Gazipur</option>
+                      <option value="Bogra">Bogra</option>
+                      <option value="Mymensingh">Mymensingh</option>
+                      <option value="Jessore">Jessore</option>
+                      <option value="Saidpur">Saidpur</option>
+                    </optgroup>
+                    <option value="custom">Enter Custom Location</option>
+                  </select>
+                  <div class="absolute inset-y-0 right-0 flex items-center px-2 pointer-events-none">
+                    <svg class="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+                    </svg>
+                  </div>
+                </div>
+                <input id="preferred_location" name="preferred_location" type="text" class="hidden w-full border border-gray-300 px-3 py-2 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent mt-2" placeholder="Enter preferred location" />
+                <p id="preferred_location_error" class="text-red-600 text-sm mt-1 hidden"></p>
+              </div>
+              <div>
+                <label class="block text-sm font-medium text-gray-700 mb-1">Move-in Date</label>
+                <input id="move_in_date" name="move_in_date" type="date" class="w-full border border-gray-300 px-3 py-2 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent" />
+                <p id="move_in_date_error" class="text-red-600 text-sm mt-1 hidden"></p>
+              </div>
+              <div>
+                <label class="block text-sm font-medium text-gray-700 mb-1">Budget Min</label>
+                <input id="budget_min" name="budget_min" type="number" class="w-full border border-gray-300 px-3 py-2 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent" placeholder="0" min="0" />
+                <p id="budget_min_error" class="text-red-600 text-sm mt-1 hidden"></p>
+              </div>
+              <div>
+                <label class="block text-sm font-medium text-gray-700 mb-1">Budget Max</label>
+                <input id="budget_max" name="budget_max" type="number" class="w-full border border-gray-300 px-3 py-2 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent" placeholder="2000" min="0" />
+                <p id="budget_max_error" class="text-red-600 text-sm mt-1 hidden"></p>
+              </div>
+            </div>
+
+            <div class="bg-gray-50 p-6 rounded-lg">
+              <h3 class="text-lg font-semibold mb-4 text-gray-700">Room Preferences</h3>
+              <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                  <label class="block text-sm font-medium text-gray-700 mb-1">Room Type</label>
+                  <select id="room_type" name="room_type" class="w-full border border-gray-300 px-3 py-2 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+                    <option value="any">Any</option>
+                    <option value="private_room">Private Room</option>
+                    <option value="shared_room">Shared Room</option>
+                  </select>
+                </div>
+                <div>
+                  <label class="block text-sm font-medium text-gray-700 mb-1">Lease Duration (months)</label>
+                  <input id="lease_duration_preference" name="lease_duration_preference" type="number" class="w-full border border-gray-300 px-3 py-2 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent" min="1" max="24" value="12" />
+                </div>
+                <div>
+                  <label class="block text-sm font-medium text-gray-700 mb-1">Occupation</label>
+                  <select id="occupation" name="occupation" class="w-full border border-gray-300 px-3 py-2 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+                    <option value="">Any</option>
+                    <option value="student">Student</option>
+                    <option value="working">Working Professional</option>
+                    <option value="other">Other</option>
+                  </select>
+                </div>
+                <div>
+                  <label class="block text-sm font-medium text-gray-700 mb-1">Number of Roommates</label>
+                  <input id="max_roommates" name="max_roommates" type="number" class="w-full border border-gray-300 px-3 py-2 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent" min="1" max="10" value="1" />
+                </div>
+              </div>
+            </div>
+
+            <div class="bg-gray-50 p-6 rounded-lg">
+              <h3 class="text-lg font-semibold mb-4 text-gray-700">Personal Preferences</h3>
+              <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                  <label class="block text-sm font-medium text-gray-700 mb-1">Gender Preference</label>
+                  <select id="gender_preference" name="gender_preference" class="w-full border border-gray-300 px-3 py-2 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+                    <option value="any">Any</option>
+                    <option value="male">Male</option>
+                    <option value="female">Female</option>
+                  </select>
+                </div>
+                <div>
+                  <label class="block text-sm font-medium text-gray-700 mb-1">Smoking Preference</label>
+                  <select id="smoking_preference" name="smoking_preference" class="w-full border border-gray-300 px-3 py-2 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+                    <option value="any">Any</option>
+                    <option value="non_smoker">Non-smoker</option>
+                    <option value="occasional">Occasional</option>
+                    <option value="regular">Regular</option>
+                  </select>
+                </div>
+                <div>
+                  <label class="block text-sm font-medium text-gray-700 mb-1">Pet Preference</label>
+                  <select id="pet_preference" name="pet_preference" class="w-full border border-gray-300 px-3 py-2 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+                    <option value="any_pets">Any</option>
+                    <option value="no_pets">No Pets</option>
+                    <option value="cats_ok">Cats OK</option>
+                    <option value="dogs_ok">Dogs OK</option>
+                  </select>
+                </div>
+                <div>
+                  <label class="block text-sm font-medium text-gray-700 mb-1">Religion</label>
+                  <input id="religion" name="religion" class="w-full border border-gray-300 px-3 py-2 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent" placeholder="Optional" />
+                </div>
+              </div>
+            </div>
+
+            <div class="bg-gray-50 p-6 rounded-lg">
+              <h3 class="text-lg font-semibold mb-4 text-gray-700">Lifestyle & Description</h3>
+              <div class="space-y-4">
+                <div>
+                  <label class="block text-sm font-medium text-gray-700 mb-1">Lifestyle Preferences</label>
+                  <textarea id="lifestyle" name="lifestyle" rows="3" class="w-full border border-gray-300 px-3 py-2 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent" placeholder="Describe your lifestyle, daily routine, cleanliness preferences, etc."></textarea>
+                </div>
+                <div>
+                  <label class="block text-sm font-medium text-gray-700 mb-1">Description</label>
+                  <textarea id="description" name="description" rows="4" class="w-full border border-gray-300 px-3 py-2 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent" placeholder="Tell potential roommates about yourself, what you're looking for, and why you'd be a great roommate."></textarea>
+                </div>
+              </div>
+            </div>
+
+            <div class="bg-gray-50 p-6 rounded-lg">
+              <h3 class="text-lg font-semibold mb-4 text-gray-700">Photos</h3>
+              <div>
+                <label class="block text-sm font-medium text-gray-700 mb-1">Current Photos</label>
+                <div id="currentPhotos" class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-4"></div>
+                <label class="block text-sm font-medium text-gray-700 mb-1">Add New Photos</label>
+                <input id="photos" name="photos" type="file" multiple accept="image/*" class="w-full border border-gray-300 px-3 py-2 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent" />
+                <p class="text-sm text-gray-500 mt-1">Select additional photos (hold Ctrl/Cmd to select multiple). Supported formats: JPG, PNG, GIF</p>
+                <div id="photo-count" class="mt-2 text-sm text-gray-600"></div>
+              </div>
+            </div>
+
+            <div id="editMsg" class="hidden p-4 rounded-lg text-sm font-medium"></div>
+
+            <div class="flex justify-end space-x-4">
+              <a href="javascript:history.back()" class="bg-gray-500 text-white px-6 py-3 rounded-md hover:bg-gray-600 transition-colors">Cancel</a>
+              <button type="submit" id="editBtn" class="bg-blue-600 text-white px-6 py-3 rounded-md hover:bg-blue-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed">
+                Save Changes
+              </button>
+            </div>
+          </form>
+        </div>
       </div>
     </div>
 
@@ -69,8 +226,330 @@
           }
         });
       });
-    </script>
 
-    <script src="/js/roommates.js"></script>
+      // Location selector functionality
+      const locationSelect = document.getElementById('locationSelect');
+      const locationInput = document.getElementById('preferred_location');
+
+      locationSelect.addEventListener('change', function() {
+        const selectedValue = this.value;
+
+        if (selectedValue === 'custom') {
+          // Show custom location input
+          locationInput.classList.remove('hidden');
+          locationInput.required = true;
+          locationInput.value = '';
+          locationInput.focus();
+        } else if (selectedValue) {
+          // Use selected predefined location
+          locationInput.value = selectedValue;
+          locationInput.classList.add('hidden');
+          locationInput.required = true;
+        } else {
+          // No selection
+          locationInput.value = '';
+          locationInput.classList.add('hidden');
+          locationInput.required = false;
+        }
+      });
+
+      document.addEventListener('DOMContentLoaded', () => {
+        const editForm = document.getElementById('editRoommateForm');
+        const editMsg = document.getElementById('editMsg');
+        const editBtn = document.getElementById('editBtn');
+
+        // Get roommate ID from URL
+        const roommateId = window.location.pathname.split('/')[2];
+        let existingPhotos = [];
+
+        // Photo handling variables
+        let selectedFiles = [];
+        let fileInput = document.getElementById('photos');
+        let currentPhotosDiv = document.getElementById('currentPhotos');
+        let photoCountDisplay = document.getElementById('photo-count');
+
+        // Photo preview functionality for new photos
+        fileInput.addEventListener('change', (e) => {
+          const newFiles = Array.from(e.target.files);
+
+          // Calculate total photos (existing + new)
+          const totalPhotos = existingPhotos.length + selectedFiles.length + newFiles.length;
+
+          // Check total file count
+          if (totalPhotos > 10) {
+            alert(`Maximum 10 photos allowed. You can select up to ${10 - existingPhotos.length - selectedFiles.length} more photos.`);
+            // Reset the input
+            e.target.value = '';
+            return;
+          }
+
+          // Add new files to our collection
+          selectedFiles = selectedFiles.concat(newFiles);
+
+          // Update the input's files to reflect all selected files
+          updateFileInput();
+
+          // Clear and rebuild preview (existing + new)
+          rebuildPhotoPreview();
+
+          // Update photo count display
+          updatePhotoCount();
+        });
+
+        // Function to show existing photos
+        function showExistingPhotos(photos) {
+          // Clear only existing photos, keep new photo previews
+          const existingPhotoElements = currentPhotosDiv.querySelectorAll('.existing-photo');
+          existingPhotoElements.forEach(el => el.remove());
+
+          if (photos && Array.isArray(photos)) {
+            // Add existing photos at the beginning
+            photos.forEach((photo, index) => {
+              if (photo && photo.url) {
+                const div = document.createElement('div');
+                div.className = 'relative existing-photo';
+                div.setAttribute('data-photo-index', index);
+                div.innerHTML = `
+                  <img src="${photo.url}" alt="Roommate photo ${index + 1}" class="w-full h-32 object-cover rounded-md border bg-gray-100">
+                  <button type="button" onclick="removeExistingPhoto(${index})" class="absolute top-1 right-1 bg-red-500 text-white rounded-full w-6 h-6 flex items-center justify-center text-xs hover:bg-red-600">
+                    ×
+                  </button>
+                `;
+                // Insert at the beginning, before new photo previews
+                currentPhotosDiv.insertBefore(div, currentPhotosDiv.firstChild);
+              }
+            });
+          }
+        }
+
+        // Function to remove existing photo from UI and array
+        window.removeExistingPhoto = function(index) {
+          // Remove from existingPhotos array
+          if (index >= 0 && index < existingPhotos.length) {
+            existingPhotos.splice(index, 1);
+            // Re-render existing photos to update indices
+            showExistingPhotos(existingPhotos);
+          }
+        };
+
+        // Function to remove new photo preview
+        window.removeNewPhoto = function(buttonElement) {
+          // Find the index of this preview in the new photos
+          const previewDiv = buttonElement.parentElement;
+          const allPreviews = Array.from(currentPhotosDiv.children);
+          const previewIndex = allPreviews.indexOf(previewDiv);
+
+          // Count existing photos
+          const existingCount = existingPhotos.length;
+
+          // If this is a new photo (not existing), remove it from selectedFiles
+          if (previewIndex >= existingCount) {
+            const newPhotoIndex = previewIndex - existingCount;
+            selectedFiles.splice(newPhotoIndex, 1);
+
+            // Update the input's files
+            updateFileInput();
+
+            // Rebuild preview
+            rebuildPhotoPreview();
+
+            // Update photo count
+            updatePhotoCount();
+          }
+        };
+
+        // Helper functions for file management
+        function updateFileInput() {
+          // Create a new DataTransfer to update the input's files
+          const dt = new DataTransfer();
+          selectedFiles.forEach(file => dt.items.add(file));
+          fileInput.files = dt.files;
+        }
+
+        function rebuildPhotoPreview() {
+          // Clear all previews
+          currentPhotosDiv.innerHTML = '';
+
+          // Rebuild existing photos
+          showExistingPhotos(existingPhotos);
+
+          // Add new photo previews
+          selectedFiles.forEach((file, index) => {
+            const reader = new FileReader();
+            reader.onload = function(e) {
+              const previewDiv = document.createElement('div');
+              previewDiv.className = 'relative';
+              previewDiv.innerHTML = `
+                <img src="${e.target.result}" alt="New photo preview" class="w-full h-32 object-cover rounded-md border-2 border-blue-500 bg-gray-100">
+                <button type="button" onclick="removeNewPhoto(this)" class="absolute -top-2 -right-2 bg-red-500 text-white rounded-full w-6 h-6 flex items-center justify-center text-xs hover:bg-red-600 shadow-lg">
+                  ×
+                </button>
+              `;
+              currentPhotosDiv.appendChild(previewDiv);
+            };
+            reader.readAsDataURL(file);
+          });
+        }
+
+        function updatePhotoCount() {
+          const totalPhotos = existingPhotos.length + selectedFiles.length;
+          photoCountDisplay.textContent = totalPhotos > 0 ? `${totalPhotos} photo${totalPhotos !== 1 ? 's' : ''} total` : '';
+        }
+
+        editForm.addEventListener('submit', async (e) => {
+          e.preventDefault();
+
+          // Clear previous errors
+          ['preferred_location_error', 'move_in_date_error', 'budget_min_error', 'budget_max_error'].forEach(id => {
+            const el = document.getElementById(id);
+            if (el) { el.textContent = ''; el.classList.add('hidden'); }
+          });
+
+          const location = locationSelect.value;
+          const customLocation = locationInput.value.trim();
+          const finalLocation = location === 'custom' ? customLocation : location;
+          const moveInDate = document.getElementById('move_in_date').value;
+          const budgetMin = document.getElementById('budget_min').value;
+          const budgetMax = document.getElementById('budget_max').value;
+
+          let hasError = false;
+          if (!finalLocation) {
+            const el = document.getElementById('preferred_location_error'); el.textContent = 'Please select or enter a location'; el.classList.remove('hidden'); hasError = true;
+          }
+          if (moveInDate && Number.isNaN(Date.parse(moveInDate))) {
+            const el = document.getElementById('move_in_date_error'); el.textContent = 'Please enter a valid date'; el.classList.remove('hidden'); hasError = true;
+          }
+          if (budgetMin && (isNaN(Number(budgetMin)) || Number(budgetMin) < 0)) {
+            const el = document.getElementById('budget_min_error'); el.textContent = 'Please enter a valid minimum budget'; el.classList.remove('hidden'); hasError = true;
+          }
+          if (budgetMax && (isNaN(Number(budgetMax)) || Number(budgetMax) < 0)) {
+            const el = document.getElementById('budget_max_error'); el.textContent = 'Please enter a valid maximum budget'; el.classList.remove('hidden'); hasError = true;
+          }
+          if (budgetMin && budgetMax && Number(budgetMin) > Number(budgetMax)) {
+            const el = document.getElementById('budget_min_error'); el.textContent = 'Minimum budget cannot exceed maximum budget'; el.classList.remove('hidden'); hasError = true;
+          }
+
+          if (hasError) return;
+
+          editBtn.disabled = true;
+          editBtn.innerHTML = '<span class="flex items-center"><svg class="animate-spin -ml-1 mr-3 h-5 w-5 text-white" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>Saving...</span>';
+
+          try {
+            const token = localStorage.getItem('token');
+            const formData = new FormData(editForm);
+
+            // Ensure the location field has the correct value
+            if (location !== 'custom') {
+              formData.set('preferred_location', location);
+            }
+
+            // Send the complete final photos array
+            formData.append('photos', JSON.stringify(existingPhotos));
+
+            const response = await fetch(`/api/roommates/${roommateId}`, {
+              method: 'PUT',
+              headers: {
+                'Authorization': `Bearer ${token}`
+              },
+              body: formData
+            });
+
+            const result = await response.json();
+
+            if (response.ok) {
+              editMsg.className = 'p-4 rounded-lg text-sm font-medium text-green-700 bg-green-50 border border-green-200';
+              editMsg.textContent = '✅ Roommate request updated successfully!';
+              editMsg.classList.remove('hidden');
+
+              // Redirect after success
+              setTimeout(() => {
+                window.location.href = `/roommates/${roommateId}/view`;
+              }, 1500);
+            } else {
+              editMsg.className = 'p-4 rounded-lg text-sm font-medium text-red-700 bg-red-50 border border-red-200';
+              editMsg.textContent = result.message || '❌ Failed to update roommate request';
+              editMsg.classList.remove('hidden');
+            }
+          } catch (error) {
+            editMsg.className = 'p-4 rounded-lg text-sm font-medium text-red-700 bg-red-50 border border-red-200';
+            editMsg.textContent = '❌ Network error. Please try again.';
+            editMsg.classList.remove('hidden');
+          } finally {
+            editBtn.disabled = false;
+            editBtn.innerHTML = '💾 Save Changes';
+          }
+        });
+
+        async function loadRoommateData(id) {
+          try {
+            const response = await fetch(`/api/roommates/${id}`);
+            if (response.ok) {
+              const data = await response.json();
+              const roommate = data.roommate;
+
+              // Populate form fields
+              if (['Dhaka', 'Chittagong', 'Khulna', 'Rajshahi', 'Sylhet', 'Barisal', 'Rangpur', 'Comilla', 'Narayanganj', 'Gazipur', 'Bogra', 'Mymensingh', 'Jessore', 'Saidpur'].includes(roommate.preferred_location)) {
+                document.getElementById('locationSelect').value = roommate.preferred_location;
+                document.getElementById('preferred_location').value = roommate.preferred_location;
+                document.getElementById('preferred_location').classList.add('hidden');
+              } else {
+                document.getElementById('locationSelect').value = 'custom';
+                document.getElementById('preferred_location').value = roommate.preferred_location;
+                document.getElementById('preferred_location').classList.remove('hidden');
+              }
+
+              document.getElementById('move_in_date').value = roommate.move_in_date ? new Date(roommate.move_in_date).toISOString().split('T')[0] : '';
+              document.getElementById('budget_min').value = roommate.budget_min || '';
+              document.getElementById('budget_max').value = roommate.budget_max || '';
+              document.getElementById('room_type').value = roommate.room_type || 'any';
+              document.getElementById('lease_duration_preference').value = roommate.lease_duration_preference || 12;
+              document.getElementById('occupation').value = roommate.occupation || '';
+              document.getElementById('max_roommates').value = roommate.max_roommates || 1;
+              document.getElementById('gender_preference').value = roommate.gender_preference || 'any';
+              document.getElementById('smoking_preference').value = roommate.smoking_preference || 'any';
+              document.getElementById('pet_preference').value = roommate.pet_preference || 'any_pets';
+              document.getElementById('religion').value = roommate.religion || '';
+              document.getElementById('lifestyle').value = roommate.lifestyle || '';
+              document.getElementById('description').value = roommate.description || '';
+
+              // Show existing photos if any
+              if (roommate.photos) {
+                let photos = roommate.photos;
+                if (Array.isArray(photos)) {
+                  // Already parsed
+                } else if (typeof photos === 'string') {
+                  try {
+                    // Handle double-encoded JSON strings
+                    if (photos.startsWith('"') && photos.endsWith('"')) {
+                      photos = JSON.parse(photos); // Unescape the outer JSON encoding
+                    }
+                    if (typeof photos === 'string') {
+                      photos = JSON.parse(photos); // Parse the actual JSON
+                    }
+                  } catch (e) {
+                    console.error('Failed to parse photos JSON string:', e);
+                    photos = [];
+                  }
+                }
+                // Populate the existingPhotos array with the loaded photos
+                existingPhotos = photos || [];
+                showExistingPhotos(photos);
+              }
+            } else {
+              editMsg.className = 'p-4 rounded-lg text-sm font-medium text-red-700 bg-red-50 border border-red-200';
+              editMsg.textContent = '❌ Failed to load roommate data';
+              editMsg.classList.remove('hidden');
+            }
+          } catch (error) {
+            editMsg.className = 'p-4 rounded-lg text-sm font-medium text-red-700 bg-red-50 border border-red-200';
+            editMsg.textContent = '❌ Network error loading roommate data';
+            editMsg.classList.remove('hidden');
+          }
+        }
+
+        // Load roommate data on page load
+        loadRoommateData(roommateId);
+      });
+    </script>
   </body>
 </html>

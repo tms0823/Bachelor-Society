@@ -136,7 +136,7 @@ const RoommateModel = {
 
   findById: (id, cb) => {
     console.log('Finding roommate by ID:', id, 'Type:', typeof id);
-    const sql = `SELECT rr.*, u.name as owner_name, u.username as owner_username, u.profile_picture as owner_profile_picture FROM roommate_requests rr LEFT JOIN users u ON rr.owner_id = u.id WHERE rr.id = ? LIMIT 1`;
+    const sql = `SELECT rr.*, u.username as owner_username, u.profile_picture as owner_profile_picture FROM roommate_requests rr LEFT JOIN users u ON rr.owner_id = u.id WHERE rr.id = ? LIMIT 1`;
     db.query(sql, [id], (err, results) => {
       if (err) {
         console.error('Database error in findById:', err);

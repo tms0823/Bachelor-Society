@@ -147,7 +147,7 @@ const HousingController = {
         const is_owner = user && user.id === listing.user_id;
 
         return res.status(200).json({
-          listing: {
+          housing: {
             ...listing,
             is_owner
           }
