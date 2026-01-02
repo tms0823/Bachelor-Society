@@ -1,110 +1,114 @@
-# Bachelor Society
+# Bachelor-Society
+CSE470 Project
 
-A lightweight Node + Express + EJS project for sharing housing and roommates.
+## 🚀 **Bachelor Society - Complete Setup Guide**
 
-Tech stack
-- Node.js + Express
-- MySQL (`mysql2`)
-- EJS templates
-- Tailwind CSS (via CDN for quick prototyping)
-- JWT auth (`jsonwebtoken`)
-- bcrypt (`bcryptjs`) for password hashing
+### **📋 Prerequisites**
+- **Node.js** (v14 or higher) - [Download here](https://nodejs.org/)
+- **MySQL** or **MariaDB** database server - [Download MySQL](https://dev.mysql.com/downloads/mysql/)
+- **Git** for cloning the repository
 
-Quick setup
-1. Copy `.env.example` (if present) or create `.env` with DB credentials and JWT secret:
-
-```
-DB_HOST=localhost
-DB_USER=root
-DB_PASSWORD=yourpassword
-DB_NAME=bachelor_society
-JWT_SECRET=change_this_secret
-PORT=3002
-
-# Optional: Admin account creation (used by create-admin.js script)
-ADMIN_EMAIL=admin@example.com
-ADMIN_PASSWORD=admin123
-ADMIN_USERNAME=admin
-```
-
-2. Install dependencies
-
+### **⚡ Quick Start (3 minutes)**
 ```bash
+# 1. Clone the repository
+git clone https://github.com/tms0823/Bachelor-Society.git
+cd bachelor-society
+
+# 2. Install dependencies
 npm install
+
+# 3. Set up environment variables
+cp .env.example .env
+# Edit .env with your database credentials (see below)
+
+# 4. Set up the database automatically
+npm run setup
+
+# 5. Start the application
+npm start
 ```
 
-3. Set up the database
+Open `http://localhost:3000` and register your first account! 🎉
 
-**For brand new installations:**
+### **🔧 Environment Configuration**
+Edit `.env` with your actual values:
+```env
+# Database Configuration
+DB_HOST=localhost
+DB_USER=your_mysql_username
+DB_PASSWORD=your_mysql_password
+DB_NAME=bachelor_society
+
+# JWT Secret (generate a random string)
+JWT_SECRET=your_super_secret_jwt_key_here
+
+# Optional: Cloudinary for image uploads
+CLOUDINARY_CLOUD_NAME=your_cloud_name
+CLOUDINARY_API_KEY=your_api_key
+CLOUDINARY_API_SECRET=your_api_secret
+
+# Optional: Email service
+EMAIL_SERVICE=gmail
+EMAIL_USER=your_email@gmail.com
+EMAIL_PASS=your_app_password
+```
+
+### **🗄️ Database Setup**
+**Automatic (Recommended):**
 ```bash
-npm run db:fresh-install
+npm run setup  # Creates database, tables, and everything automatically
 ```
-This creates the database schema and inserts sample data.
 
-**For existing databases with user data:**
+### **📱 Features**
+- 👥 **User Registration & Authentication** (JWT-based)
+- 🏠 **Housing Listings** with photo uploads
+- 🤝 **Roommate Finding** with detailed profiles
+- 🎯 **Activity Buddy System** for social connections
+- 💬 **Messaging System** between users
+- 👨‍💼 **Admin Dashboard** for moderation
+- 📱 **Responsive Design** with Tailwind CSS
+
+### **📦 Available Commands**
 ```bash
-# First, create a backup (highly recommended)
-npm run db:backup
+# Development
+npm run dev          # Start with auto-restart (nodemon)
+npm start            # Start production server
+npm test             # Run tests
 
-# Then reset safely (requires backup + confirmation)
-npm run db:reset-safe
-
-# Or restore from backup if needed
-npm run db:restore
+# Database
+npm run setup        # Fresh setup (creates DB + tables)
+npm run db:backup    # Backup current data
+npm run db:restore   # Restore from backup
 ```
 
-⚠️ **SAFETY NOTICE**: The old `npm run db:init` command has been removed because it could accidentally delete all user data. Use the safe commands above instead.
+### **🔍 Troubleshooting**
+- **Database Connection:** Ensure MySQL is running and credentials are correct
+- **Port Issues:** Change PORT in .env if 3000 is in use
+- **Permission Errors:** Check file upload directory permissions
 
-4. Create an admin account (optional, for content management)
-
-```bash
-node scripts/create-admin.js
+### **📂 Project Structure**
+```
+bachelor-society/
+├── controllers/     # API route handlers
+├── models/         # Database models
+├── views/          # EJS templates
+├── routes/         # Express routes
+├── public/         # Static files (CSS, JS, images)
+├── scripts/        # Utility scripts
+├── sql/           # Database schema and seed data
+└── utils/         # Helper functions
 ```
 
-This creates an admin account with the credentials specified in your `.env` file (or defaults). The script is safe to run multiple times.
+### **🤝 Contributing**
+1. Fork the repository
+2. Create a feature branch: `git checkout -b feature-name`
+3. Make your changes and test thoroughly
+4. Commit: `git commit -am 'Add new feature'`
+5. Push: `git push origin feature-name`
+6. Submit a pull request
 
-5. Run the app in development
-
-```bash
-npm run dev
-```
-
-API / Frontend
-- Auth: `POST /api/auth/register`, `POST /api/auth/login`, `POST /api/auth/logout`
-- Users: `GET /api/users/me` (auth), `PUT /api/users/me` (auth)
-- Housing: `GET /api/housing`, `POST /api/housing` (auth), `GET /api/housing/:id`, `PUT /api/housing/:id` (auth / owner), `DELETE /api/housing/:id` (auth / owner)
-- Buddies: `GET /api/buddies`, `POST /api/buddies` (auth), `GET /api/buddies/:id`, `PUT /api/buddies/:id` (auth / owner), `DELETE /api/buddies/:id` (auth / owner)
-- Roommates: `GET /api/roommates`, `POST /api/roommates` (auth), `GET /api/roommates/:id`, `PUT /api/roommates/:id` (auth / owner), `DELETE /api/roommates/:id` (auth / owner), contact at `POST /api/roommates/:id/contact` (auth)
-
-Admin API (admin role required)
-- Dashboard: `GET /api/admin/stats`
-- User Management: `GET /api/admin/users`, `DELETE /api/admin/users/:id`
-- Content Moderation: `GET /api/admin/housing`, `DELETE /api/admin/housing/:id`, `GET /api/admin/roommates`, `DELETE /api/admin/roommates/:id`, `GET /api/admin/buddies`, `DELETE /api/admin/buddies/:id`
-
-UI
-- EJS views are in `views/` and use simple Tailwind styling. Public JS files are in `public/js/`.
-- Profile management at `/profile`
-- All modules have list, create, detail, edit/delete views with client-side JS for interactions.
-- **Admin Panel**: Dedicated admin interface at `/admin/dashboard` with user management, content moderation, and statistics (admin role required)
-
-DB
-- Schema SQL: `sql/schema.sql`
-- Seed data: `sql/seed.sql`
-- Database scripts: `scripts/` folder
-  - `npm run db:fresh-install` - New database setup
-  - `npm run db:backup` - Backup user data
-  - `npm run db:reset-safe` - Safe reset with backup
-  - `npm run db:restore` - Restore from backup
-
-Testing
-- A minimal test scaffold has been added using Jest + Supertest; run `npm test` after installing dev dependencies.
-
-Notes
-- This is a prototype; for production use you should harden security (rate limit, CSRF, input validation), use environment secrets, and add robust testing / CI.
-
-Next steps completed or in-progress
-- Auth, housing, buddies modules implemented with views and basic client JS.
-- Remaining: polish UI, add more tests, add production deployment docs.
-
-CI
-- A basic GitHub Actions workflow is included at `.github/workflows/nodejs.yml` to run `npm test` on push/PR to `main`.
+**Happy coding! 🎯**
+=======
+# Bachelor-Society
+CSE470 Project
+>>>>>>> 642d8e9ab697c2f3121225f2c3ec1e1f2ccaf2a0
