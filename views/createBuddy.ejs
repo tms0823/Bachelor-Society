@@ -1,0 +1,231 @@
+<%- include('layout', { title: 'Create Activity' }) %>
+
+<div class="max-w-4xl mx-auto bg-white p-8 rounded-lg shadow-lg">
+  <h2 class="text-2xl font-bold mb-6 text-gray-800">Create Activity</h2>
+
+  <form id="createBuddyForm" enctype="multipart/form-data" class="space-y-6">
+    <!-- Basic Information -->
+    <div class="bg-gray-50 p-6 rounded-lg">
+      <h3 class="text-lg font-semibold mb-4 text-gray-700">Basic Information</h3>
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div>
+          <label class="block text-sm font-medium text-gray-700 mb-1">Activity Type *</label>
+          <select name="activity_type" class="w-full border border-gray-300 px-3 py-2 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent" required>
+            <option value="">Select activity type</option>
+            <option value="sports">Sports & Fitness</option>
+            <option value="cultural">Cultural Events</option>
+            <option value="social">Social Gathering</option>
+            <option value="educational">Educational</option>
+            <option value="outdoor">Outdoor Adventure</option>
+            <option value="gaming">Gaming</option>
+            <option value="music">Music & Arts</option>
+            <option value="food">Food & Dining</option>
+            <option value="travel">Travel & Exploration</option>
+            <option value="other">Other</option>
+          </select>
+        </div>
+        <div>
+          <label class="block text-sm font-medium text-gray-700 mb-1">Location *</label>
+          <div class="relative">
+            <select id="locationSelect" class="w-full border border-gray-300 px-3 py-2 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent appearance-none bg-white">
+              <option value="">Select a location</option>
+              <option value="Dhaka">Dhaka</option>
+              <option value="Chittagong">Chittagong</option>
+              <option value="Khulna">Khulna</option>
+              <option value="Rajshahi">Rajshahi</option>
+              <option value="Sylhet">Sylhet</option>
+              <option value="Barisal">Barisal</option>
+              <option value="Rangpur">Rangpur</option>
+              <option value="Comilla">Comilla</option>
+              <option value="Narayanganj">Narayanganj</option>
+              <option value="Gazipur">Gazipur</option>
+              <option value="Bogra">Bogra</option>
+              <option value="Mymensingh">Mymensingh</option>
+              <option value="Jessore">Jessore</option>
+              <option value="Saidpur">Saidpur</option>
+              <option value="custom">Enter Custom Location</option>
+            </select>
+            <div class="absolute inset-y-0 right-0 flex items-center px-2 pointer-events-none">
+              <svg class="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+              </svg>
+            </div>
+          </div>
+          <input id="location" name="location" type="text" class="hidden w-full border border-gray-300 px-3 py-2 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent mt-2" placeholder="Enter custom location" />
+        </div>
+        <div>
+          <label class="block text-sm font-medium text-gray-700 mb-1">Date & Time *</label>
+          <input name="date_time" type="datetime-local" class="w-full border border-gray-300 px-3 py-2 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent" required />
+        </div>
+        <div>
+          <label class="block text-sm font-medium text-gray-700 mb-1">Maximum Participants</label>
+          <input name="max_participants" type="number" class="w-full border border-gray-300 px-3 py-2 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent" min="2" max="50" value="10" />
+        </div>
+        <div>
+          <label class="block text-sm font-medium text-gray-700 mb-1">Cost Per Person (BDT)</label>
+          <input name="cost_per_person" type="number" class="w-full border border-gray-300 px-3 py-2 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent" min="0" value="0" />
+        </div>
+      </div>
+    </div>
+
+    <!-- Preferences -->
+    <div class="bg-gray-50 p-6 rounded-lg">
+      <h3 class="text-lg font-semibold mb-4 text-gray-700">Participant Preferences</h3>
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div>
+          <label class="block text-sm font-medium text-gray-700 mb-1">Gender Preference</label>
+          <select name="gender_preference" class="w-full border border-gray-300 px-3 py-2 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+            <option value="any">Any</option>
+            <option value="male">Male only</option>
+            <option value="female">Female only</option>
+          </select>
+        </div>
+        <div>
+          <label class="block text-sm font-medium text-gray-700 mb-1">Minimum Age</label>
+          <input name="min_age" type="number" class="w-full border border-gray-300 px-3 py-2 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent" min="13" max="99" value="18" />
+        </div>
+        <div>
+          <label class="block text-sm font-medium text-gray-700 mb-1">Maximum Age</label>
+          <input name="max_age" type="number" class="w-full border border-gray-300 px-3 py-2 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent" min="13" max="99" value="99" />
+        </div>
+      </div>
+    </div>
+
+    <!-- Description -->
+    <div class="bg-gray-50 p-6 rounded-lg">
+      <h3 class="text-lg font-semibold mb-4 text-gray-700">Description</h3>
+      <div>
+        <label class="block text-sm font-medium text-gray-700 mb-1">Activity Description *</label>
+        <textarea name="description" rows="6" class="w-full border border-gray-300 px-3 py-2 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent" placeholder="Describe your activity in detail. What will participants do? What should they bring? Any special requirements?" required></textarea>
+      </div>
+    </div>
+
+    <!-- Photos -->
+    <div class="bg-gray-50 p-6 rounded-lg">
+      <h3 class="text-lg font-semibold mb-4 text-gray-700">Photos</h3>
+      <div>
+        <label class="block text-sm font-medium text-gray-700 mb-1">Upload Photos (max 10)</label>
+        <input id="photos" name="photos" type="file" multiple accept="image/*" class="w-full border border-gray-300 px-3 py-2 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent" />
+        <p class="text-sm text-gray-500 mt-1">You can select multiple photos. Supported formats: JPG, PNG, GIF</p>
+        <div id="photo-preview" class="mt-4 grid grid-cols-2 md:grid-cols-4 gap-4"></div>
+      </div>
+    </div>
+
+    <!-- Submit -->
+    <div class="flex justify-end space-x-4">
+      <a href="/buddies" class="bg-gray-500 text-white px-6 py-3 rounded-md hover:bg-gray-600 transition-colors">Cancel</a>
+      <button type="submit" class="bg-blue-600 text-white px-6 py-3 rounded-md hover:bg-blue-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed">
+        Create Activity
+      </button>
+    </div>
+  </form>
+
+  <div id="createMsg" class="mt-6"></div>
+</div>
+
+<script>
+// Location selector functionality
+const locationSelect = document.getElementById('locationSelect');
+const locationInput = document.getElementById('location');
+
+locationSelect.addEventListener('change', function() {
+  const selectedValue = this.value;
+
+  if (selectedValue === 'custom') {
+    // Show custom location input
+    locationInput.classList.remove('hidden');
+    locationInput.required = true;
+    locationInput.value = '';
+    locationInput.focus();
+  } else if (selectedValue) {
+    // Use selected predefined location
+    locationInput.value = selectedValue;
+    locationInput.classList.add('hidden');
+    locationInput.required = true;
+  } else {
+    // No selection
+    locationInput.value = '';
+    locationInput.classList.add('hidden');
+    locationInput.required = false;
+  }
+});
+
+// Handle form submission to ensure location is set
+const buddyForm = document.getElementById('createBuddyForm');
+buddyForm.addEventListener('submit', function(e) {
+  const selectedValue = locationSelect.value;
+  if (!selectedValue) {
+    e.preventDefault();
+    alert('Please select a location or enter a custom one.');
+    locationSelect.focus();
+    return false;
+  }
+
+  if (selectedValue === 'custom' && !locationInput.value.trim()) {
+    e.preventDefault();
+    alert('Please enter a custom location.');
+    locationInput.focus();
+    return false;
+  }
+
+  // Ensure the location field has the correct value
+  if (selectedValue !== 'custom') {
+    locationInput.value = selectedValue;
+  }
+});
+
+// Photo preview functionality
+document.getElementById('photos').addEventListener('change', function(e) {
+  const preview = document.getElementById('photo-preview');
+  preview.innerHTML = '';
+
+  Array.from(e.target.files).forEach((file, index) => {
+    if (index >= 10) return; // Max 10 photos
+
+    // Create preview div immediately with proper data attribute
+    const div = document.createElement('div');
+    div.className = 'relative photo-preview-item';
+    div.setAttribute('data-file-index', index);
+    div.innerHTML = '<div class="w-full h-32 bg-gray-200 rounded-md flex items-center justify-center"><div class="text-gray-500 text-sm">Loading...</div></div><button type="button" class="absolute top-1 right-1 bg-red-500 text-white rounded-full w-6 h-6 flex items-center justify-center text-xs hover:bg-red-600" onclick="removePhoto(' + index + ')">×</button>';
+    preview.appendChild(div);
+
+    // Load the image asynchronously
+    const reader = new FileReader();
+    reader.onload = function(e) {
+      const imgDiv = div.querySelector('div');
+      imgDiv.innerHTML = '<img src="' + e.target.result + '" class="w-full h-32 object-contain rounded-md bg-gray-100" />';
+    };
+    reader.readAsDataURL(file);
+  });
+});
+
+function removePhoto(index) {
+  const input = document.getElementById('photos');
+  const preview = document.getElementById('photo-preview');
+
+  // Remove from preview - find the div with the matching data attribute
+  const photoDiv = preview.querySelector(`[data-file-index="${index}"]`);
+  if (photoDiv) {
+    photoDiv.remove();
+  }
+
+  // Create new FileList without the removed file
+  const dt = new DataTransfer();
+  const files = Array.from(input.files);
+  files.splice(index, 1);
+  files.forEach(file => dt.items.add(file));
+  input.files = dt.files;
+
+  // Update indices of remaining preview items
+  const remainingItems = preview.querySelectorAll('.photo-preview-item');
+  remainingItems.forEach((item, newIndex) => {
+    item.setAttribute('data-file-index', newIndex);
+    const button = item.querySelector('button');
+    if (button) {
+      button.setAttribute('onclick', `removePhoto(${newIndex})`);
+    }
+  });
+}
+</script>
+
+<script src="/js/buddy.js"></script>

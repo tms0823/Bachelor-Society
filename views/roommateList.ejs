@@ -1,0 +1,437 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Roommate Requests - Bachelor Society</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
+    <script src="/js/auth.js"></script>
+    <style>
+      .sidebar-transition {
+        transition: transform 0.3s ease-in-out;
+      }
+      .nav-item {
+        transition: all 0.2s ease-in-out;
+      }
+      .nav-item.active {
+        background-color: rgba(59, 130, 246, 0.1);
+        border-left: 3px solid #3b82f6;
+      }
+    </style>
+  </head>
+  <body class="bg-gray-50 font-sans">
+    <!-- Include Sidebar -->
+    <%- include('partials/sidebar') %>
+
+    <!-- Main Content -->
+    <div class="lg:ml-80 min-h-screen">
+      <!-- Top Bar (Mobile) -->
+      <div class="lg:hidden bg-white shadow-sm border-b border-gray-200 px-4 py-3 flex items-center justify-between">
+        <button onclick="toggleSidebar()" class="text-gray-600 hover:text-gray-800">
+          <i data-lucide="menu" class="w-6 h-6"></i>
+        </button>
+        <h1 class="text-lg font-semibold text-gray-800">Roommate Requests</h1>
+        <div class="w-6"></div> <!-- Spacer -->
+      </div>
+
+      <!-- Page Content -->
+      <div class="p-6 lg:p-8">
+        <div class="max-w-7xl mx-auto">
+          <div class="flex justify-between items-center mb-6">
+            <h2 class="text-3xl font-bold text-gray-800">Roommate Requests</h2>
+            <a href="/roommates/create" class="bg-blue-600 text-white px-6 py-3 rounded-lg hover:bg-blue-700 transition-colors font-medium">
+              <span class="mr-2">+</span>Create Request
+            </a>
+          </div>
+
+          <!-- Filters -->
+          <div class="bg-white rounded-lg shadow-md p-6 mb-6">
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
+              <div>
+                <label class="block text-sm font-medium text-gray-700 mb-2">Preferred Location</label>
+                <input type="text" id="locationFilter" placeholder="e.g., Dhanmondi, Dhaka" class="w-full border border-gray-300 px-3 py-2 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+              </div>
+              <div>
+                <label class="block text-sm font-medium text-gray-700 mb-2">Min Budget (BDT)</label>
+                <input type="number" id="minBudgetFilter" placeholder="5000" min="0" class="w-full border border-gray-300 px-3 py-2 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+              </div>
+              <div>
+                <label class="block text-sm font-medium text-gray-700 mb-2">Max Budget (BDT)</label>
+                <input type="number" id="maxBudgetFilter" placeholder="15000" min="0" class="w-full border border-gray-300 px-3 py-2 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+              </div>
+              <div>
+                <label class="block text-sm font-medium text-gray-700 mb-2">Room Type</label>
+                <select id="roomTypeFilter" class="w-full border border-gray-300 px-3 py-2 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+                  <option value="">Any</option>
+                  <option value="private_room">Private Room</option>
+                  <option value="shared_room">Shared Room</option>
+                  <option value="any">Any</option>
+                </select>
+              </div>
+              <div>
+                <label class="block text-sm font-medium text-gray-700 mb-2">Lease Duration (months)</label>
+                <input type="number" id="leaseDurationFilter" placeholder="12" min="1" max="24" class="w-full border border-gray-300 px-3 py-2 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+              </div>
+              <div>
+                <label class="block text-sm font-medium text-gray-700 mb-2">Occupation</label>
+                <select id="occupationFilter" class="w-full border border-gray-300 px-3 py-2 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+                  <option value="">Any</option>
+                  <option value="student">Student</option>
+                  <option value="working">Working Professional</option>
+                  <option value="other">Other</option>
+                </select>
+              </div>
+              <div>
+                <label class="block text-sm font-medium text-gray-700 mb-2">Gender Preference</label>
+                <select id="genderFilter" class="w-full border border-gray-300 px-3 py-2 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+                  <option value="">Any</option>
+                  <option value="male">Male</option>
+                  <option value="female">Female</option>
+                  <option value="any">Any</option>
+                </select>
+              </div>
+              <div>
+                <label class="block text-sm font-medium text-gray-700 mb-2">Smoking Preference</label>
+                <select id="smokingFilter" class="w-full border border-gray-300 px-3 py-2 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+                  <option value="">Any</option>
+                  <option value="non_smoker">Non-smoker</option>
+                  <option value="occasional">Occasional</option>
+                  <option value="regular">Regular</option>
+                  <option value="any">Any</option>
+                </select>
+              </div>
+              <div>
+                <label class="block text-sm font-medium text-gray-700 mb-2">Pet Preference</label>
+                <select id="petFilter" class="w-full border border-gray-300 px-3 py-2 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+                  <option value="">Any</option>
+                  <option value="no_pets">No Pets</option>
+                  <option value="cats_ok">Cats OK</option>
+                  <option value="dogs_ok">Dogs OK</option>
+                  <option value="any_pets">Any Pets</option>
+                </select>
+              </div>
+              <div>
+                <label class="block text-sm font-medium text-gray-700 mb-2">Max Roommates</label>
+                <input type="number" id="maxRoommatesFilter" placeholder="2" min="1" max="10" class="w-full border border-gray-300 px-3 py-2 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+              </div>
+              <div>
+                <label class="block text-sm font-medium text-gray-700 mb-2">Move-in Date</label>
+                <input type="date" id="moveInDateFilter" class="w-full border border-gray-300 px-3 py-2 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+              </div>
+              <div>
+                <label class="block text-sm font-medium text-gray-700 mb-2">Search</label>
+                <input type="text" id="searchFilter" placeholder="Search by description..." class="w-full border border-gray-300 px-3 py-2 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+              </div>
+            </div>
+            <div class="flex justify-between items-center mt-4">
+              <button id="applyRoommateFilters" class="bg-blue-600 text-white px-6 py-2 rounded-md hover:bg-blue-700 transition-colors">
+                Apply Filters
+              </button>
+              <button id="clearRoommateFilters" class="bg-gray-500 text-white px-6 py-2 rounded-md hover:bg-gray-600 transition-colors">
+                Clear Filters
+              </button>
+            </div>
+          </div>
+
+          <!-- Requests Grid -->
+          <div id="requests" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"></div>
+
+          <!-- Loading State -->
+          <div id="loading" class="text-center py-12">
+            <div class="inline-block animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
+            <p class="mt-2 text-gray-600">Loading roommate requests...</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <script>
+      // Initialize Lucide icons
+      lucide.createIcons();
+
+      // Sidebar toggle for mobile
+      function toggleSidebar() {
+        const sidebar = document.getElementById('sidebar');
+        const overlay = document.getElementById('sidebar-overlay');
+
+        if (sidebar.classList.contains('-translate-x-full')) {
+          sidebar.classList.remove('-translate-x-full');
+          overlay.classList.remove('hidden');
+        } else {
+          sidebar.classList.add('-translate-x-full');
+          overlay.classList.add('hidden');
+        }
+      }
+
+      // Navigation
+      document.addEventListener('DOMContentLoaded', function() {
+        const currentPath = window.location.pathname;
+        const navItems = document.querySelectorAll('.nav-item');
+        navItems.forEach(item => {
+          const href = item.getAttribute('href');
+          if (href === currentPath || (href !== '/dashboard' && currentPath.startsWith(href))) {
+            item.classList.add('active');
+          }
+        });
+      });
+
+      let currentRoommateFilters = {};
+
+      function loadRequests(filters = {}) {
+        const loading = document.getElementById('loading');
+        const requests = document.getElementById('requests');
+
+        loading.classList.remove('hidden');
+        requests.innerHTML = '';
+
+        // Build query string from filters
+        const queryParams = new URLSearchParams();
+        Object.keys(filters).forEach(key => {
+          if (filters[key]) {
+            queryParams.append(key, filters[key]);
+          }
+        });
+
+        const url = '/api/roommates' + (queryParams.toString() ? '?' + queryParams.toString() : '');
+
+        const token = localStorage.getItem('token');
+        const headers = {};
+        if (token) {
+          headers['Authorization'] = `Bearer ${token}`;
+        }
+
+        fetch(url, { headers })
+          .then(response => response.json())
+          .then(data => {
+            loading.classList.add('hidden');
+            if (data && data.listings && data.listings.length > 0) {
+              renderRequests(data.listings);
+            } else {
+              requests.innerHTML = '<div class="col-span-full text-center py-12"><p class="text-gray-500 text-lg">No roommate requests found matching your criteria.</p><p class="text-gray-400 mt-2">Try adjusting your filters or check back later.</p></div>';
+            }
+          })
+          .catch(error => {
+            loading.classList.add('hidden');
+            console.error('Error:', error);
+            requests.innerHTML = '<div class="col-span-full text-center py-12"><p class="text-red-500 text-lg">Error loading requests. Please try again.</p></div>';
+          });
+      }
+
+      let currentUser = null;
+
+      // Get current user info
+      async function getCurrentUser() {
+        try {
+          const response = await fetch('/api/users/me');
+          if (response.ok) {
+            const data = await response.json();
+            currentUser = data.user;
+          }
+        } catch (error) {
+          console.log('User not authenticated');
+        }
+      }
+
+      function renderRequests(requests) {
+        const container = document.getElementById('requests');
+        requests.forEach(request => {
+          console.log('Request:', request.owner_username, 'Profile pic:', request.owner_profile_picture);
+          const div = document.createElement('div');
+          div.className = 'bg-white rounded-lg shadow-md hover:shadow-lg transition-shadow duration-200 overflow-hidden';
+
+          // Format budget with BDT
+          const budgetMinFormatted = new Intl.NumberFormat('en-US').format(request.budget_min || 0) + ' BDT';
+          const budgetMaxFormatted = new Intl.NumberFormat('en-US').format(request.budget_max || 0) + ' BDT';
+
+          // Get move-in date
+          const moveInDate = request.move_in_date ? new Date(request.move_in_date).toLocaleDateString('en-US', {
+            year: 'numeric',
+            month: 'short',
+            day: 'numeric'
+          }) : 'Flexible';
+
+          // Check if current user owns this request
+          const isOwner = currentUser && request.owner_id === currentUser.id;
+
+          div.innerHTML = `
+            <div class="p-8">
+              <div class="flex justify-between items-start mb-4">
+                <div class="flex-1 min-w-0">
+                  <h3 class="text-xl font-bold text-gray-900 mb-2 leading-tight break-words">${request.preferred_location}</h3>
+                </div>
+                <div class="text-right ml-4 flex-shrink-0">
+                  <p class="text-2xl font-bold text-green-600">${budgetMinFormatted} - ${budgetMaxFormatted}</p>
+                  <p class="text-sm text-gray-500">per month</p>
+                </div>
+              </div>
+
+              <!-- Owner Information -->
+              <div class="flex items-center space-x-3 mb-4 p-3 bg-gray-50 rounded-lg">
+                <div class="flex-shrink-0">
+                  ${request.owner_profile_picture ?
+                    `<img src="${request.owner_profile_picture}" alt="${request.owner_username}'s profile" class="w-10 h-10 rounded-full object-cover border-2 border-white shadow-sm">` :
+                    `<div class="w-10 h-10 rounded-full bg-gray-300 flex items-center justify-center">
+                      <svg class="w-5 h-5 text-gray-600" fill="currentColor" viewBox="0 0 24 24">
+                        <path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/>
+                      </svg>
+                    </div>`
+                  }
+                </div>
+                <div class="flex-1 min-w-0">
+                  <p class="text-sm font-medium text-gray-900">Posted by</p>
+                  <p class="text-sm text-gray-600 truncate">${(() => {
+                    let ownerDisplayName = request.owner_name;
+                    if (!ownerDisplayName) {
+                      const username = request.owner_username || '';
+                      if (username.includes('@')) {
+                        ownerDisplayName = username.split('@')[0];
+                        ownerDisplayName = ownerDisplayName.charAt(0).toUpperCase() + ownerDisplayName.slice(1);
+                      } else {
+                        ownerDisplayName = username;
+                      }
+                    }
+                    return ownerDisplayName || 'Unknown User';
+                  })()}</p>
+                </div>
+              </div>
+
+              <div class="flex flex-col sm:flex-row sm:items-center space-y-2 sm:space-y-0 sm:space-x-6 mb-6 text-sm text-gray-600">
+                <span class="flex items-center">
+                  <svg class="w-5 h-5 mr-2 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"></path>
+                  </svg>
+                  ${request.room_type || 'Any room type'}
+                </span>
+                <span class="flex items-center">
+                  <svg class="w-5 h-5 mr-2 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
+                  </svg>
+                  Move-in ${moveInDate}
+                </span>
+              </div>
+
+              <div class="flex flex-col space-y-4">
+                <div class="flex flex-wrap gap-2">
+                  <span class="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-green-100 text-green-800">
+                    ${request.occupation || 'Any occupation'}
+                  </span>
+                  <span class="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-blue-100 text-blue-800">
+                    ${request.gender_preference || 'Any gender'}
+                  </span>
+                  ${request.smoking_preference && request.smoking_preference !== 'any' ? `<span class="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-yellow-100 text-yellow-800">${request.smoking_preference}</span>` : ''}
+                  ${request.pet_preference && request.pet_preference !== 'any_pets' ? `<span class="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-purple-100 text-purple-800">${request.pet_preference.replace('_', ' ')}</span>` : ''}
+                </div>
+                <div class="flex flex-wrap gap-3">
+                  <a href="/roommates/${request.id}/view" class="bg-green-600 text-white px-6 py-3 rounded-lg hover:bg-green-700 transition-colors text-sm font-medium whitespace-nowrap">
+                    View Details
+                  </a>
+                  ${isOwner ? `
+                    <a href="/roommates/${request.id}/edit" class="bg-yellow-600 text-white px-6 py-3 rounded-lg hover:bg-yellow-700 transition-colors text-sm font-medium whitespace-nowrap">
+                      Edit
+                    </a>
+                    <button onclick="deletePost('roommate', ${request.id})" class="bg-red-600 text-white px-6 py-3 rounded-lg hover:bg-red-700 transition-colors text-sm font-medium whitespace-nowrap">
+                      Delete
+                    </button>
+                  ` : ''}
+                </div>
+              </div>
+            </div>
+          `;
+          container.appendChild(div);
+        });
+      }
+
+      // Filter functionality
+      document.getElementById('applyRoommateFilters').addEventListener('click', function() {
+        const locationFilter = document.getElementById('locationFilter').value.trim();
+        const minBudgetFilter = document.getElementById('minBudgetFilter').value;
+        const maxBudgetFilter = document.getElementById('maxBudgetFilter').value;
+        const roomTypeFilter = document.getElementById('roomTypeFilter').value;
+        const leaseDurationFilter = document.getElementById('leaseDurationFilter').value;
+        const occupationFilter = document.getElementById('occupationFilter').value;
+        const genderFilter = document.getElementById('genderFilter').value;
+        const smokingFilter = document.getElementById('smokingFilter').value;
+        const petFilter = document.getElementById('petFilter').value;
+        const maxRoommatesFilter = document.getElementById('maxRoommatesFilter').value;
+        const moveInDateFilter = document.getElementById('moveInDateFilter').value;
+        const searchFilter = document.getElementById('searchFilter').value.trim();
+
+        currentRoommateFilters = {};
+
+        if (locationFilter) currentRoommateFilters.preferred_location = locationFilter;
+        if (minBudgetFilter) currentRoommateFilters.budget_min = minBudgetFilter;
+        if (maxBudgetFilter) currentRoommateFilters.budget_max = maxBudgetFilter;
+        if (roomTypeFilter) currentRoommateFilters.room_type = roomTypeFilter;
+        if (leaseDurationFilter) currentRoommateFilters.lease_duration_preference = leaseDurationFilter;
+        if (occupationFilter) currentRoommateFilters.occupation = occupationFilter;
+        if (genderFilter) currentRoommateFilters.gender_preference = genderFilter;
+        if (smokingFilter) currentRoommateFilters.smoking_preference = smokingFilter;
+        if (petFilter) currentRoommateFilters.pet_preference = petFilter;
+        if (maxRoommatesFilter) currentRoommateFilters.max_roommates = maxRoommatesFilter;
+        if (moveInDateFilter) currentRoommateFilters.move_in_date = moveInDateFilter;
+        if (searchFilter) currentRoommateFilters.q = searchFilter;
+
+        loadRequests(currentRoommateFilters);
+      });
+
+      document.getElementById('clearRoommateFilters').addEventListener('click', function() {
+        // Reset all filter inputs
+        document.getElementById('locationFilter').value = '';
+        document.getElementById('minBudgetFilter').value = '';
+        document.getElementById('maxBudgetFilter').value = '';
+        document.getElementById('roomTypeFilter').value = '';
+        document.getElementById('leaseDurationFilter').value = '';
+        document.getElementById('occupationFilter').value = '';
+        document.getElementById('genderFilter').value = '';
+        document.getElementById('smokingFilter').value = '';
+        document.getElementById('petFilter').value = '';
+        document.getElementById('maxRoommatesFilter').value = '';
+        document.getElementById('moveInDateFilter').value = '';
+        document.getElementById('searchFilter').value = '';
+
+        // Clear filters and reload
+        currentRoommateFilters = {};
+        loadRequests();
+      });
+
+      // Load initial requests after ensuring auth is ready
+      function initializePage() {
+        // Wait for auth to be ready
+        if (typeof window.authManager !== 'undefined') {
+          getCurrentUser().then(() => {
+            loadRequests();
+          });
+        } else {
+          // Wait a bit for auth to initialize
+          setTimeout(initializePage, 100);
+        }
+      }
+
+      initializePage();
+
+      async function deletePost(type, id) {
+        if (!confirm('Are you sure you want to delete this post?')) return;
+
+        try {
+          let endpoint = '';
+          if (type === 'roommate') endpoint = `/api/roommates/${id}`;
+
+          const response = await fetch(endpoint, {
+            method: 'DELETE',
+            headers: { 'Authorization': `Bearer ${localStorage.getItem('token')}` }
+          });
+
+          if (response.ok) {
+            // Reload requests
+            loadRequests(currentRoommateFilters);
+          } else {
+            alert('Failed to delete post');
+          }
+        } catch (error) {
+          alert('Error deleting post');
+        }
+      }
+    </script>
+  </body>
+</html>

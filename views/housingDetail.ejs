@@ -1,0 +1,660 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Housing Detail - Bachelor Society</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
+    <script src="/js/auth.js"></script>
+    <style>
+      .sidebar-transition {
+        transition: transform 0.3s ease-in-out;
+      }
+      .nav-item {
+        transition: all 0.2s ease-in-out;
+      }
+      .nav-item.active {
+        background-color: rgba(59, 130, 246, 0.1);
+        border-left: 3px solid #3b82f6;
+      }
+    </style>
+  </head>
+  <body class="bg-gray-50 font-sans">
+    <!-- Include Sidebar -->
+    <%- include('partials/sidebar') %>
+
+    <!-- Main Content -->
+    <div class="lg:ml-80 min-h-screen">
+      <!-- Top Bar (Mobile) -->
+      <div class="lg:hidden bg-white shadow-sm border-b border-gray-200 px-4 py-3 flex items-center justify-between">
+        <button onclick="toggleSidebar()" class="text-gray-600 hover:text-gray-800">
+          <i data-lucide="menu" class="w-6 h-6"></i>
+        </button>
+        <h1 class="text-lg font-semibold text-gray-800">Housing Details</h1>
+        <div class="w-6"></div> <!-- Spacer -->
+      </div>
+
+      <!-- Page Content -->
+      <div class="p-6 lg:p-8">
+        <div class="max-w-6xl mx-auto">
+
+<div id="housingDetail">
+  <!-- Loading State -->
+  <div id="loading" class="text-center py-12">
+    <div class="inline-block animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
+    <p class="mt-2 text-gray-600">Loading listing details...</p>
+  </div>
+
+  <!-- Error State -->
+  <div id="error" class="hidden text-center py-12">
+    <div class="text-6xl mb-4">Error</div>
+    <h3 class="text-xl font-semibold text-gray-800 mb-2">Error loading listing</h3>
+    <p class="text-gray-600 mb-4">The listing may not exist or has been removed.</p>
+    <a href="/housing" class="bg-blue-600 text-white px-6 py-3 rounded-lg hover:bg-blue-700 transition-colors">
+      Back to Listings
+    </a>
+  </div>
+
+  <!-- Listing Content -->
+  <div id="listingContent" class="hidden">
+    <!-- Photo Gallery -->
+    <div id="photoGallery" class="bg-white rounded-lg shadow-lg overflow-hidden mb-6 group"
+         onmouseenter="stopAutoRotate()" onmouseleave="startAutoRotate()">
+      <div class="relative">
+        <img id="mainPhoto" src="/images/default-house.jpg" alt="Property" class="w-full h-96 object-contain" />
+        <!-- Navigation Arrows -->
+        <button id="prevPhoto" class="absolute left-4 top-1/2 transform -translate-y-1/2 bg-black bg-opacity-50 hover:bg-opacity-75 text-white p-3 rounded-full transition-all duration-200 opacity-75 hover:opacity-100">
+          <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path>
+          </svg>
+        </button>
+        <button id="nextPhoto" class="absolute right-4 top-1/2 transform -translate-y-1/2 bg-black bg-opacity-50 hover:bg-opacity-75 text-white p-3 rounded-full transition-all duration-200 opacity-75 hover:opacity-100">
+          <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
+          </svg>
+        </button>
+        <div id="photoIndicators" class="absolute bottom-4 left-1/2 transform -translate-x-1/2 flex space-x-2"></div>
+        <div id="privateBadge" class="hidden absolute top-4 left-4 bg-red-500 text-white px-3 py-1 rounded-full text-sm font-medium">
+          Private Listing
+        </div>
+      </div>
+
+    </div>
+
+    <!-- Header Section -->
+    <div class="bg-white rounded-lg shadow-lg p-6 mb-6">
+      <div class="flex justify-between items-start mb-4">
+        <div>
+          <h1 id="address" class="text-3xl font-bold text-gray-800 mb-2"></h1>
+          <div class="flex items-center space-x-4 text-gray-600">
+            <span id="propertyType" class="flex items-center">
+              Property
+            </span>
+            <span id="rooms" class="flex items-center">
+              rooms
+            </span>
+            <span id="occupants" class="flex items-center">
+              max occupants
+            </span>
+          </div>
+        </div>
+        <div class="text-right">
+          <div id="rent" class="text-3xl font-bold text-blue-600 mb-1"></div>
+          <div class="text-sm text-gray-500">per month</div>
+        </div>
+      </div>
+
+      <!-- Action Buttons -->
+      <div class="flex flex-wrap gap-3">
+        <div id="ownerActions" class="hidden flex gap-3">
+          <a id="editBtn" href="#" class="bg-yellow-600 text-white px-6 py-3 rounded-lg hover:bg-yellow-700 transition-colors font-medium">
+            Edit Listing
+          </a>
+          <button id="deleteBtn" class="bg-red-600 text-white px-6 py-3 rounded-lg hover:bg-red-700 transition-colors font-medium">
+            Delete Listing
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Property Details -->
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-6">
+      <!-- Main Details -->
+      <div class="lg:col-span-2 space-y-6">
+        <!-- Basic Information -->
+        <div class="bg-white rounded-lg shadow-lg p-6">
+          <h2 class="text-xl font-semibold text-gray-800 mb-4">Property Information</h2>
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div>
+              <span class="block text-sm font-medium text-gray-500">Available From</span>
+              <span id="availableFrom" class="text-gray-800"></span>
+            </div>
+            <div>
+              <span class="block text-sm font-medium text-gray-500">Lease Duration</span>
+              <span id="leaseDuration" class="text-gray-800"></span>
+            </div>
+            <div>
+              <span class="block text-sm font-medium text-gray-500">Property Type</span>
+              <span id="propertyTypeDetail" class="text-gray-800"></span>
+            </div>
+            <div>
+              <span class="block text-sm font-medium text-gray-500">Maximum Occupants</span>
+              <span id="maxOccupants" class="text-gray-800"></span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Preferences & Rules -->
+        <div class="bg-white rounded-lg shadow-lg p-6">
+          <h2 class="text-xl font-semibold text-gray-800 mb-4">Tenant Preferences & Rules</h2>
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div>
+              <h3 class="font-medium text-gray-700 mb-2">Tenant Preferences</h3>
+              <div class="space-y-2">
+                <div>
+                  <span class="text-sm text-gray-500">Gender:</span>
+                  <span id="genderPreference" class="text-gray-800"></span>
+                </div>
+                <div>
+                  <span class="text-sm text-gray-500">Allowed Residents:</span>
+                  <span id="allowedResidents" class="text-gray-800"></span>
+                </div>
+                <div id="religionPreferenceRow">
+                  <span class="text-sm text-gray-500">Religion:</span>
+                  <span id="religionPreference" class="text-gray-800"></span>
+                </div>
+                <div id="universityPreferenceRow">
+                  <span class="text-sm text-gray-500">University:</span>
+                  <span id="universityPreference" class="text-gray-800"></span>
+                </div>
+              </div>
+            </div>
+            <div>
+              <h3 class="font-medium text-gray-700 mb-2">Property Rules</h3>
+              <div class="flex flex-wrap gap-2">
+                <span id="smokingRule" class="px-3 py-1 rounded-full text-sm bg-gray-100 text-gray-700"></span>
+                <span id="petsRule" class="px-3 py-1 rounded-full text-sm bg-gray-100 text-gray-700"></span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Sidebar -->
+      <div class="space-y-6">
+        <!-- Owner Information -->
+        <div class="bg-white rounded-lg shadow-lg p-6">
+          <h3 class="text-lg font-semibold text-gray-800 mb-4">Listed By</h3>
+          <div class="text-center">
+            <div class="w-20 h-20 rounded-full mx-auto mb-3 overflow-hidden border-4 border-gray-200">
+              <div id="ownerAvatarContainer">
+                <div class="w-full h-full bg-blue-100 flex items-center justify-center">
+                  <span class="text-2xl text-blue-600 font-semibold"></span>
+                </div>
+              </div>
+            </div>
+            <div id="ownerName" class="font-medium text-gray-800"></div>
+            <div class="text-sm text-gray-500">Property Owner</div>
+            <button id="messageOwnerBtn" class="mt-3 w-full bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors text-sm">
+              Send Message
+            </button>
+          </div>
+        </div>
+
+        <!-- Quick Stats -->
+        <div class="bg-white rounded-lg shadow-lg p-6">
+          <h3 class="text-lg font-semibold text-gray-800 mb-4">Quick Facts</h3>
+          <div class="space-y-3">
+            <div class="flex justify-between">
+              <span class="text-gray-600">Monthly Rent</span>
+              <span id="rentStat" class="font-medium"></span>
+            </div>
+            <div class="flex justify-between">
+              <span class="text-gray-600">Rooms</span>
+              <span id="roomsStat" class="font-medium"></span>
+            </div>
+            <div class="flex justify-between">
+              <span class="text-gray-600">Available</span>
+              <span id="availableStat" class="font-medium"></span>
+            </div>
+            <div class="flex justify-between">
+              <span class="text-gray-600">Listed</span>
+              <span id="listedStat" class="font-medium"></span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+
+
+    <!-- Message Modal -->
+    <div id="messageModal" class="hidden fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+      <div class="bg-white rounded-lg p-6 max-w-md w-full mx-4">
+        <h3 class="text-lg font-semibold mb-4">Send Message to Property Owner</h3>
+        <form id="messageForm">
+          <div class="mb-4">
+            <label class="block text-sm font-medium text-gray-700 mb-1">Message</label>
+            <textarea id="messageText" rows="4" class="w-full border border-gray-300 px-3 py-2 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent" placeholder="Hi! I'm interested in your property..." required></textarea>
+          </div>
+          <div class="flex justify-end space-x-3">
+            <button type="button" id="cancelMessage" class="px-4 py-2 text-gray-600 hover:text-gray-800">Cancel</button>
+            <button type="submit" id="sendMessageBtn" class="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700">Send Message</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+let currentListing = null;
+let currentPhotos = [];
+
+// Load listing details
+async function loadListingDetails() {
+  const urlParams = new URLSearchParams(window.location.search);
+  const listingId = window.location.pathname.split('/')[2];
+
+  try {
+    const token = localStorage.getItem('token') || urlParams.get('token');
+    const headers = token ? { 'Authorization': `Bearer ${token}` } : {};
+
+    const response = await fetch(`/api/housing/${listingId}`, { headers });
+    if (!response.ok) throw new Error('Listing not found');
+
+    const data = await response.json();
+    currentListing = data.listing || data;
+    // Handle photos field - it might be already parsed or a JSON string
+    if (currentListing.photos) {
+      if (Array.isArray(currentListing.photos)) {
+        currentPhotos = currentListing.photos;
+      } else {
+        try {
+          currentPhotos = JSON.parse(currentListing.photos);
+        } catch (e) {
+          currentPhotos = [];
+        }
+      }
+    } else {
+      currentPhotos = [];
+    }
+
+    displayListingDetails();
+  } catch (error) {
+    document.getElementById('loading').classList.add('hidden');
+    document.getElementById('error').classList.remove('hidden');
+    console.error('Error loading listing:', error);
+  }
+}
+
+function displayListingDetails() {
+  try {
+    document.getElementById('loading').classList.add('hidden');
+    document.getElementById('listingContent').classList.remove('hidden');
+
+    // Photo gallery
+    setupPhotoGallery();
+
+    // Basic information
+    document.getElementById('address').textContent = currentListing.address || 'Address not specified';
+    document.getElementById('rent').textContent = currentListing.rent ? `$${currentListing.rent}` : 'Price not specified';
+    document.getElementById('propertyType').textContent = currentListing.property_type || 'Property';
+    document.getElementById('rooms').textContent = `${currentListing.rooms || 'N/A'} rooms`;
+    document.getElementById('occupants').textContent = `${currentListing.max_occupants || 'N/A'} max occupants`;
+
+    // Property details
+    try {
+      document.getElementById('availableFrom').textContent = currentListing.available_from ?
+        new Date(currentListing.available_from).toLocaleDateString() : 'Not specified';
+    } catch (e) {
+      document.getElementById('availableFrom').textContent = 'Not specified';
+    }
+
+    document.getElementById('leaseDuration').textContent = `${currentListing.lease_duration_months || 12} months`;
+    document.getElementById('propertyTypeDetail').textContent = currentListing.property_type || 'Not specified';
+    document.getElementById('maxOccupants').textContent = currentListing.max_occupants || 'Not specified';
+
+    // Preferences
+    document.getElementById('genderPreference').textContent = currentListing.gender_preference === 'any' ? 'Any gender' :
+      (currentListing.gender_preference ? `${currentListing.gender_preference} only` : 'Not specified');
+    document.getElementById('allowedResidents').textContent = currentListing.allowed_residents === 'anyone' ? 'Anyone' :
+      (currentListing.allowed_residents || 'Not specified');
+
+    // Conditional fields
+    if (currentListing.religion_preference) {
+      document.getElementById('religionPreference').textContent = currentListing.religion_preference;
+      document.getElementById('religionPreferenceRow').style.display = 'block';
+    } else {
+      document.getElementById('religionPreferenceRow').style.display = 'none';
+    }
+
+    if (currentListing.university_preference) {
+      document.getElementById('universityPreference').textContent = currentListing.university_preference;
+      document.getElementById('universityPreferenceRow').style.display = 'block';
+    } else {
+      document.getElementById('universityPreferenceRow').style.display = 'none';
+    }
+
+    // Rules
+    document.getElementById('smokingRule').textContent = currentListing.smoking_allowed ? 'Smoking Allowed' : 'No Smoking';
+    document.getElementById('smokingRule').className = currentListing.smoking_allowed ?
+      'px-3 py-1 rounded-full text-sm bg-green-100 text-green-700' :
+      'px-3 py-1 rounded-full text-sm bg-red-100 text-red-700';
+
+    document.getElementById('petsRule').textContent = currentListing.pets_allowed ? 'Pets Allowed' : 'No Pets';
+    document.getElementById('petsRule').className = currentListing.pets_allowed ?
+      'px-3 py-1 rounded-full text-sm bg-green-100 text-green-700' :
+      'px-3 py-1 rounded-full text-sm bg-red-100 text-red-700';
+
+    // Owner info - extract name from email if needed
+    let ownerDisplayName = currentListing.owner_name;
+    if (!ownerDisplayName) {
+      // If name is null, try to extract name from username/email
+      const username = currentListing.owner_username || '';
+      if (username.includes('@')) {
+        // If username looks like email, extract part before @
+        ownerDisplayName = username.split('@')[0];
+        // Capitalize first letter
+        ownerDisplayName = ownerDisplayName.charAt(0).toUpperCase() + ownerDisplayName.slice(1);
+      } else {
+        ownerDisplayName = username;
+      }
+    }
+    document.getElementById('ownerName').textContent = ownerDisplayName || 'Property Owner';
+
+    // Owner avatar
+    const avatarContainer = document.getElementById('ownerAvatarContainer');
+    if (currentListing.owner_profile_picture) {
+      avatarContainer.innerHTML = `<img src="${currentListing.owner_profile_picture}" alt="${currentListing.owner_username}'s profile" class="w-full h-full object-contain rounded-full border-2 border-white shadow-md">`;
+    } else {
+      const initials = (currentListing.owner_name || currentListing.owner_username || 'U').charAt(0).toUpperCase();
+      avatarContainer.innerHTML = `<div class="w-full h-full bg-blue-100 flex items-center justify-center rounded-full border-2 border-white shadow-md">
+        <span class="text-2xl text-blue-600 font-semibold">${initials}</span>
+      </div>`;
+    }
+
+    // Stats
+    document.getElementById('rentStat').textContent = currentListing.rent ? `$${currentListing.rent}` : 'N/A';
+    document.getElementById('roomsStat').textContent = currentListing.rooms || 'N/A';
+
+    try {
+      document.getElementById('availableStat').textContent = currentListing.available_from ?
+        new Date(currentListing.available_from).toLocaleDateString() : 'N/A';
+    } catch (e) {
+      document.getElementById('availableStat').textContent = 'N/A';
+    }
+
+    try {
+      document.getElementById('listedStat').textContent = currentListing.created_at ?
+        new Date(currentListing.created_at).toLocaleDateString() : 'N/A';
+    } catch (e) {
+      document.getElementById('listedStat').textContent = 'N/A';
+    }
+
+    // Privacy badge
+    if (currentListing.is_private) {
+      document.getElementById('privateBadge').classList.remove('hidden');
+    }
+
+    // Show/hide actions based on ownership
+    if (currentListing.is_owner) {
+      if (document.getElementById('visitorActions')) {
+        document.getElementById('visitorActions').classList.add('hidden');
+      }
+      if (document.getElementById('ownerActions')) {
+        document.getElementById('ownerActions').classList.remove('hidden');
+        // Set edit button href
+        document.getElementById('editBtn').href = `/housing/${currentListing.id}/edit`;
+      }
+      // Hide message button for owners (can't message yourself)
+      document.getElementById('messageOwnerBtn').style.display = 'none';
+    } else {
+      if (document.getElementById('visitorActions')) {
+        document.getElementById('visitorActions').classList.remove('hidden');
+      }
+      if (document.getElementById('ownerActions')) {
+        document.getElementById('ownerActions').classList.add('hidden');
+      }
+      // Show message button for non-owners
+      document.getElementById('messageOwnerBtn').style.display = 'block';
+    }
+  } catch (error) {
+    console.error('Error displaying listing details:', error);
+    document.getElementById('loading').classList.add('hidden');
+    document.getElementById('listingContent').classList.add('hidden');
+    document.getElementById('error').classList.remove('hidden');
+  }
+}
+
+let currentPhotoIndex = 0;
+
+let autoRotateInterval = null;
+
+function setupPhotoGallery() {
+  if (!currentPhotos || currentPhotos.length === 0) return;
+
+  const mainPhoto = document.getElementById('mainPhoto');
+  const photoIndicators = document.getElementById('photoIndicators');
+  const photoGallery = document.getElementById('photoGallery');
+
+  // Set main photo (with fallback)
+  if (currentPhotos[0] && currentPhotos[0].url) {
+    mainPhoto.src = currentPhotos[0].url;
+  } else {
+    mainPhoto.src = '/images/default-house.jpg';
+  }
+
+  photoIndicators.innerHTML = '';
+
+  currentPhotos.forEach((photo, index) => {
+    if (!photo || !photo.url) return;
+
+    // Indicators
+    const indicator = document.createElement('div');
+    indicator.className = `w-2 h-2 rounded-full cursor-pointer ${index === 0 ? 'bg-blue-500' : 'bg-gray-300'}`;
+    indicator.onclick = () => {
+      changeMainPhoto(index);
+      resetAutoRotate(); // Reset timer when manually clicked
+    };
+    photoIndicators.appendChild(indicator);
+  });
+
+  // Add arrow navigation
+  if (currentPhotos.length > 1) {
+    document.getElementById('prevPhoto').addEventListener('click', () => {
+      currentPhotoIndex = (currentPhotoIndex - 1 + currentPhotos.length) % currentPhotos.length;
+      changeMainPhoto(currentPhotoIndex);
+      resetAutoRotate();
+    });
+
+    document.getElementById('nextPhoto').addEventListener('click', () => {
+      currentPhotoIndex = (currentPhotoIndex + 1) % currentPhotos.length;
+      changeMainPhoto(currentPhotoIndex);
+      resetAutoRotate();
+    });
+
+    // Start auto-rotation
+    startAutoRotate();
+  } else {
+    // Hide arrows if only one photo
+    document.getElementById('prevPhoto').style.display = 'none';
+    document.getElementById('nextPhoto').style.display = 'none';
+  }
+}
+
+function startAutoRotate() {
+  if (currentPhotos.length <= 1) return;
+
+  autoRotateInterval = setInterval(() => {
+    currentPhotoIndex = (currentPhotoIndex + 1) % currentPhotos.length;
+    changeMainPhoto(currentPhotoIndex);
+  }, 4000); // Change photo every 4 seconds
+}
+
+function resetAutoRotate() {
+  if (autoRotateInterval) {
+    clearInterval(autoRotateInterval);
+  }
+  startAutoRotate();
+}
+
+function stopAutoRotate() {
+  if (autoRotateInterval) {
+    clearInterval(autoRotateInterval);
+    autoRotateInterval = null;
+  }
+}
+
+function changeMainPhoto(index) {
+  const mainPhoto = document.getElementById('mainPhoto');
+  const indicators = document.querySelectorAll('#photoIndicators div');
+
+  mainPhoto.src = currentPhotos[index].url;
+
+  // Update active states for indicators
+  indicators.forEach((indicator, i) => {
+    indicator.className = `w-2 h-2 rounded-full cursor-pointer ${i === index ? 'bg-blue-500' : 'bg-gray-300'}`;
+  });
+
+  currentPhotoIndex = index;
+}
+
+
+
+document.getElementById('messageOwnerBtn').addEventListener('click', () => {
+  document.getElementById('messageModal').classList.remove('hidden');
+});
+
+document.getElementById('cancelMessage').addEventListener('click', () => {
+  document.getElementById('messageModal').classList.add('hidden');
+  document.getElementById('messageForm').reset();
+});
+
+document.getElementById('messageForm').addEventListener('submit', async (e) => {
+  e.preventDefault();
+
+  const message = document.getElementById('messageText').value.trim();
+  if (!message) return;
+
+  const sendBtn = document.getElementById('sendMessageBtn');
+  const originalText = sendBtn.textContent;
+  sendBtn.disabled = true;
+  sendBtn.textContent = 'Sending...';
+
+  let success = false;
+
+  try {
+    const token = localStorage.getItem('token');
+
+    const response = await fetch('/api/messages', {
+      method: 'POST',
+      headers: {
+        'Authorization': `Bearer ${token}`,
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({
+        receiver_id: currentListing.user_id,
+        message: message,
+        related_type: 'housing',
+        related_id: currentListing.id
+      })
+    });
+
+    const result = await response.json();
+
+    if (response.ok) {
+      sendBtn.textContent = '✓';
+      sendBtn.className = 'bg-green-600 text-white px-4 py-2 rounded-md';
+      success = true;
+
+      // Reset button and close modal after 1 second
+      setTimeout(() => {
+        sendBtn.disabled = false;
+        sendBtn.textContent = 'Send Message';
+        sendBtn.className = 'bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700';
+        document.getElementById('messageModal').classList.add('hidden');
+        document.getElementById('messageForm').reset();
+      }, 1000);
+    } else {
+      alert(result.message || 'Failed to send message');
+    }
+  } catch (error) {
+    alert('Network error. Please try again.');
+  } finally {
+    if (!success) {
+      sendBtn.disabled = false;
+      sendBtn.textContent = originalText;
+    }
+  }
+});
+
+// Initialize
+loadListingDetails();
+
+// Delete button handler
+document.getElementById('deleteBtn').addEventListener('click', async () => {
+  if (!confirm('Are you sure you want to delete this listing? This action cannot be undone.')) return;
+
+  const deleteBtn = document.getElementById('deleteBtn');
+  const originalText = deleteBtn.textContent;
+  deleteBtn.disabled = true;
+  deleteBtn.textContent = 'Deleting...';
+
+  try {
+    const token = localStorage.getItem('token');
+    const response = await fetch(`/api/housing/${currentListing.id}`, {
+      method: 'DELETE',
+      headers: { Authorization: `Bearer ${token}` }
+    });
+
+    if (response.ok) {
+      alert('Listing deleted successfully');
+      window.location.href = '/housing';
+    } else {
+      const json = await response.json();
+      alert(json.message || 'Failed to delete listing');
+    }
+  } catch (error) {
+    alert('Network error. Please try again.');
+  } finally {
+    deleteBtn.disabled = false;
+    deleteBtn.textContent = originalText;
+  }
+});
+</script>
+
+<script>
+  // Initialize Lucide icons
+  lucide.createIcons();
+
+  // Sidebar toggle for mobile
+  function toggleSidebar() {
+    const sidebar = document.getElementById('sidebar');
+    const overlay = document.getElementById('sidebar-overlay');
+
+    if (sidebar.classList.contains('-translate-x-full')) {
+      sidebar.classList.remove('-translate-x-full');
+      overlay.classList.remove('hidden');
+    } else {
+      sidebar.classList.add('-translate-x-full');
+      overlay.classList.add('hidden');
+    }
+  }
+
+  // Navigation
+  document.addEventListener('DOMContentLoaded', function() {
+    const currentPath = window.location.pathname;
+    const navItems = document.querySelectorAll('.nav-item');
+    navItems.forEach(item => {
+      const href = item.getAttribute('href');
+      if (href === currentPath || (href !== '/dashboard' && currentPath.startsWith(href))) {
+        item.classList.add('active');
+      }
+    });
+  });
+</script>
+
+  </body>
+</html>

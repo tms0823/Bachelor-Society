@@ -1,0 +1,353 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title><%= typeof title !== 'undefined' ? title : 'Bachelor Society' %></title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
+    <script src="/js/auth.js"></script>
+    <style>
+      .sidebar-transition {
+        transition: transform 0.3s ease-in-out;
+      }
+      .nav-item {
+        transition: all 0.2s ease-in-out;
+      }
+      .nav-item.active {
+        background-color: rgba(59, 130, 246, 0.1);
+        border-left: 3px solid #3b82f6;
+      }
+      .feature-carousel {
+        position: relative;
+        height: 500px;
+        overflow: hidden;
+      }
+      .feature-card {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        opacity: 0;
+        transform: translateX(100%);
+        transition: all 0.5s ease-in-out;
+        background: white;
+        border-radius: 12px;
+        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+        border: 1px solid #e5e7eb;
+        padding: 2rem;
+        text-align: center;
+      }
+      .feature-card.active {
+        opacity: 1;
+        transform: translateX(0);
+      }
+      .carousel-controls {
+        position: absolute;
+        top: 50%;
+        transform: translateY(-50%);
+        background: rgba(255, 255, 255, 0.95);
+        backdrop-filter: blur(10px);
+        border-radius: 50%;
+        width: 50px;
+        height: 50px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+        cursor: pointer;
+        z-index: 10;
+        transition: all 0.3s ease;
+        border: 1px solid rgba(0, 0, 0, 0.1);
+      }
+      .carousel-controls:hover {
+        box-shadow: 0 6px 25px rgba(0, 0, 0, 0.2);
+        transform: translateY(-50%) scale(1.1);
+        background: white;
+      }
+      .carousel-controls.left {
+        left: 10px;
+      }
+      .carousel-controls.right {
+        right: 10px;
+      }
+      .carousel-dots {
+        display: flex;
+        justify-content: center;
+        gap: 12px;
+        margin-top: 2rem;
+      }
+      .dot {
+        width: 10px;
+        height: 10px;
+        border-radius: 50%;
+        background-color: #e5e7eb;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        border: 2px solid transparent;
+      }
+      .dot.active {
+        background-color: #3b82f6;
+        transform: scale(1.3);
+        border-color: rgba(59, 130, 246, 0.3);
+      }
+      .dot:hover {
+        background-color: #9ca3af;
+      }
+    </style>
+  </head>
+  <body class="bg-gray-50 font-sans">
+    <!-- Include Sidebar -->
+    <%- include('partials/sidebar', { user: user }) %>
+
+    <!-- Main Content -->
+    <div class="lg:ml-80 min-h-screen">
+      <!-- Top Bar (Mobile) -->
+      <div class="lg:hidden bg-white shadow-sm border-b border-gray-200 px-4 py-3 flex items-center justify-between">
+        <button onclick="toggleSidebar()" class="text-gray-600 hover:text-gray-800">
+          <i data-lucide="menu" class="w-6 h-6"></i>
+        </button>
+        <h1 class="text-lg font-semibold text-gray-800"><%= typeof title !== 'undefined' ? title : 'Bachelor Society' %></h1>
+        <div class="w-6"></div> <!-- Spacer -->
+      </div>
+
+      <!-- Page Content -->
+      <div class="p-6 lg:p-8">
+        <div class="max-w-2xl mx-auto">
+          <!-- Feature Carousel -->
+          <div class="feature-carousel">
+            <!-- Navigation Arrows -->
+            <div class="carousel-controls left" onclick="prevFeature()">
+              <i data-lucide="chevron-left" class="w-6 h-6 text-gray-700"></i>
+            </div>
+            <div class="carousel-controls right" onclick="nextFeature()">
+              <i data-lucide="chevron-right" class="w-6 h-6 text-gray-700"></i>
+            </div>
+
+            <!-- Housing Card -->
+            <div id="housing-card" class="feature-card active">
+              <div class="w-16 h-16 bg-blue-100 rounded-lg flex items-center justify-center mx-auto mb-6">
+                <span class="text-xl font-bold text-blue-600">H</span>
+              </div>
+              <span class="text-sm font-medium text-blue-600 bg-blue-50 px-3 py-1 rounded-full mb-4 inline-block">Housing</span>
+              <h3 class="text-2xl font-semibold text-gray-900 mb-4">Find Your Perfect Home</h3>
+              <ul class="space-y-3 text-sm text-gray-600 mb-8 max-w-md mx-auto">
+                <li class="flex items-center justify-center">
+                  <span class="w-2 h-2 bg-blue-500 rounded-full mr-3"></span>
+                  Advanced filtering by location & price
+                </li>
+                <li class="flex items-center justify-center">
+                  <span class="w-2 h-2 bg-blue-500 rounded-full mr-3"></span>
+                  Professional photo galleries
+                </li>
+                <li class="flex items-center justify-center">
+                  <span class="w-2 h-2 bg-blue-500 rounded-full mr-3"></span>
+                  Direct contact with landlords
+                </li>
+              </ul>
+              <a href="/housing" class="bg-blue-600 text-white px-6 py-3 rounded-lg font-medium hover:bg-blue-700 transition-colors inline-flex items-center">
+                <span>Find Housing</span>
+                <i data-lucide="arrow-right" class="w-4 h-4 ml-2"></i>
+              </a>
+            </div>
+
+            <!-- Roommates Card -->
+            <div id="roommates-card" class="feature-card">
+              <div class="w-16 h-16 bg-green-100 rounded-lg flex items-center justify-center mx-auto mb-6">
+                <span class="text-xl font-bold text-green-600">R</span>
+              </div>
+              <span class="text-sm font-medium text-green-600 bg-green-50 px-3 py-1 rounded-full mb-4 inline-block">Roommates</span>
+              <h3 class="text-2xl font-semibold text-gray-900 mb-4">Connect with Compatible Roommates</h3>
+              <ul class="space-y-3 text-sm text-gray-600 mb-8 max-w-md mx-auto">
+                <li class="flex items-center justify-center">
+                  <span class="w-2 h-2 bg-green-500 rounded-full mr-3"></span>
+                  Detailed compatibility matching
+                </li>
+                <li class="flex items-center justify-center">
+                  <span class="w-2 h-2 bg-green-500 rounded-full mr-3"></span>
+                  Lifestyle and preference filtering
+                </li>
+                <li class="flex items-center justify-center">
+                  <span class="w-2 h-2 bg-green-500 rounded-full mr-3"></span>
+                  Verified roommate profiles
+                </li>
+              </ul>
+              <a href="/roommates" class="bg-green-600 text-white px-6 py-3 rounded-lg font-medium hover:bg-green-700 transition-colors inline-flex items-center">
+                <span>Find Roommates</span>
+                <i data-lucide="arrow-right" class="w-4 h-4 ml-2"></i>
+              </a>
+            </div>
+
+            <!-- Activities Card -->
+            <div id="activities-card" class="feature-card">
+              <div class="w-16 h-16 bg-purple-100 rounded-lg flex items-center justify-center mx-auto mb-6">
+                <span class="text-xl font-bold text-purple-600">A</span>
+              </div>
+              <span class="text-sm font-medium text-purple-600 bg-purple-50 px-3 py-1 rounded-full mb-4 inline-block">Activities</span>
+              <h3 class="text-2xl font-semibold text-gray-900 mb-4">Join Fun Activities & Events</h3>
+              <ul class="space-y-3 text-sm text-gray-600 mb-8 max-w-md mx-auto">
+                <li class="flex items-center justify-center">
+                  <span class="w-2 h-2 bg-purple-500 rounded-full mr-3"></span>
+                  Sports, cultural, and social events
+                </li>
+                <li class="flex items-center justify-center">
+                  <span class="w-2 h-2 bg-purple-500 rounded-full mr-3"></span>
+                  Age and interest-based matching
+                </li>
+                <li class="flex items-center justify-center">
+                  <span class="w-2 h-2 bg-purple-500 rounded-full mr-3"></span>
+                  Easy join/leave functionality
+                </li>
+              </ul>
+              <a href="/buddies" class="bg-purple-600 text-white px-6 py-3 rounded-lg font-medium hover:bg-purple-700 transition-colors inline-flex items-center">
+                <span>Find Activities</span>
+                <i data-lucide="arrow-right" class="w-4 h-4 ml-2"></i>
+              </a>
+            </div>
+          </div>
+
+          <!-- Dots Indicator -->
+          <div class="carousel-dots">
+            <div class="dot active" onclick="goToFeature(0)"></div>
+            <div class="dot" onclick="goToFeature(1)"></div>
+            <div class="dot" onclick="goToFeature(2)"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <script>
+      // ===== LOGOUT FUNCTION =====
+      function logout() {
+        // Clear localStorage immediately
+        localStorage.removeItem('token');
+        console.log('Token cleared from localStorage');
+
+        fetch('/api/auth/logout', {
+          method: 'POST',
+          credentials: 'same-origin'
+        })
+        .then(response => response.json())
+        .then(data => {
+          console.log('Logout API response:', data);
+          // Redirect to home page after logout
+          window.location.href = '/';
+        })
+        .catch(error => {
+          console.error('Logout error:', error);
+          // Force redirect even if logout fails
+          window.location.href = '/';
+        });
+      }
+
+      // Initialize Lucide icons
+      lucide.createIcons();
+
+      // Sidebar toggle for mobile
+      function toggleSidebar() {
+        const sidebar = document.getElementById('sidebar');
+        const overlay = document.getElementById('sidebar-overlay');
+
+        if (sidebar.classList.contains('-translate-x-full')) {
+          sidebar.classList.remove('-translate-x-full');
+          overlay.classList.remove('hidden');
+        } else {
+          sidebar.classList.add('-translate-x-full');
+          overlay.classList.add('hidden');
+        }
+      }
+
+      // Close sidebar when clicking outside on mobile
+      document.addEventListener('click', function(event) {
+        const sidebar = document.getElementById('sidebar');
+        const overlay = document.getElementById('sidebar-overlay');
+        const menuButton = event.target.closest('[onclick="toggleSidebar()"]');
+
+        if (!sidebar.contains(event.target) && !menuButton && window.innerWidth < 1024) {
+          sidebar.classList.add('-translate-x-full');
+          overlay.classList.add('hidden');
+        }
+      });
+
+      // Set active navigation item based on current page
+      document.addEventListener('DOMContentLoaded', function() {
+        const currentPath = window.location.pathname;
+        const navItems = document.querySelectorAll('.nav-item');
+        navItems.forEach(item => {
+          const href = item.getAttribute('href');
+          if (href === currentPath || (href !== '/dashboard' && currentPath.startsWith(href))) {
+            item.classList.add('active');
+          }
+        });
+      });
+
+      // Responsive behavior
+      window.addEventListener('resize', function() {
+        if (window.innerWidth >= 1024) {
+          document.getElementById('sidebar').classList.remove('-translate-x-full');
+          document.getElementById('sidebar-overlay').classList.add('hidden');
+        } else {
+          document.getElementById('sidebar').classList.add('-translate-x-full');
+          document.getElementById('sidebar-overlay').classList.add('hidden');
+        }
+      });
+
+      // ===== FEATURE CAROUSEL =====
+      let currentFeature = 0;
+      const features = ['housing-card', 'roommates-card', 'activities-card'];
+      const dots = document.querySelectorAll('.dot');
+      let autoRotateInterval;
+
+      function showFeature(index) {
+        // Remove active class from all cards
+        features.forEach(featureId => {
+          document.getElementById(featureId).classList.remove('active');
+        });
+
+        // Remove active class from all dots
+        dots.forEach(dot => dot.classList.remove('active'));
+
+        // Add active class to current card and dot
+        document.getElementById(features[index]).classList.add('active');
+        dots[index].classList.add('active');
+
+        currentFeature = index;
+      }
+
+      function nextFeature() {
+        const nextIndex = (currentFeature + 1) % features.length;
+        showFeature(nextIndex);
+        resetAutoRotate();
+      }
+
+      function prevFeature() {
+        const prevIndex = (currentFeature - 1 + features.length) % features.length;
+        showFeature(prevIndex);
+        resetAutoRotate();
+      }
+
+      function goToFeature(index) {
+        showFeature(index);
+        resetAutoRotate();
+      }
+
+      function startAutoRotate() {
+        autoRotateInterval = setInterval(() => {
+          nextFeature();
+        }, 2500); // Faster rotation - every 2.5 seconds
+      }
+
+      function resetAutoRotate() {
+        clearInterval(autoRotateInterval);
+        startAutoRotate();
+      }
+
+      // Initialize carousel on page load
+      document.addEventListener('DOMContentLoaded', function() {
+        showFeature(0); // Show first feature
+        startAutoRotate();
+      });
+    </script>
+  </body>
+</html>

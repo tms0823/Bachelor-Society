@@ -1,0 +1,230 @@
+<%- include('partials/auth-header', { title: 'Register' }) %>
+
+<div class="min-h-screen flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
+  <div class="max-w-md w-full space-y-8 animate-on-scroll">
+    <!-- Header -->
+    <div class="text-center">
+      <div class="flex justify-center">
+        <div class="w-16 h-16 bg-gradient-to-r from-green-600 to-emerald-600 rounded-2xl flex items-center justify-center mb-6">
+          <span class="text-2xl text-white"></span>
+        </div>
+      </div>
+      <h2 class="text-3xl font-bold text-gray-900 mb-2">Join Bachelor Society</h2>
+      <p class="text-gray-600">Create your account and start connecting with the community</p>
+    </div>
+
+    <!-- Register Form -->
+    <div class="bg-white/80 backdrop-blur-sm rounded-3xl shadow-2xl border border-white/20 p-8">
+      <form id="registerForm" enctype="multipart/form-data" class="space-y-6">
+        <div>
+          <label for="username" class="block text-sm font-semibold text-gray-700 mb-2">
+            Username
+          </label>
+          <div class="relative">
+            <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+              <span class="text-gray-400"></span>
+            </div>
+            <input
+              id="username"
+              name="username"
+              type="text"
+              required
+              class="block w-full pl-10 pr-3 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-green-500 focus:border-green-500 transition-all duration-200 bg-white/50 backdrop-blur-sm"
+              placeholder="Choose a unique username"
+            />
+          </div>
+        </div>
+
+        <div>
+          <label for="email" class="block text-sm font-semibold text-gray-700 mb-2">
+            Email Address
+          </label>
+          <div class="relative">
+            <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+              <span class="text-gray-400"></span>
+            </div>
+            <input
+              id="email"
+              name="email"
+              type="email"
+              required
+              class="block w-full pl-10 pr-3 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-green-500 focus:border-green-500 transition-all duration-200 bg-white/50 backdrop-blur-sm"
+              placeholder="your@email.com"
+            />
+          </div>
+        </div>
+
+        <div>
+          <label for="phone" class="block text-sm font-semibold text-gray-700 mb-2">
+            Phone Number
+          </label>
+          <div class="relative">
+            <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+              <span class="text-gray-400"></span>
+            </div>
+            <input
+              id="phone"
+              name="phone"
+              type="tel"
+              class="block w-full pl-10 pr-3 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-green-500 focus:border-green-500 transition-all duration-200 bg-white/50 backdrop-blur-sm"
+              placeholder="+1 (555) 123-4567"
+            />
+          </div>
+        </div>
+
+        <div>
+          <label for="profilePicture" class="block text-sm font-semibold text-gray-700 mb-2">
+            Profile Picture
+          </label>
+          <div class="relative">
+            <input
+              id="profilePicture"
+              name="profilePicture"
+              type="file"
+              accept="image/*"
+              class="block w-full px-3 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-green-500 focus:border-green-500 transition-all duration-200 bg-white/50 backdrop-blur-sm file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-semibold file:bg-green-50 file:text-green-700 hover:file:bg-green-100"
+            />
+          </div>
+          <p class="mt-1 text-xs text-gray-500">Optional. Upload a profile picture (max 5MB)</p>
+        </div>
+
+        <div>
+          <label for="password" class="block text-sm font-semibold text-gray-700 mb-2">
+            Password
+          </label>
+          <div class="relative">
+            <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+              <span class="text-gray-400"></span>
+            </div>
+            <input
+              id="password"
+              name="password"
+              type="password"
+              required
+              minlength="6"
+              class="block w-full pl-10 pr-10 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-green-500 focus:border-green-500 transition-all duration-200 bg-white/50 backdrop-blur-sm"
+              placeholder="Create a strong password"
+            />
+            <button
+              type="button"
+              id="togglePassword"
+              class="absolute inset-y-0 right-0 pr-3 flex items-center text-gray-400 hover:text-gray-600 transition-colors duration-200"
+            >
+              <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path>
+              </svg>
+            </button>
+          </div>
+          <p class="mt-1 text-xs text-gray-500">Must be at least 6 characters long</p>
+        </div>
+
+
+
+        <!-- Error Message -->
+        <div id="registerMsg" class="hidden p-4 rounded-xl text-sm font-medium"></div>
+
+        <!-- Submit Button -->
+        <button
+          type="submit"
+          id="registerBtn"
+          class="w-full bg-gradient-to-r from-green-600 to-emerald-600 text-white py-3 px-4 rounded-xl font-semibold hover:shadow-xl transform hover:scale-105 hover:shadow-green-500/25 transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2 relative overflow-hidden group"
+        >
+          <span class="flex items-center justify-center relative z-10">
+            <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18 9v3m0 0v3m0-3h3m-3 0h-3m-2-5a4 4 0 11-8 0 4 4 0 018 0zM3 20a6 6 0 0112 0v1H3v-1z"></path>
+            </svg>
+            Create Account
+          </span>
+          <div class="absolute inset-0 bg-gradient-to-r from-emerald-600 to-teal-600 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+        </button>
+      </form>
+
+      <!-- Additional Links -->
+      <div class="mt-6 text-center">
+        <p class="text-gray-600">
+          Already have an account?
+          <a href="/login" class="font-semibold text-green-600 hover:text-green-700 transition-colors duration-200">
+            Sign in here
+          </a>
+        </p>
+      </div>
+
+
+    </div>
+  </div>
+</div>
+
+<script>
+  document.addEventListener('DOMContentLoaded', () => {
+    const registerForm = document.getElementById('registerForm');
+    const registerMsg = document.getElementById('registerMsg');
+    const registerBtn = document.getElementById('registerBtn');
+    const togglePassword = document.getElementById('togglePassword');
+    const passwordInput = document.getElementById('password');
+
+    // Toggle password visibility
+    togglePassword.addEventListener('click', () => {
+      const type = passwordInput.type === 'password' ? 'text' : 'password';
+      passwordInput.type = type;
+      togglePassword.innerHTML = type === 'password'
+        ? `<svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path>
+          </svg>`
+        : `<svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.543-7a9.97 9.97 0 011.563-3.029m5.858.908a3 3 0 114.243 4.243M9.878 9.878l4.242 4.242M9.878 9.878L3 3m6.878 6.878L21 21"></path>
+          </svg>`;
+    });
+
+    registerForm.addEventListener('submit', async (e) => {
+      e.preventDefault();
+
+      const originalText = registerBtn.innerHTML;
+      registerBtn.disabled = true;
+      registerBtn.innerHTML = '<span class="flex items-center justify-center"><svg class="animate-spin -ml-1 mr-3 h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>Creating Account...</span>';
+
+      try {
+        const formData = new FormData(registerForm);
+        const response = await fetch('/api/auth/register', {
+          method: 'POST',
+          body: formData, // Send FormData directly (no Content-Type header needed)
+        });
+
+        const data = await response.json();
+
+        if (response.ok) {
+          // Automatically log the user in after successful registration
+          localStorage.setItem('token', data.token);
+
+          // Phase 1: Loading state with "Setting up your account..."
+          registerBtn.innerHTML = '<span class="flex items-center justify-center"><svg class="animate-spin -ml-1 mr-3 h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>Setting up your account...</span>';
+
+          // Phase 2: Success state after 1 second
+          setTimeout(() => {
+            registerBtn.innerHTML = '<span class="flex items-center justify-center"><svg class="w-5 h-5 mr-3 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>Success!</span>';
+            registerBtn.classList.remove('bg-gradient-to-r', 'from-green-600', 'to-emerald-600');
+            registerBtn.classList.add('bg-green-600');
+
+            // Phase 3: Instant redirect after showing success
+            setTimeout(() => {
+              window.location.href = '/dashboard?token=' + encodeURIComponent(data.token);
+            }, 500);
+          }, 1000);
+        } else {
+          registerMsg.className = 'p-4 rounded-xl text-sm font-medium text-red-700 bg-red-50 border border-red-200';
+          registerMsg.textContent = data.message || 'Registration failed. Please try again.';
+          registerMsg.classList.remove('hidden');
+        }
+      } catch (error) {
+        registerMsg.className = 'p-4 rounded-xl text-sm font-medium text-red-700 bg-red-50 border border-red-200';
+        registerMsg.textContent = 'Network error. Please check your connection and try again.';
+        registerMsg.classList.remove('hidden');
+      } finally {
+        registerBtn.disabled = false;
+        registerBtn.innerHTML = originalText;
+      }
+    });
+  });
+</script>
+<%- include('partials/auth-footer') %>

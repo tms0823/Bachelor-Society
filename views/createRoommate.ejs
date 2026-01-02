@@ -1,0 +1,362 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title><%= edit ? 'Edit Roommate Request' : 'Create Roommate Request' %> - Bachelor Society</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
+    <script src="/js/auth.js"></script>
+    <style>
+      .sidebar-transition {
+        transition: transform 0.3s ease-in-out;
+      }
+      .nav-item {
+        transition: all 0.2s ease-in-out;
+      }
+      .nav-item.active {
+        background-color: rgba(59, 130, 246, 0.1);
+        border-left: 3px solid #3b82f6;
+      }
+    </style>
+  </head>
+  <body class="bg-gray-50 font-sans">
+    <!-- Include Sidebar -->
+    <%- include('partials/sidebar') %>
+
+    <!-- Main Content -->
+    <div class="lg:ml-80 min-h-screen">
+      <!-- Top Bar (Mobile) -->
+      <div class="lg:hidden bg-white shadow-sm border-b border-gray-200 px-4 py-3 flex items-center justify-between">
+        <button onclick="toggleSidebar()" class="text-gray-600 hover:text-gray-800">
+          <i data-lucide="menu" class="w-6 h-6"></i>
+        </button>
+        <h1 class="text-lg font-semibold text-gray-800"><%= edit ? 'Edit Roommate Request' : 'Create Roommate Request' %></h1>
+        <div class="w-6"></div> <!-- Spacer -->
+      </div>
+
+      <!-- Page Content -->
+      <div class="p-6 lg:p-8">
+        <div class="max-w-4xl mx-auto bg-white p-8 rounded-lg shadow-lg">
+  <h2 class="text-2xl font-bold mb-6 text-gray-800"><%= edit ? 'Edit' : 'Create' %> Roommate Request</h2>
+
+  <form id="createRoommateForm" enctype="multipart/form-data" class="space-y-6">
+    <!-- Basic Information -->
+    <div class="bg-gray-50 p-6 rounded-lg">
+      <h3 class="text-lg font-semibold mb-4 text-gray-700">Basic Information</h3>
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div>
+          <label class="block text-sm font-medium text-gray-700 mb-1">Preferred Location *</label>
+          <div class="relative">
+            <select id="locationSelect" class="w-full border border-gray-300 px-3 py-2 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent appearance-none bg-white">
+              <option value="">Select a location or enter custom location</option>
+              <optgroup label="Popular Cities">
+                <option value="Dhaka">Dhaka</option>
+                <option value="Chittagong">Chittagong</option>
+                <option value="Khulna">Khulna</option>
+                <option value="Rajshahi">Rajshahi</option>
+                <option value="Sylhet">Sylhet</option>
+                <option value="Barisal">Barisal</option>
+                <option value="Rangpur">Rangpur</option>
+                <option value="Comilla">Comilla</option>
+                <option value="Narayanganj">Narayanganj</option>
+                <option value="Gazipur">Gazipur</option>
+                <option value="Bogra">Bogra</option>
+                <option value="Mymensingh">Mymensingh</option>
+                <option value="Jessore">Jessore</option>
+                <option value="Saidpur">Saidpur</option>
+              </optgroup>
+              <option value="custom">Enter Custom Location</option>
+            </select>
+            <div class="absolute inset-y-0 right-0 flex items-center px-2 pointer-events-none">
+              <svg class="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+              </svg>
+            </div>
+          </div>
+          <input id="preferred_location" name="preferred_location" type="text" class="hidden w-full border border-gray-300 px-3 py-2 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent mt-2" placeholder="Enter preferred location" />
+          <p id="preferred_location_error" class="text-red-600 text-sm mt-1 hidden"></p>
+        </div>
+        <div>
+          <label class="block text-sm font-medium text-gray-700 mb-1">Move-in Date</label>
+          <input id="move_in_date" name="move_in_date" type="date" class="w-full border border-gray-300 px-3 py-2 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent" />
+          <p id="move_in_date_error" class="text-red-600 text-sm mt-1 hidden"></p>
+        </div>
+        <div>
+          <label class="block text-sm font-medium text-gray-700 mb-1">Budget Min</label>
+          <input id="budget_min" name="budget_min" type="number" class="w-full border border-gray-300 px-3 py-2 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent" placeholder="0" min="0" />
+          <p id="budget_min_error" class="text-red-600 text-sm mt-1 hidden"></p>
+        </div>
+        <div>
+          <label class="block text-sm font-medium text-gray-700 mb-1">Budget Max</label>
+          <input id="budget_max" name="budget_max" type="number" class="w-full border border-gray-300 px-3 py-2 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent" placeholder="2000" min="0" />
+          <p id="budget_max_error" class="text-red-600 text-sm mt-1 hidden"></p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Room Preferences -->
+    <div class="bg-gray-50 p-6 rounded-lg">
+      <h3 class="text-lg font-semibold mb-4 text-gray-700">Room Preferences</h3>
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div>
+          <label class="block text-sm font-medium text-gray-700 mb-1">Room Type</label>
+          <select id="room_type" name="room_type" class="w-full border border-gray-300 px-3 py-2 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+            <option value="any">Any</option>
+            <option value="private_room">Private Room</option>
+            <option value="shared_room">Shared Room</option>
+          </select>
+        </div>
+        <div>
+          <label class="block text-sm font-medium text-gray-700 mb-1">Lease Duration (months)</label>
+          <input id="lease_duration_preference" name="lease_duration_preference" type="number" class="w-full border border-gray-300 px-3 py-2 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent" min="1" max="24" value="12" />
+        </div>
+        <div>
+          <label class="block text-sm font-medium text-gray-700 mb-1">Occupation</label>
+          <select id="occupation" name="occupation" class="w-full border border-gray-300 px-3 py-2 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+            <option value="">Any</option>
+            <option value="student">Student</option>
+            <option value="working">Working Professional</option>
+            <option value="other">Other</option>
+          </select>
+        </div>
+        <div>
+          <label class="block text-sm font-medium text-gray-700 mb-1">Number of Roommates</label>
+          <input id="max_roommates" name="max_roommates" type="number" class="w-full border border-gray-300 px-3 py-2 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent" min="1" max="10" value="1" />
+        </div>
+      </div>
+    </div>
+
+    <!-- Personal Preferences -->
+    <div class="bg-gray-50 p-6 rounded-lg">
+      <h3 class="text-lg font-semibold mb-4 text-gray-700">Personal Preferences</h3>
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div>
+          <label class="block text-sm font-medium text-gray-700 mb-1">Gender Preference</label>
+          <select id="gender_preference" name="gender_preference" class="w-full border border-gray-300 px-3 py-2 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+            <option value="any">Any</option>
+            <option value="male">Male</option>
+            <option value="female">Female</option>
+          </select>
+        </div>
+        <div>
+          <label class="block text-sm font-medium text-gray-700 mb-1">Smoking Preference</label>
+          <select id="smoking_preference" name="smoking_preference" class="w-full border border-gray-300 px-3 py-2 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+            <option value="any">Any</option>
+            <option value="non_smoker">Non-smoker</option>
+            <option value="occasional">Occasional</option>
+            <option value="regular">Regular</option>
+          </select>
+        </div>
+        <div>
+          <label class="block text-sm font-medium text-gray-700 mb-1">Pet Preference</label>
+          <select id="pet_preference" name="pet_preference" class="w-full border border-gray-300 px-3 py-2 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+            <option value="any_pets">Any</option>
+            <option value="no_pets">No Pets</option>
+            <option value="cats_ok">Cats OK</option>
+            <option value="dogs_ok">Dogs OK</option>
+          </select>
+        </div>
+        <div>
+          <label class="block text-sm font-medium text-gray-700 mb-1">Religion</label>
+          <input id="religion" name="religion" class="w-full border border-gray-300 px-3 py-2 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent" placeholder="Optional" />
+        </div>
+      </div>
+    </div>
+
+    <!-- Lifestyle & Description -->
+    <div class="bg-gray-50 p-6 rounded-lg">
+      <h3 class="text-lg font-semibold mb-4 text-gray-700">Lifestyle & Description</h3>
+      <div class="space-y-4">
+        <div>
+          <label class="block text-sm font-medium text-gray-700 mb-1">Lifestyle Preferences</label>
+          <textarea id="lifestyle" name="lifestyle" rows="3" class="w-full border border-gray-300 px-3 py-2 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent" placeholder="Describe your lifestyle, daily routine, cleanliness preferences, etc."></textarea>
+        </div>
+        <div>
+          <label class="block text-sm font-medium text-gray-700 mb-1">Description</label>
+          <textarea name="description" rows="4" class="w-full border border-gray-300 px-3 py-2 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent" placeholder="Tell potential roommates about yourself, what you're looking for, and why you'd be a great roommate."></textarea>
+        </div>
+      </div>
+    </div>
+
+    <!-- Photos -->
+    <div class="bg-gray-50 p-6 rounded-lg">
+      <h3 class="text-lg font-semibold mb-4 text-gray-700">Photos</h3>
+      <div>
+        <label class="block text-sm font-medium text-gray-700 mb-1">Upload Photos (max 10)</label>
+        <input id="photos" name="photos" type="file" multiple accept="image/*" class="w-full border border-gray-300 px-3 py-2 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent" />
+        <p class="text-sm text-gray-500 mt-1">You can select multiple photos. Supported formats: JPG, PNG, GIF</p>
+        <div id="photo-preview" class="mt-4 grid grid-cols-2 md:grid-cols-4 gap-4"></div>
+      </div>
+    </div>
+
+
+
+    <!-- Submit -->
+    <div class="flex justify-end space-x-4">
+      <a href="/" class="bg-gray-500 text-white px-6 py-3 rounded-md hover:bg-gray-600 transition-colors">Cancel</a>
+      <button type="submit" class="bg-blue-600 text-white px-6 py-3 rounded-md hover:bg-blue-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed">
+        <%= edit ? 'Update' : 'Create' %> Request
+      </button>
+    </div>
+  </form>
+
+  <div id="createRoommateMsg" class="mt-6"></div>
+</div>
+
+<script>
+// Location selector functionality
+const locationSelect = document.getElementById('locationSelect');
+const locationInput = document.getElementById('preferred_location');
+
+locationSelect.addEventListener('change', function() {
+  const selectedValue = this.value;
+
+  if (selectedValue === 'custom') {
+    // Show custom location input
+    locationInput.classList.remove('hidden');
+    locationInput.required = true;
+    locationInput.value = '';
+    locationInput.focus();
+  } else if (selectedValue) {
+    // Use selected predefined location
+    locationInput.value = selectedValue;
+    locationInput.classList.add('hidden');
+    locationInput.required = true;
+  } else {
+    // No selection
+    locationInput.value = '';
+    locationInput.classList.add('hidden');
+    locationInput.required = false;
+  }
+});
+
+// Handle form submission to ensure location is set
+const roommateForm = document.getElementById('createRoommateForm');
+roommateForm.addEventListener('submit', function(e) {
+  const selectedValue = locationSelect.value;
+  if (!selectedValue) {
+    e.preventDefault();
+    const errorMsg = document.getElementById('preferred_location_error');
+    errorMsg.textContent = 'Please select a location or enter a custom one.';
+    errorMsg.classList.remove('hidden');
+    locationSelect.focus();
+    return false;
+  }
+
+  if (selectedValue === 'custom' && !locationInput.value.trim()) {
+    e.preventDefault();
+    const errorMsg = document.getElementById('preferred_location_error');
+    errorMsg.textContent = 'Please enter a custom location.';
+    errorMsg.classList.remove('hidden');
+    locationInput.focus();
+    return false;
+  }
+
+  // Clear any error messages
+  document.getElementById('preferred_location_error').classList.add('hidden');
+
+  // Ensure the location field has the correct value
+  if (selectedValue !== 'custom') {
+    locationInput.value = selectedValue;
+  }
+});
+
+// Photo preview functionality
+document.getElementById('photos').addEventListener('change', function(e) {
+  const preview = document.getElementById('photo-preview');
+  preview.innerHTML = '';
+
+  Array.from(e.target.files).forEach((file, index) => {
+    if (index >= 10) return; // Max 10 photos
+
+    const reader = new FileReader();
+    reader.onload = function(e) {
+      const div = document.createElement('div');
+      div.className = 'relative';
+      div.innerHTML = '<img src="' + e.target.result + '" class="w-full h-24 object-cover rounded-md" /><button type="button" class="absolute top-1 right-1 bg-red-500 text-white rounded-full w-6 h-6 flex items-center justify-center text-xs hover:bg-red-600" onclick="removePhoto(' + index + ')">×</button>';
+      preview.appendChild(div);
+    };
+    reader.readAsDataURL(file);
+  });
+});
+
+function removePhoto(index) {
+  const input = document.getElementById('photos');
+  const preview = document.getElementById('photo-preview');
+
+  // Remove from preview
+  preview.children[index].remove();
+
+  // Create new FileList without the removed file
+  const dt = new DataTransfer();
+  const files = Array.from(input.files);
+  files.splice(index, 1);
+  files.forEach(file => dt.items.add(file));
+  input.files = dt.files;
+}
+
+
+</script>
+
+<script src="/js/roommates.js"></script>
+
+        </div>
+      </div>
+    </div>
+
+    <script>
+      // Initialize Lucide icons
+      lucide.createIcons();
+
+      // Sidebar toggle for mobile
+      function toggleSidebar() {
+        const sidebar = document.getElementById('sidebar');
+        const overlay = document.getElementById('sidebar-overlay');
+
+        if (sidebar.classList.contains('-translate-x-full')) {
+          sidebar.classList.remove('-translate-x-full');
+          overlay.classList.remove('hidden');
+        } else {
+          sidebar.classList.add('-translate-x-full');
+          overlay.classList.add('hidden');
+        }
+      }
+
+      // Close sidebar when clicking outside on mobile
+      document.addEventListener('click', function(event) {
+        const sidebar = document.getElementById('sidebar');
+        const overlay = document.getElementById('sidebar-overlay');
+        const menuButton = event.target.closest('[onclick="toggleSidebar()"]');
+
+        if (!sidebar.contains(event.target) && !menuButton && window.innerWidth < 1024) {
+          sidebar.classList.add('-translate-x-full');
+          overlay.classList.add('hidden');
+        }
+      });
+
+      // Set active navigation item based on current page
+      document.addEventListener('DOMContentLoaded', function() {
+        const currentPath = window.location.pathname;
+        const navItems = document.querySelectorAll('.nav-item');
+        navItems.forEach(item => {
+          const href = item.getAttribute('href');
+          if (href === currentPath || (href !== '/dashboard' && currentPath.startsWith(href))) {
+            item.classList.add('active');
+          }
+        });
+      });
+
+      // Responsive behavior
+      window.addEventListener('resize', function() {
+        if (window.innerWidth >= 1024) {
+          document.getElementById('sidebar').classList.remove('-translate-x-full');
+          document.getElementById('sidebar-overlay').classList.add('hidden');
+        } else {
+          document.getElementById('sidebar').classList.add('-translate-x-full');
+          document.getElementById('sidebar-overlay').classList.add('hidden');
+        }
+      });
+    </script>
+  </body>
+</html>

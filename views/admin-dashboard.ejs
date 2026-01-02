@@ -1,0 +1,249 @@
+<div class="max-w-7xl mx-auto">
+  <div class="mb-8">
+    <h1 class="text-3xl font-bold text-gray-900">Admin Dashboard</h1>
+    <p class="mt-2 text-gray-600">Welcome to the admin panel. Manage users and content from here.</p>
+  </div>
+
+  <!-- Stats Cards -->
+  <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8" id="stats-container">
+    <!-- Stats will be loaded dynamically -->
+  </div>
+
+  <!-- Quick Actions -->
+  <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-6 mb-8">
+    <h2 class="text-xl font-semibold text-gray-900 mb-4">Quick Actions</h2>
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+      <a href="/admin/users" class="flex items-center p-4 bg-blue-50 rounded-lg hover:bg-blue-100 transition-colors">
+        <div class="w-10 h-10 bg-blue-500 rounded-lg flex items-center justify-center mr-3">
+          <i data-lucide="users" class="w-5 h-5 text-white"></i>
+        </div>
+        <div>
+          <h3 class="font-medium text-gray-900">Manage Users</h3>
+          <p class="text-sm text-gray-600">View and manage user accounts</p>
+        </div>
+      </a>
+
+      <a href="/admin/housing" class="flex items-center p-4 bg-green-50 rounded-lg hover:bg-green-100 transition-colors">
+        <div class="w-10 h-10 bg-green-500 rounded-lg flex items-center justify-center mr-3">
+          <i data-lucide="home" class="w-5 h-5 text-white"></i>
+        </div>
+        <div>
+          <h3 class="font-medium text-gray-900">Housing Posts</h3>
+          <p class="text-sm text-gray-600">Review housing listings</p>
+        </div>
+      </a>
+
+      <a href="/admin/roommates" class="flex items-center p-4 bg-purple-50 rounded-lg hover:bg-purple-100 transition-colors">
+        <div class="w-10 h-10 bg-purple-500 rounded-lg flex items-center justify-center mr-3">
+          <i data-lucide="user-plus" class="w-5 h-5 text-white"></i>
+        </div>
+        <div>
+          <h3 class="font-medium text-gray-900">Roommate Posts</h3>
+          <p class="text-sm text-gray-600">Review roommate requests</p>
+        </div>
+      </a>
+
+      <a href="/admin/activities" class="flex items-center p-4 bg-orange-50 rounded-lg hover:bg-orange-100 transition-colors">
+        <div class="w-10 h-10 bg-orange-500 rounded-lg flex items-center justify-center mr-3">
+          <i data-lucide="calendar" class="w-5 h-5 text-white"></i>
+        </div>
+        <div>
+          <h3 class="font-medium text-gray-900">Activity Posts</h3>
+          <p class="text-sm text-gray-600">Review activity posts</p>
+        </div>
+      </a>
+    </div>
+  </div>
+
+  <!-- Recent Activity -->
+  <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+    <!-- Recent Users -->
+    <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+      <h2 class="text-xl font-semibold text-gray-900 mb-4">Recent Users</h2>
+      <div id="recent-users" class="space-y-4">
+        <!-- Recent users will be loaded dynamically -->
+        <div class="text-center text-gray-500 py-8">
+          <i data-lucide="users" class="w-12 h-12 mx-auto mb-2 opacity-50"></i>
+          <p>Loading recent users...</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Recent Posts -->
+    <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+      <h2 class="text-xl font-semibold text-gray-900 mb-4">Recent Posts</h2>
+      <div id="recent-posts" class="space-y-4">
+        <!-- Recent posts will be loaded dynamically -->
+        <div class="text-center text-gray-500 py-8">
+          <i data-lucide="file-text" class="w-12 h-12 mx-auto mb-2 opacity-50"></i>
+          <p>Loading recent posts...</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+// Load admin stats
+async function loadStats() {
+  try {
+    const response = await fetch('/api/admin/stats', {
+      headers: {
+        'Authorization': `Bearer ${localStorage.getItem('token')}`
+      }
+    });
+
+    if (response.ok) {
+      const data = await response.json();
+      displayStats(data.stats);
+    } else {
+      console.error('Failed to load stats');
+    }
+  } catch (error) {
+    console.error('Error loading stats:', error);
+  }
+}
+
+// Display stats in cards
+function displayStats(stats) {
+  const container = document.getElementById('stats-container');
+  const statCards = [
+    { key: 'users', label: 'Total Users', icon: 'users', color: 'blue' },
+    { key: 'housing', label: 'Housing Posts', icon: 'home', color: 'green' },
+    { key: 'roommates', label: 'Roommate Posts', icon: 'user-plus', color: 'purple' },
+    { key: 'buddies', label: 'Activity Posts', icon: 'calendar', color: 'orange' }
+  ];
+
+  container.innerHTML = statCards.map(card => `
+    <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+      <div class="flex items-center">
+        <div class="w-12 h-12 bg-${card.color}-100 rounded-lg flex items-center justify-center">
+          <i data-lucide="${card.icon}" class="w-6 h-6 text-${card.color}-600"></i>
+        </div>
+        <div class="ml-4">
+          <p class="text-sm font-medium text-gray-600">${card.label}</p>
+          <p class="text-2xl font-bold text-gray-900">${stats[card.key] || 0}</p>
+        </div>
+      </div>
+    </div>
+  `).join('');
+
+  // Re-initialize icons
+  lucide.createIcons();
+}
+
+// Load recent users
+async function loadRecentUsers() {
+  try {
+    const response = await fetch('/api/admin/users', {
+      headers: {
+        'Authorization': `Bearer ${localStorage.getItem('token')}`
+      }
+    });
+
+    if (response.ok) {
+      const data = await response.json();
+      displayRecentUsers(data.users.slice(0, 5)); // Show only 5 recent users
+    }
+  } catch (error) {
+    console.error('Error loading recent users:', error);
+  }
+}
+
+// Display recent users
+function displayRecentUsers(users) {
+  const container = document.getElementById('recent-users');
+
+  if (users.length === 0) {
+    container.innerHTML = '<p class="text-gray-500 text-center py-4">No users found</p>';
+    return;
+  }
+
+  container.innerHTML = users.map(user => `
+    <div class="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+      <div class="flex items-center">
+        <div class="w-8 h-8 bg-gray-300 rounded-full flex items-center justify-center mr-3">
+          <span class="text-sm font-medium text-gray-700">${user.username.charAt(0).toUpperCase()}</span>
+        </div>
+        <div>
+          <p class="text-sm font-medium text-gray-900">${user.username}</p>
+          <p class="text-xs text-gray-600">${user.email}</p>
+        </div>
+      </div>
+      <span class="text-xs px-2 py-1 bg-${user.role === 'admin' ? 'red' : 'blue'}-100 text-${user.role === 'admin' ? 'red' : 'blue'}-800 rounded-full">
+        ${user.role}
+      </span>
+    </div>
+  `).join('');
+}
+
+// Load recent posts (combined from all types)
+async function loadRecentPosts() {
+  try {
+    const [housingRes, roommateRes, buddyRes] = await Promise.all([
+      fetch('/api/admin/housing', { headers: { 'Authorization': `Bearer ${localStorage.getItem('token')}` } }),
+      fetch('/api/admin/roommates', { headers: { 'Authorization': `Bearer ${localStorage.getItem('token')}` } }),
+      fetch('/api/admin/buddies', { headers: { 'Authorization': `Bearer ${localStorage.getItem('token')}` } })
+    ]);
+
+    const posts = [];
+
+    if (housingRes.ok) {
+      const housing = await housingRes.json();
+      posts.push(...housing.housing.map(p => ({ ...p, type: 'Housing', icon: 'home', color: 'green' })));
+    }
+
+    if (roommateRes.ok) {
+      const roommates = await roommateRes.json();
+      posts.push(...roommates.roommates.map(p => ({ ...p, type: 'Roommate', icon: 'user-plus', color: 'purple' })));
+    }
+
+    if (buddyRes.ok) {
+      const buddies = await buddyRes.json();
+      posts.push(...buddies.buddies.map(p => ({ ...p, type: 'Activity', icon: 'calendar', color: 'orange' })));
+    }
+
+    // Sort by created_at and take 5 most recent
+    posts.sort((a, b) => new Date(b.created_at) - new Date(a.created_at));
+    displayRecentPosts(posts.slice(0, 5));
+
+  } catch (error) {
+    console.error('Error loading recent posts:', error);
+  }
+}
+
+// Display recent posts
+function displayRecentPosts(posts) {
+  const container = document.getElementById('recent-posts');
+
+  if (posts.length === 0) {
+    container.innerHTML = '<p class="text-gray-500 text-center py-4">No posts found</p>';
+    return;
+  }
+
+  container.innerHTML = posts.map(post => `
+    <div class="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+      <div class="flex items-center">
+        <div class="w-8 h-8 bg-${post.color}-100 rounded-lg flex items-center justify-center mr-3">
+          <i data-lucide="${post.icon}" class="w-4 h-4 text-${post.color}-600"></i>
+        </div>
+        <div>
+          <p class="text-sm font-medium text-gray-900">${post.title || post.activity_name || 'Untitled'}</p>
+          <p class="text-xs text-gray-600">${post.type} • ${post.owner_username || 'Unknown'}</p>
+        </div>
+      </div>
+      <span class="text-xs text-gray-500">${new Date(post.created_at).toLocaleDateString()}</span>
+    </div>
+  `).join('');
+
+  // Re-initialize icons
+  lucide.createIcons();
+}
+
+// Initialize dashboard
+document.addEventListener('DOMContentLoaded', function() {
+  loadStats();
+  loadRecentUsers();
+  loadRecentPosts();
+});
+</script>

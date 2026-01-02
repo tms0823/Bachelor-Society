@@ -1,0 +1,69 @@
+    </main>
+
+
+
+    <script>
+      document.addEventListener('DOMContentLoaded', () => {
+        const token = localStorage.getItem('token');
+        const guestNav = document.getElementById('guest-nav');
+        const userNav = document.getElementById('user-nav');
+        const mobileGuestNav = document.getElementById('mobile-guest-nav');
+        const mobileUserNav = document.getElementById('mobile-user-nav');
+        const logoutBtn = document.getElementById('logout-btn');
+        const mobileLogoutBtn = document.getElementById('mobile-logout-btn');
+        const mobileMenuBtn = document.getElementById('mobile-menu-btn');
+        const mobileMenu = document.getElementById('mobile-menu');
+
+        // Toggle navigation based on authentication
+        if (token) {
+          if (guestNav) guestNav.classList.add('hidden');
+          if (userNav) userNav.classList.remove('hidden');
+          if (mobileGuestNav) mobileGuestNav.classList.add('hidden');
+          if (mobileUserNav) mobileUserNav.classList.remove('hidden');
+        }
+
+        // Logout functionality
+        const handleLogout = async () => {
+          try {
+            await logout();
+          } catch (error) {
+            console.error('Logout failed:', error);
+            // Fallback: clear localStorage and redirect anyway
+            localStorage.removeItem('token');
+            localStorage.removeItem('user');
+            window.location.href = '/login';
+          }
+        };
+
+        if (logoutBtn) logoutBtn.addEventListener('click', handleLogout);
+        if (mobileLogoutBtn) mobileLogoutBtn.addEventListener('click', handleLogout);
+
+        // Mobile menu toggle
+        if (mobileMenuBtn && mobileMenu) {
+          mobileMenuBtn.addEventListener('click', () => {
+            mobileMenu.classList.toggle('hidden');
+          });
+        }
+
+        // Add animation classes to elements
+        const observerOptions = {
+          threshold: 0.1,
+          rootMargin: '0px 0px -50px 0px'
+        };
+
+        const observer = new IntersectionObserver((entries) => {
+          entries.forEach(entry => {
+            if (entry.isIntersecting) {
+              entry.target.classList.add('animate-fade-in');
+            }
+          });
+        }, observerOptions);
+
+        // Observe elements for animations
+        document.querySelectorAll('.animate-on-scroll').forEach(el => {
+          observer.observe(el);
+        });
+      });
+    </script>
+  </body>
+</html>

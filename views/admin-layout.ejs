@@ -1,0 +1,103 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title><%= typeof title !== 'undefined' ? title : 'Admin Panel - Bachelor Society' %></title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
+    <style>
+      .sidebar-transition {
+        transition: transform 0.3s ease-in-out;
+      }
+      .nav-item {
+        transition: all 0.2s ease-in-out;
+      }
+      .nav-item.active {
+        background-color: rgba(59, 130, 246, 0.1);
+        border-left: 3px solid #3b82f6;
+      }
+    </style>
+  </head>
+  <body class="bg-gray-50 font-sans">
+    <!-- Include Admin Sidebar -->
+    <%- include('partials/admin-sidebar', { user: user }) %>
+
+    <!-- Main Content -->
+    <div class="lg:ml-80 min-h-screen">
+      <!-- Top Bar (Mobile) -->
+      <div class="lg:hidden bg-white shadow-sm border-b border-gray-200 px-4 py-3 flex items-center justify-between">
+        <button onclick="toggleSidebar()" class="text-gray-600 hover:text-gray-800">
+          <i data-lucide="menu" class="w-6 h-6"></i>
+        </button>
+        <h1 class="text-lg font-semibold text-gray-800"><%= typeof title !== 'undefined' ? title : 'Admin Panel' %></h1>
+        <div class="w-6"></div> <!-- Spacer -->
+      </div>
+
+      <!-- Page Content -->
+      <div class="p-6 lg:p-8">
+        <%- body %>
+      </div>
+    </div>
+
+    <script>
+      // Initialize Lucide icons
+      lucide.createIcons();
+
+      // Sidebar toggle for mobile
+      function toggleSidebar() {
+        const sidebar = document.getElementById('sidebar');
+        const overlay = document.getElementById('sidebar-overlay');
+
+        if (sidebar.classList.contains('-translate-x-full')) {
+          sidebar.classList.remove('-translate-x-full');
+          overlay.classList.remove('hidden');
+        } else {
+          sidebar.classList.add('-translate-x-full');
+          overlay.classList.add('hidden');
+        }
+      }
+
+      // Close sidebar when clicking outside on mobile
+      document.addEventListener('click', function(event) {
+        const sidebar = document.getElementById('sidebar');
+        const overlay = document.getElementById('sidebar-overlay');
+        const menuButton = event.target.closest('[onclick="toggleSidebar()"]');
+
+        if (!sidebar.contains(event.target) && !menuButton && window.innerWidth < 1024) {
+          sidebar.classList.add('-translate-x-full');
+          overlay.classList.add('hidden');
+        }
+      });
+
+      // Set active navigation item based on current page
+      document.addEventListener('DOMContentLoaded', function() {
+        const currentPath = window.location.pathname;
+
+        // Set active states for navigation items
+        const navItems = document.querySelectorAll('.nav-item');
+        navItems.forEach(item => {
+          const href = item.getAttribute('href');
+          if (href === currentPath || (href !== '/admin/dashboard' && currentPath.startsWith(href))) {
+            item.classList.add('active');
+          }
+        });
+      });
+
+      // Responsive behavior
+      window.addEventListener('resize', function() {
+        if (window.innerWidth >= 1024) {
+          // Desktop: always show sidebar
+          document.getElementById('sidebar').classList.remove('-translate-x-full');
+          document.getElementById('sidebar-overlay').classList.add('hidden');
+        } else {
+          // Mobile: hide sidebar by default
+          document.getElementById('sidebar').classList.add('-translate-x-full');
+          document.getElementById('sidebar-overlay').classList.add('hidden');
+        }
+      });
+    </script>
+
+    <script src="/js/auth.js"></script>
+  </body>
+</html>

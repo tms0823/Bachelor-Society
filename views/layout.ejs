@@ -1,0 +1,281 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title><%= typeof title !== 'undefined' ? title : 'Bachelor Society' %></title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
+    <script>
+      tailwind.config = {
+        theme: {
+          extend: {
+            colors: {
+              primary: {
+                50: '#eff6ff',
+                100: '#dbeafe',
+                200: '#bfdbfe',
+                300: '#93c5fd',
+                400: '#60a5fa',
+                500: '#3b82f6',
+                600: '#2563eb',
+                700: '#1d4ed8',
+                800: '#1e40af',
+                900: '#1e3a8a',
+              }
+            },
+            animation: {
+              'fade-in': 'fadeIn 0.5s ease-in-out',
+              'slide-up': 'slideUp 0.3s ease-out',
+              'bounce-subtle': 'bounceSubtle 2s infinite',
+            }
+          }
+        }
+      }
+    </script>
+    <style>
+      @keyframes fadeIn {
+        from { opacity: 0; transform: translateY(10px); }
+        to { opacity: 1; transform: translateY(0); }
+      }
+      @keyframes slideUp {
+        from { transform: translateY(20px); opacity: 0; }
+        to { transform: translateY(0); opacity: 1; }
+      }
+      @keyframes bounceSubtle {
+        0%, 100% { transform: translateY(0); }
+        50% { transform: translateY(-5px); }
+      }
+      .animate-fade-in { animation: fadeIn 0.5s ease-in-out; }
+      .animate-slide-up { animation: slideUp 0.3s ease-out; }
+      .animate-bounce-subtle { animation: bounceSubtle 2s infinite; }
+    </style>
+  </head>
+  <body class="bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-50 min-h-screen font-sans">
+    <!-- Include Sidebar -->
+    <%- include('partials/sidebar', { user: user }) %>
+
+    <!-- Mobile Menu Button -->
+    <div class="lg:hidden fixed top-4 left-4 z-40">
+      <button onclick="toggleSidebar()" class="bg-gray-800 text-white p-2 rounded-md shadow-lg">
+        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
+        </svg>
+      </button>
+    </div>
+
+    <!-- Main Content -->
+    <main class="flex-1 lg:ml-80 pt-16 lg:pt-0">
+    </main>
+
+
+
+    <script>
+      // Initialize Lucide icons
+      lucide.createIcons();
+
+      // Sidebar toggle for mobile
+      function toggleSidebar() {
+        const sidebar = document.getElementById('sidebar');
+        const overlay = document.getElementById('sidebar-overlay');
+
+        if (sidebar.classList.contains('-translate-x-full')) {
+          sidebar.classList.remove('-translate-x-full');
+          overlay.classList.remove('hidden');
+        } else {
+          sidebar.classList.add('-translate-x-full');
+          overlay.classList.add('hidden');
+        }
+      }
+
+      // Close sidebar when clicking outside on mobile
+      document.addEventListener('click', function(event) {
+        const sidebar = document.getElementById('sidebar');
+        const overlay = document.getElementById('sidebar-overlay');
+        const menuButton = event.target.closest('[onclick="toggleSidebar()"]');
+
+        if (!sidebar.contains(event.target) && !menuButton && window.innerWidth < 1024) {
+          sidebar.classList.add('-translate-x-full');
+          overlay.classList.add('hidden');
+        }
+      });
+
+      // Responsive behavior
+      window.addEventListener('resize', function() {
+        if (window.innerWidth >= 1024) {
+          // Desktop: always show sidebar
+          document.getElementById('sidebar').classList.remove('-translate-x-full');
+          document.getElementById('sidebar-overlay').classList.add('hidden');
+        } else {
+          // Mobile: hide sidebar by default
+          document.getElementById('sidebar').classList.add('-translate-x-full');
+          document.getElementById('sidebar-overlay').classList.add('hidden');
+        }
+      });
+
+      document.addEventListener('DOMContentLoaded', () => {
+        const token = localStorage.getItem('token');
+        const guestNav = document.getElementById('guest-nav');
+        const userNav = document.getElementById('user-nav');
+        const mobileGuestNav = document.getElementById('mobile-guest-nav');
+        const mobileUserNav = document.getElementById('mobile-user-nav');
+        const logoutBtn = document.getElementById('logout-btn');
+        const mobileLogoutBtn = document.getElementById('mobile-logout-btn');
+        const mobileMenuBtn = document.getElementById('mobile-menu-btn');
+        const mobileMenu = document.getElementById('mobile-menu');
+
+        // Toggle navigation based on authentication
+        if (token) {
+          if (guestNav) guestNav.classList.add('hidden');
+          if (userNav) userNav.classList.remove('hidden');
+          if (mobileGuestNav) mobileGuestNav.classList.add('hidden');
+          if (mobileUserNav) mobileUserNav.classList.remove('hidden');
+        }
+
+        // Logout functionality
+        const handleLogout = () => {
+          localStorage.removeItem('token');
+          location.reload();
+        };
+
+        if (logoutBtn) logoutBtn.addEventListener('click', handleLogout);
+        if (mobileLogoutBtn) mobileLogoutBtn.addEventListener('click', handleLogout);
+
+        // Mobile menu toggle
+        if (mobileMenuBtn && mobileMenu) {
+          mobileMenuBtn.addEventListener('click', () => {
+            mobileMenu.classList.toggle('hidden');
+          });
+        }
+
+        // Add animation classes to elements
+        const observerOptions = {
+          threshold: 0.1,
+          rootMargin: '0px 0px -50px 0px'
+        };
+
+        const observer = new IntersectionObserver((entries) => {
+          entries.forEach(entry => {
+            if (entry.isIntersecting) {
+              entry.target.classList.add('animate-fade-in');
+            }
+          });
+        }, observerOptions);
+
+  // Observe elements for animations
+  document.querySelectorAll('.animate-on-scroll').forEach(el => {
+    observer.observe(el);
+  });
+
+  // Load notifications if user is logged in
+  if (token) {
+    loadNotifications();
+  }
+
+  // Notification functionality
+  const notificationsBtn = document.getElementById('notifications-btn');
+  const notificationsDropdown = document.getElementById('notifications-dropdown');
+
+  if (notificationsBtn && notificationsDropdown) {
+    notificationsBtn.addEventListener('click', (e) => {
+      e.stopPropagation();
+      notificationsDropdown.classList.toggle('hidden');
+      if (!notificationsDropdown.classList.contains('hidden')) {
+        loadNotifications();
+      }
+    });
+
+    // Close dropdown when clicking outside
+    document.addEventListener('click', (e) => {
+      if (!notificationsBtn.contains(e.target) && !notificationsDropdown.contains(e.target)) {
+        notificationsDropdown.classList.add('hidden');
+      }
+    });
+  }
+
+  // Intercept navigation to protected routes and add token
+  document.addEventListener('click', (e) => {
+    const link = e.target.closest('a[href]');
+    if (!link) return;
+
+    const href = link.getAttribute('href');
+    const protectedRoutes = ['/housing', '/buddies', '/roommates', '/profile'];
+
+    const isProtectedRoute = protectedRoutes.some(route =>
+      href === route || href.startsWith(route + '/')
+    );
+
+    if (isProtectedRoute && token) {
+      e.preventDefault();
+      // Add token as query parameter for view routes
+      const separator = href.includes('?') ? '&' : '?';
+      window.location.href = href + separator + 'token=' + encodeURIComponent(token);
+    }
+  });
+
+  async function loadNotifications() {
+    if (!token) return;
+
+    try {
+      const response = await fetch('/api/notifications', {
+        headers: {
+          'Authorization': 'Bearer ' + token
+        }
+      });
+
+      if (response.ok) {
+        const data = await response.json();
+        displayNotifications(data.notifications);
+      }
+    } catch (error) {
+      console.error('Error loading notifications:', error);
+    }
+  }
+
+  function displayNotifications(notifications) {
+    const notificationsList = document.getElementById('notifications-list');
+    const notificationBadge = document.getElementById('notification-badge');
+
+    if (!notificationsList || !notificationBadge) return;
+
+    const unreadCount = notifications.filter(n => !n.is_read).length;
+
+    // Update badge
+    if (unreadCount > 0) {
+      notificationBadge.textContent = unreadCount > 99 ? '99+' : unreadCount;
+      notificationBadge.classList.remove('hidden');
+    } else {
+      notificationBadge.classList.add('hidden');
+    }
+
+    // Display notifications
+    if (notifications.length === 0) {
+      notificationsList.innerHTML = '<div class="p-4 text-center text-gray-500"><svg class="w-12 h-12 mx-auto mb-4 text-gray-300" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-5-5V9a4 4 0 00-8 0v3l-5 5h5m0 0v1a3 3 0 006 0v-1m-6 0h6"></path></svg><p>No notifications yet</p><p class="text-sm">You\'ll get notified when people interact with your activities!</p></div>';
+    } else {
+      notificationsList.innerHTML = notifications.map(notification => '<div class="p-4 border-b border-gray-100 hover:bg-gray-50 cursor-pointer ' + (!notification.is_read ? 'bg-blue-50' : '') + '" onclick="markAsRead(' + notification.id + ')"><div class="flex items-start space-x-3"><div class="flex-shrink-0"><div class="w-2 h-2 bg-blue-500 rounded-full ' + (notification.is_read ? 'opacity-0' : '') + '"></div></div><div class="flex-1 min-w-0"><p class="text-sm font-medium text-gray-900">' + notification.title + '</p><p class="text-sm text-gray-600 mt-1">' + notification.message + '</p><p class="text-xs text-gray-400 mt-2">' + new Date(notification.created_at).toLocaleDateString() + '</p></div></div></div>').join('');
+    }
+  }
+
+  async function markAsRead(notificationId) {
+    if (!token) return;
+
+    try {
+      await fetch('/api/notifications/' + notificationId + '/read', {
+        method: 'PUT',
+        headers: {
+          'Authorization': 'Bearer ' + token
+        }
+      });
+
+      // Reload notifications to update UI
+      loadNotifications();
+    } catch (error) {
+      console.error('Error marking notification as read:', error);
+    }
+  }
+});
+    </script>
+
+    <script src="/js/auth.js"></script>
+  </body>
+</html>

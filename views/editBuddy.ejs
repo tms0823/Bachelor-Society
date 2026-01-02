@@ -1,0 +1,445 @@
+<%- include('layout', { title: 'Edit Activity' }) %>
+
+<div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+  <!-- Back Button -->
+  <div class="mb-6">
+    <a href="/buddies" class="inline-flex items-center text-blue-600 hover:text-blue-700 transition-colors duration-200">
+      <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path>
+      </svg>
+      Back to Activities
+    </a>
+  </div>
+
+  <!-- Edit Activity Form -->
+  <div class="bg-white rounded-2xl shadow-lg border border-gray-100 overflow-hidden">
+    <div class="bg-gradient-to-r from-blue-600 to-indigo-600 text-white p-8">
+      <div class="flex items-center space-x-4">
+        <div class="w-16 h-16 bg-white/20 rounded-2xl flex items-center justify-center text-2xl font-bold">
+          Edit
+        </div>
+        <div>
+          <h1 class="text-3xl font-bold">Edit Activity</h1>
+          <p class="text-blue-100 mt-1">Update your activity details</p>
+        </div>
+      </div>
+    </div>
+
+  <div class="p-8">
+      <form id="editBuddyForm" enctype="multipart/form-data" class="space-y-6">
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <div>
+            <label for="activity_type" class="block text-sm font-semibold text-gray-700 mb-2">
+              Activity Type *
+            </label>
+            <div class="relative">
+              <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                <span class="text-gray-400"></span>
+              </div>
+              <input
+                id="activity_type"
+                name="activity_type"
+                type="text"
+                required
+                placeholder="e.g., Basketball, Hiking, Gaming, Dinner"
+                class="w-full pl-10 pr-3 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200 bg-white/50 backdrop-blur-sm"
+              />
+            </div>
+            <p id="activity_error" class="text-red-600 text-sm mt-1 hidden"></p>
+          </div>
+
+          <div>
+            <label for="location" class="block text-sm font-semibold text-gray-700 mb-2">
+              Location *
+            </label>
+            <div class="relative">
+              <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                <span class="text-gray-400"></span>
+              </div>
+              <input
+                id="location"
+                name="location"
+                type="text"
+                required
+                placeholder="e.g., Central Park, Downtown Cafe"
+                class="w-full pl-10 pr-3 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200 bg-white/50 backdrop-blur-sm"
+              />
+            </div>
+            <p id="location_error" class="text-red-600 text-sm mt-1 hidden"></p>
+          </div>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <div>
+            <label for="date_time" class="block text-sm font-semibold text-gray-700 mb-2">
+              Date & Time *
+            </label>
+            <div class="relative">
+              <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                <span class="text-gray-400"></span>
+              </div>
+              <input
+                id="date_time"
+                name="date_time"
+                type="datetime-local"
+                required
+                class="w-full pl-10 pr-3 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200 bg-white/50 backdrop-blur-sm"
+              />
+            </div>
+            <p id="date_error" class="text-red-600 text-sm mt-1 hidden"></p>
+          </div>
+
+          <div>
+            <label for="max_participants" class="block text-sm font-semibold text-gray-700 mb-2">
+              Max Participants
+            </label>
+            <div class="relative">
+              <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                <span class="text-gray-400"></span>
+              </div>
+              <input
+                id="max_participants"
+                name="max_participants"
+                type="number"
+                min="2"
+                max="50"
+                placeholder="10"
+                class="w-full pl-10 pr-3 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200 bg-white/50 backdrop-blur-sm"
+              />
+            </div>
+            <p class="text-gray-500 text-xs mt-1">Leave empty for unlimited participants</p>
+          </div>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <div>
+            <label for="gender_preference" class="block text-sm font-semibold text-gray-700 mb-2">
+              Gender Preference
+            </label>
+            <select
+              id="gender_preference"
+              name="gender_preference"
+              class="w-full border border-gray-300 rounded-xl px-4 py-3 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200 bg-white/50 backdrop-blur-sm"
+            >
+              <option value="any">Any</option>
+              <option value="male">Male only</option>
+              <option value="female">Female only</option>
+            </select>
+          </div>
+
+          <div>
+            <label for="cost_per_person" class="block text-sm font-semibold text-gray-700 mb-2">
+              Cost Per Person (BDT)
+            </label>
+            <input
+              id="cost_per_person"
+              name="cost_per_person"
+              type="number"
+              min="0"
+              step="0.01"
+              placeholder="0"
+              class="w-full border border-gray-300 rounded-xl px-4 py-3 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200 bg-white/50 backdrop-blur-sm"
+            />
+          </div>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <div>
+            <label for="min_age" class="block text-sm font-semibold text-gray-700 mb-2">
+              Minimum Age
+            </label>
+            <input
+              id="min_age"
+              name="min_age"
+              type="number"
+              min="13"
+              max="99"
+              value="18"
+              class="w-full border border-gray-300 rounded-xl px-4 py-3 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200 bg-white/50 backdrop-blur-sm"
+            />
+          </div>
+
+          <div>
+            <label for="max_age" class="block text-sm font-semibold text-gray-700 mb-2">
+              Maximum Age
+            </label>
+            <input
+              id="max_age"
+              name="max_age"
+              type="number"
+              min="13"
+              max="99"
+              value="99"
+              class="w-full border border-gray-300 rounded-xl px-4 py-3 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200 bg-white/50 backdrop-blur-sm"
+            />
+          </div>
+        </div>
+
+        <div class="flex items-center">
+          <input
+            id="is_private"
+            name="is_private"
+            type="checkbox"
+            class="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
+          />
+          <label for="is_private" class="ml-2 block text-sm text-gray-700">
+            Make this activity private (only visible to you)
+          </label>
+        </div>
+
+        <!-- Photos -->
+        <div>
+          <label class="block text-sm font-semibold text-gray-700 mb-2">
+            Current Photos
+          </label>
+          <div id="currentPhotos" class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-4"></div>
+
+          <label class="block text-sm font-semibold text-gray-700 mb-2">
+            Add New Photos
+          </label>
+          <input
+            id="photos"
+            name="photos"
+            type="file"
+            multiple
+            accept="image/*"
+            class="w-full border border-gray-300 rounded-xl px-4 py-3 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200 bg-white/50 backdrop-blur-sm"
+          />
+          <p class="text-gray-500 text-xs mt-1">Select additional photos (max 10 total).</p>
+        </div>
+
+        <div>
+          <label for="description" class="block text-sm font-semibold text-gray-700 mb-2">
+            Description
+          </label>
+          <textarea
+            id="description"
+            name="description"
+            rows="4"
+            placeholder="Tell others about your activity! What should they expect? Any special requirements or things to bring?"
+            class="w-full border border-gray-300 rounded-xl px-4 py-3 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200 bg-white/50 backdrop-blur-sm resize-none"
+          ></textarea>
+          <p class="text-gray-500 text-xs mt-1">Help others understand what your activity is about</p>
+        </div>
+
+        <!-- Error Message -->
+        <div id="editBuddyMsg" class="hidden p-4 rounded-xl text-sm font-medium"></div>
+
+        <!-- Submit Button -->
+        <div class="flex justify-end space-x-4">
+          <a href="javascript:history.back()" class="px-6 py-3 border border-gray-300 rounded-xl text-gray-700 hover:bg-gray-50 transition-all duration-200 font-medium">
+            Cancel
+          </a>
+          <button
+            type="submit"
+            id="editBtn"
+            class="px-8 py-3 bg-gradient-to-r from-blue-600 to-indigo-600 text-white rounded-xl hover:shadow-xl transform hover:scale-105 transition-all duration-300 font-semibold shadow-lg"
+          >
+            Save Changes
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+
+<script src="/js/buddy.js"></script>
+<script>
+  document.addEventListener('DOMContentLoaded', () => {
+    const editForm = document.getElementById('editBuddyForm');
+    const editMsg = document.getElementById('editBuddyMsg');
+    const editBtn = document.getElementById('editBtn');
+
+    // Get activity ID from URL
+    const activityId = window.location.pathname.split('/')[2];
+
+    // Track existing photos for removal
+    let existingPhotos = [];
+
+    // Photo preview functionality (following housing.js pattern)
+    const photoInput = document.getElementById('photos');
+    const currentPhotosDiv = document.getElementById('currentPhotos');
+
+    photoInput.addEventListener('change', (e) => {
+      const files = Array.from(e.target.files);
+      files.forEach(file => {
+        if (file.type.startsWith('image/')) {
+          const reader = new FileReader();
+          reader.onload = (e) => {
+            const previewDiv = document.createElement('div');
+            previewDiv.className = 'relative';
+            previewDiv.innerHTML = `
+              <img src="${e.target.result}" alt="New photo preview" class="w-full h-32 object-contain rounded-lg border-2 border-blue-500 bg-gray-100">
+              <button type="button" onclick="removeNewPhoto(this)" class="absolute -top-2 -right-2 bg-red-500 text-white rounded-full w-6 h-6 flex items-center justify-center text-xs hover:bg-red-600 shadow-lg">
+                ×
+              </button>
+            `;
+            currentPhotosDiv.appendChild(previewDiv);
+          };
+          reader.readAsDataURL(file);
+        }
+      });
+    });
+
+    // Load existing activity data
+    loadActivityData(activityId);
+
+    // Function to show existing photos
+    function showExistingPhotos(photos) {
+      // Clear only existing photos, keep new photo previews
+      const existingPhotoElements = currentPhotosDiv.querySelectorAll('.existing-photo');
+      existingPhotoElements.forEach(el => el.remove());
+
+      if (photos && Array.isArray(photos)) {
+        // Add existing photos at the beginning
+        photos.forEach((photo, index) => {
+          if (photo && photo.url) {
+            const div = document.createElement('div');
+            div.className = 'relative existing-photo';
+            div.setAttribute('data-photo-index', index);
+            div.innerHTML = `
+              <img src="${photo.url}" alt="Property photo ${index + 1}" class="w-full h-32 object-contain rounded-lg border bg-gray-100">
+              <button type="button" onclick="removeExistingPhoto(${index})" class="absolute top-1 right-1 bg-red-500 text-white rounded-full w-6 h-6 flex items-center justify-center text-xs hover:bg-red-600">
+                ×
+              </button>
+            `;
+            // Insert at the beginning, before new photo previews
+            currentPhotosDiv.insertBefore(div, currentPhotosDiv.firstChild);
+          }
+        });
+      }
+    }
+
+    // Function to remove existing photo from UI and array
+    window.removeExistingPhoto = function(index) {
+      // Remove from existingPhotos array
+      if (index >= 0 && index < existingPhotos.length) {
+        existingPhotos.splice(index, 1);
+        // Re-render existing photos to update indices
+        showExistingPhotos(existingPhotos);
+      }
+    };
+
+    // Function to remove new photo preview
+    window.removeNewPhoto = function(buttonElement) {
+      buttonElement.parentElement.remove();
+    };
+
+    editForm.addEventListener('submit', async (e) => {
+      e.preventDefault();
+
+      // Clear previous errors
+      ['activity_error', 'location_error', 'date_error'].forEach(id => {
+        const el = document.getElementById(id);
+        if (el) { el.textContent = ''; el.classList.add('hidden'); }
+      });
+
+      const data = Object.fromEntries(new FormData(editForm).entries());
+      const activity = (data.activity_type || '').trim();
+      const location = (data.location || '').trim();
+      const date_time = data.date_time;
+
+      let hasError = false;
+      if (!activity) {
+        const el = document.getElementById('activity_error'); el.textContent = 'Activity type is required'; el.classList.remove('hidden'); hasError = true;
+      }
+      if (!location) {
+        const el = document.getElementById('location_error'); el.textContent = 'Location is required'; el.classList.remove('hidden'); hasError = true;
+      }
+      if (!date_time || Number.isNaN(Date.parse(date_time))) {
+        const el = document.getElementById('date_error'); el.textContent = 'Please provide a valid date/time'; el.classList.remove('hidden'); hasError = true;
+      }
+
+      if (hasError) return;
+
+      editBtn.disabled = true;
+      editBtn.innerHTML = '<span class="flex items-center"><svg class="animate-spin -ml-1 mr-3 h-5 w-5 text-white" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>Saving...</span>';
+
+      try {
+        const token = localStorage.getItem('token');
+        const formData = new FormData(editForm);
+
+        // Send the complete final photos array
+        formData.append('photos', JSON.stringify(existingPhotos));
+
+        const response = await fetch(`/api/buddies/${activityId}`, {
+          method: 'PUT',
+          headers: {
+            'Authorization': `Bearer ${token}`
+          },
+          body: formData
+        });
+
+        const result = await response.json();
+
+        if (response.ok) {
+          editMsg.className = 'p-4 rounded-xl text-sm font-medium text-green-700 bg-green-50 border border-green-200';
+          editMsg.textContent = '✅';
+          editMsg.classList.remove('hidden');
+
+          // Redirect after success
+          setTimeout(() => {
+            window.location.href = `/buddies/${activityId}/view`;
+          }, 1500);
+        } else {
+          editMsg.className = 'p-4 rounded-xl text-sm font-medium text-red-700 bg-red-50 border border-red-200';
+          editMsg.textContent = result.message || '❌ Failed to update activity';
+          editMsg.classList.remove('hidden');
+        }
+      } catch (error) {
+        editMsg.className = 'p-4 rounded-xl text-sm font-medium text-red-700 bg-red-50 border border-red-200';
+        editMsg.textContent = '❌ Network error. Please try again.';
+        editMsg.classList.remove('hidden');
+      } finally {
+        editBtn.disabled = false;
+        editBtn.innerHTML = '💾 Save Changes';
+      }
+    });
+
+    async function loadActivityData(id) {
+      try {
+        const response = await fetch(`/api/buddies/${id}`);
+        if (response.ok) {
+          const data = await response.json();
+          const activity = data.buddy;
+
+          // Populate form fields
+          document.getElementById('activity_type').value = activity.activity_type;
+          document.getElementById('location').value = activity.location;
+          document.getElementById('date_time').value = new Date(activity.date_time).toISOString().slice(0, 16);
+          document.getElementById('max_participants').value = activity.max_participants || '';
+          document.getElementById('gender_preference').value = activity.gender_preference || 'any';
+          document.getElementById('min_age').value = activity.min_age || 18;
+          document.getElementById('max_age').value = activity.max_age || 99;
+          document.getElementById('cost_per_person').value = activity.cost_per_person || 0;
+          document.getElementById('is_private').checked = activity.is_private || false;
+          document.getElementById('description').value = activity.description || '';
+
+          // Show existing photos if any
+          if (activity.photos) {
+            let photos = activity.photos;
+            if (typeof photos === 'string') {
+              try {
+                photos = JSON.parse(photos);
+              } catch (e) {
+                console.error('Failed to parse photos JSON string:', e);
+                photos = [];
+              }
+            }
+            // Populate the existingPhotos array with the loaded photos
+            existingPhotos = photos || [];
+            showExistingPhotos(photos);
+          }
+        } else {
+          editMsg.className = 'p-4 rounded-xl text-sm font-medium text-red-700 bg-red-50 border border-red-200';
+          editMsg.textContent = '❌ Failed to load activity data';
+          editMsg.classList.remove('hidden');
+        }
+      } catch (error) {
+        editMsg.className = 'p-4 rounded-xl text-sm font-medium text-red-700 bg-red-50 border border-red-200';
+        editMsg.textContent = '❌ Network error loading activity data';
+        editMsg.classList.remove('hidden');
+      }
+    }
+  });
+</script>

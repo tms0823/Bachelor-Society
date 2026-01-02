@@ -1,0 +1,448 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Activity Buddies - Bachelor Society</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
+    <script src="/js/auth.js"></script>
+    <style>
+      .sidebar-transition {
+        transition: transform 0.3s ease-in-out;
+      }
+      .nav-item {
+        transition: all 0.2s ease-in-out;
+      }
+      .nav-item.active {
+        background-color: rgba(59, 130, 246, 0.1);
+        border-left: 3px solid #3b82f6;
+      }
+    </style>
+  </head>
+  <body class="bg-gray-50 font-sans">
+    <!-- Include Sidebar -->
+    <%- include('partials/sidebar') %>
+
+    <!-- Main Content -->
+    <div class="lg:ml-80 min-h-screen">
+      <!-- Top Bar (Mobile) -->
+      <div class="lg:hidden bg-white shadow-sm border-b border-gray-200 px-4 py-3 flex items-center justify-between">
+        <button onclick="toggleSidebar()" class="text-gray-600 hover:text-gray-800">
+          <i data-lucide="menu" class="w-6 h-6"></i>
+        </button>
+        <h1 class="text-lg font-semibold text-gray-800">Activity Buddies</h1>
+        <div class="w-6"></div> <!-- Spacer -->
+      </div>
+
+      <!-- Page Content -->
+      <div class="p-6 lg:p-8">
+        <div class="max-w-7xl mx-auto">
+          <div class="flex justify-between items-center mb-6">
+            <h2 class="text-3xl font-bold text-gray-800">Activity Buddies</h2>
+            <a href="/buddies/create" class="bg-purple-600 text-white px-6 py-3 rounded-lg hover:bg-purple-700 transition-colors font-medium">
+              <span class="mr-2">+</span>Create Activity
+            </a>
+          </div>
+
+
+
+          <!-- Advanced Filters -->
+          <div class="bg-white rounded-lg shadow-md p-6 mb-6">
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
+              <div>
+                <label class="block text-sm font-medium text-gray-700 mb-2">Activity Type</label>
+                <select id="activityTypeFilter" class="w-full border border-gray-300 px-3 py-2 rounded-md focus:ring-2 focus:ring-purple-500 focus:border-transparent">
+                  <option value="">All Activities</option>
+                  <option value="sports">Sports</option>
+                  <option value="cultural">Cultural</option>
+                  <option value="social">Social</option>
+                  <option value="educational">Educational</option>
+                  <option value="outdoor">Outdoor</option>
+                  <option value="gaming">Gaming</option>
+                  <option value="other">Other</option>
+                </select>
+              </div>
+              <div>
+                <label class="block text-sm font-medium text-gray-700 mb-2">Location</label>
+                <input type="text" id="locationFilter" placeholder="e.g., Dhanmondi, Dhaka" class="w-full border border-gray-300 px-3 py-2 rounded-md focus:ring-2 focus:ring-purple-500 focus:border-transparent">
+              </div>
+              <div>
+                <label class="block text-sm font-medium text-gray-700 mb-2">Date From</label>
+                <input type="date" id="dateFromFilter" class="w-full border border-gray-300 px-3 py-2 rounded-md focus:ring-2 focus:ring-purple-500 focus:border-transparent">
+              </div>
+              <div>
+                <label class="block text-sm font-medium text-gray-700 mb-2">Date To</label>
+                <input type="date" id="dateToFilter" class="w-full border border-gray-300 px-3 py-2 rounded-md focus:ring-2 focus:ring-purple-500 focus:border-transparent">
+              </div>
+              <div>
+                <label class="block text-sm font-medium text-gray-700 mb-2">Min Age</label>
+                <input type="number" id="minAgeFilter" placeholder="18" min="13" max="100" class="w-full border border-gray-300 px-3 py-2 rounded-md focus:ring-2 focus:ring-purple-500 focus:border-transparent">
+              </div>
+              <div>
+                <label class="block text-sm font-medium text-gray-700 mb-2">Max Age</label>
+                <input type="number" id="maxAgeFilter" placeholder="99" min="13" max="100" class="w-full border border-gray-300 px-3 py-2 rounded-md focus:ring-2 focus:ring-purple-500 focus:border-transparent">
+              </div>
+              <div>
+                <label class="block text-sm font-medium text-gray-700 mb-2">Cost (Max BDT)</label>
+                <input type="number" id="maxCostFilter" placeholder="500" min="0" class="w-full border border-gray-300 px-3 py-2 rounded-md focus:ring-2 focus:ring-purple-500 focus:border-transparent">
+              </div>
+              <div>
+                <label class="block text-sm font-medium text-gray-700 mb-2">Gender Preference</label>
+                <select id="genderFilter" class="w-full border border-gray-300 px-3 py-2 rounded-md focus:ring-2 focus:ring-purple-500 focus:border-transparent">
+                  <option value="">Any</option>
+                  <option value="male">Male</option>
+                  <option value="female">Female</option>
+                  <option value="any">Any</option>
+                </select>
+              </div>
+            </div>
+            <div class="flex justify-between items-center mt-4">
+              <button id="applyBuddyFilters" class="bg-purple-600 text-white px-6 py-2 rounded-md hover:bg-purple-700 transition-colors">
+                Apply Filters
+              </button>
+              <button id="clearBuddyFilters" class="bg-gray-500 text-white px-6 py-2 rounded-md hover:bg-gray-600 transition-colors">
+                Clear Filters
+              </button>
+            </div>
+          </div>
+
+          <!-- Activities Grid -->
+          <div id="activities" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"></div>
+
+          <!-- Loading State -->
+          <div id="loading" class="text-center py-12">
+            <div class="inline-block animate-spin rounded-full h-8 w-8 border-b-2 border-purple-600"></div>
+            <p class="mt-2 text-gray-600">Loading activities...</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <script>
+      // Initialize Lucide icons
+      lucide.createIcons();
+
+      // Sidebar toggle for mobile
+      function toggleSidebar() {
+        const sidebar = document.getElementById('sidebar');
+        const overlay = document.getElementById('sidebar-overlay');
+
+        if (sidebar.classList.contains('-translate-x-full')) {
+          sidebar.classList.remove('-translate-x-full');
+          overlay.classList.remove('hidden');
+        } else {
+          sidebar.classList.add('-translate-x-full');
+          overlay.classList.add('hidden');
+        }
+      }
+
+      // Navigation
+      document.addEventListener('DOMContentLoaded', function() {
+        const currentPath = window.location.pathname;
+        const navItems = document.querySelectorAll('.nav-item');
+        navItems.forEach(item => {
+          const href = item.getAttribute('href');
+          if (href === currentPath || (href !== '/dashboard' && currentPath.startsWith(href))) {
+            item.classList.add('active');
+          }
+        });
+      });
+
+      let currentBuddyFilters = {};
+
+      function loadActivities(filters = {}) {
+        const loading = document.getElementById('loading');
+        const activities = document.getElementById('activities');
+
+        loading.classList.remove('hidden');
+        activities.innerHTML = '';
+
+        // Build query string from filters
+        const queryParams = new URLSearchParams();
+        Object.keys(filters).forEach(key => {
+          if (filters[key]) {
+            queryParams.append(key, filters[key]);
+          }
+        });
+
+        // Add user_id if user is authenticated (for proper filtering)
+        if (currentUser && currentUser.id) {
+          queryParams.append('user_id', currentUser.id);
+        }
+
+        const url = '/api/buddies' + (queryParams.toString() ? '?' + queryParams.toString() : '');
+
+        fetch(url, {
+          headers: currentUser ? { 'Authorization': `Bearer ${localStorage.getItem('token') || new URLSearchParams(window.location.search).get('token')}` } : {}
+        })
+          .then(response => response.json())
+          .then(data => {
+            loading.classList.add('hidden');
+            if (data && data.buddies && data.buddies.length > 0) {
+              renderActivities(data.buddies);
+            } else {
+              activities.innerHTML = '<div class="col-span-full text-center py-12"><p class="text-gray-500 text-lg">No activities found matching your criteria.</p><p class="text-gray-400 mt-2">Try adjusting your filters or check back later.</p></div>';
+            }
+          })
+          .catch(error => {
+            loading.classList.add('hidden');
+            console.error('Error:', error);
+            activities.innerHTML = '<div class="col-span-full text-center py-12"><p class="text-red-500 text-lg">Error loading activities. Please try again.</p></div>';
+          });
+      }
+
+      let currentUser = null;
+
+      // Get current user info
+      async function getCurrentUser() {
+        try {
+          // First try to get token from localStorage
+          let token = localStorage.getItem('token');
+
+          // If no token in localStorage, check URL parameters
+          if (!token) {
+            const urlParams = new URLSearchParams(window.location.search);
+            token = urlParams.get('token');
+            if (token) {
+              // Store token in localStorage for future use
+              localStorage.setItem('token', token);
+            }
+          }
+
+          if (token) {
+            console.log('Found token, fetching user info...', token.substring(0, 20) + '...');
+            const response = await fetch('/api/users/me', {
+              headers: {
+                'Authorization': `Bearer ${token}`
+              }
+            });
+            if (response.ok) {
+              const data = await response.json();
+              currentUser = data.user;
+              console.log('Current user set:', currentUser?.id, currentUser?.username);
+            } else {
+              console.log('Failed to get user info:', response.status, await response.text());
+              currentUser = null;
+            }
+          } else {
+            console.log('No token found');
+            currentUser = null;
+          }
+        } catch (error) {
+          console.log('User authentication error:', error);
+          currentUser = null;
+        }
+      }
+
+      function renderActivities(activities) {
+        const container = document.getElementById('activities');
+        activities.forEach(activity => {
+          const div = document.createElement('div');
+          div.className = 'bg-white rounded-lg shadow-md hover:shadow-lg transition-shadow duration-200 overflow-hidden';
+
+          // Format cost with BDT
+          const costFormatted = activity.cost_per_person !== undefined && activity.cost_per_person !== null && parseFloat(activity.cost_per_person) > 0 ? new Intl.NumberFormat('en-US').format(activity.cost_per_person) + ' BDT' : 'Free';
+
+          // Get activity date and time
+          const activityDateTime = new Date(activity.date_time);
+          const dateFormatted = activityDateTime.toLocaleDateString('en-US', {
+            year: 'numeric',
+            month: 'short',
+            day: 'numeric'
+          });
+          const timeFormatted = activityDateTime.toLocaleTimeString('en-US', {
+            hour: 'numeric',
+            minute: '2-digit',
+            hour12: true
+          });
+
+          // Check if current user owns this activity
+          const isOwner = currentUser && activity.owner_id === currentUser.id;
+          console.log('Activity:', activity.id, 'Owner ID:', activity.owner_id, 'Current User ID:', currentUser?.id, 'Is Owner:', isOwner);
+
+          // Extract display name from email if needed
+          let ownerDisplayName = activity.owner_username;
+          if (ownerDisplayName && ownerDisplayName.includes('@')) {
+            ownerDisplayName = ownerDisplayName.split('@')[0];
+            ownerDisplayName = ownerDisplayName.charAt(0).toUpperCase() + ownerDisplayName.slice(1);
+          }
+
+          div.innerHTML = `
+            <div class="p-8">
+              <div class="flex justify-between items-start mb-4">
+                <div class="flex-1 min-w-0">
+                  <h3 class="text-xl font-bold text-gray-900 mb-2 leading-tight break-words">${activity.activity_type}</h3>
+                  <p class="text-base text-purple-600 font-semibold">By ${ownerDisplayName || 'User'}</p>
+                </div>
+                <div class="text-right ml-4 flex-shrink-0">
+                  <p class="text-2xl font-bold text-purple-600">${costFormatted}</p>
+                  <p class="text-sm text-gray-500">${activity.cost_per_person !== undefined && activity.cost_per_person !== null && parseFloat(activity.cost_per_person) > 0 ? 'per person' : ''}</p>
+                </div>
+              </div>
+
+              <div class="flex flex-col sm:flex-row sm:items-center space-y-2 sm:space-y-0 sm:space-x-6 mb-6 text-sm text-gray-600">
+                <span class="flex items-center">
+                  <svg class="w-5 h-5 mr-2 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path>
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"></path>
+                  </svg>
+                  ${activity.location}
+                </span>
+                <span class="flex items-center">
+                  <svg class="w-5 h-5 mr-2 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
+                  </svg>
+                  ${dateFormatted} at ${timeFormatted}
+                </span>
+              </div>
+
+              <!-- Organizer Information -->
+              <div class="flex items-center space-x-3 mb-4 p-3 bg-gray-50 rounded-lg">
+                <div class="flex-shrink-0">
+                  ${activity.owner_profile_picture ?
+                    `<img src="${activity.owner_profile_picture}" alt="${activity.owner_username}'s profile" class="w-10 h-10 rounded-full object-cover border-2 border-white shadow-sm">` :
+                    `<div class="w-10 h-10 rounded-full bg-gray-300 flex items-center justify-center">
+                      <svg class="w-5 h-5 text-gray-600" fill="currentColor" viewBox="0 0 24 24">
+                        <path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/>
+                      </svg>
+                    </div>`
+                  }
+                </div>
+                <div class="flex-1 min-w-0">
+                  <p class="text-sm font-medium text-gray-900">Organized by</p>
+                  <p class="text-sm text-gray-600 truncate">${ownerDisplayName || 'Unknown User'}</p>
+                </div>
+                ${!isOwner ? `<button onclick="messageOrganizer(${activity.id}, '${ownerDisplayName || activity.owner_username}')" class="text-blue-600 hover:text-blue-800 text-sm font-medium">
+                  Message
+                </button>` : ''}
+              </div>
+
+              <div class="flex flex-col space-y-4">
+                <div class="flex flex-wrap gap-2">
+                  <span class="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-purple-100 text-purple-800">
+                    Ages ${activity.min_age || '18'}-${activity.max_age || '99'}
+                  </span>
+                  ${activity.gender_preference && activity.gender_preference !== 'any' ? `<span class="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-blue-100 text-blue-800">${activity.gender_preference}</span>` : ''}
+                  ${activity.activity_type !== 'other' ? `<span class="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-green-100 text-green-800">${activity.activity_type}</span>` : ''}
+                </div>
+                <div class="flex flex-wrap gap-3">
+                  <a href="/buddies/${activity.id}/view" class="bg-purple-600 text-white px-6 py-3 rounded-lg hover:bg-purple-700 transition-colors text-sm font-medium whitespace-nowrap">
+                    View Details
+                  </a>
+                  ${isOwner ? `
+                    <a href="/buddies/${activity.id}/edit" class="bg-yellow-600 text-white px-6 py-3 rounded-lg hover:bg-yellow-700 transition-colors text-sm font-medium whitespace-nowrap">
+                      Edit
+                    </a>
+                    <button onclick="deletePost('activity', ${activity.id})" class="bg-red-600 text-white px-6 py-3 rounded-lg hover:bg-red-700 transition-colors text-sm font-medium whitespace-nowrap">
+                      Delete
+                    </button>
+                  ` : ''}
+                </div>
+              </div>
+            </div>
+          `;
+          container.appendChild(div);
+        });
+      }
+
+      // Filter functionality
+      document.getElementById('applyBuddyFilters').addEventListener('click', function() {
+        const activityTypeFilter = document.getElementById('activityTypeFilter').value;
+        const locationFilter = document.getElementById('locationFilter').value.trim();
+        const dateFromFilter = document.getElementById('dateFromFilter').value;
+        const dateToFilter = document.getElementById('dateToFilter').value;
+        const minAgeFilter = document.getElementById('minAgeFilter').value;
+        const maxAgeFilter = document.getElementById('maxAgeFilter').value;
+        const maxCostFilter = document.getElementById('maxCostFilter').value;
+        const genderFilter = document.getElementById('genderFilter').value;
+
+        currentBuddyFilters = {};
+
+        if (activityTypeFilter) currentBuddyFilters.activity_type = activityTypeFilter;
+        if (locationFilter) currentBuddyFilters.location = locationFilter;
+        if (dateFromFilter) currentBuddyFilters.date_from = dateFromFilter;
+        if (dateToFilter) currentBuddyFilters.date_to = dateToFilter;
+        if (minAgeFilter) currentBuddyFilters.min_age = minAgeFilter;
+        if (maxAgeFilter) currentBuddyFilters.max_age = maxAgeFilter;
+        if (maxCostFilter) currentBuddyFilters.cost_max = maxCostFilter;
+        if (genderFilter) currentBuddyFilters.gender_preference = genderFilter;
+
+        loadActivities(currentBuddyFilters);
+      });
+
+      document.getElementById('clearBuddyFilters').addEventListener('click', function() {
+        // Reset all filter inputs
+        document.getElementById('activityTypeFilter').value = '';
+        document.getElementById('locationFilter').value = '';
+        document.getElementById('dateFromFilter').value = '';
+        document.getElementById('dateToFilter').value = '';
+        document.getElementById('minAgeFilter').value = '';
+        document.getElementById('maxAgeFilter').value = '';
+        document.getElementById('maxCostFilter').value = '';
+        document.getElementById('genderFilter').value = '';
+
+        // Clear filters and reload
+        currentBuddyFilters = {};
+        loadActivities();
+      });
+
+
+
+      // Load initial activities
+      getCurrentUser().then(() => {
+        loadActivities();
+      });
+
+      async function deletePost(type, id) {
+        if (!confirm('Are you sure you want to delete this post?')) return;
+
+        try {
+          let endpoint = '';
+          if (type === 'activity') endpoint = `/api/buddies/${id}`;
+
+          const response = await fetch(endpoint, {
+            method: 'DELETE',
+            headers: { 'Authorization': `Bearer ${localStorage.getItem('token')}` }
+          });
+
+          if (response.ok) {
+            // Reload activities
+            loadActivities(currentBuddyFilters);
+          } else {
+            alert('Failed to delete post');
+          }
+        } catch (error) {
+          alert('Error deleting post');
+        }
+      }
+
+      async function messageOrganizer(activityId, organizerName) {
+        const message = prompt(`Send a message to ${organizerName} about this activity:`);
+        if (!message || !message.trim()) return;
+
+        try {
+          const response = await fetch('/api/messages/contact-organizer/' + activityId, {
+            method: 'POST',
+            headers: {
+              'Authorization': `Bearer ${localStorage.getItem('token')}`,
+              'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+              message: message.trim()
+            })
+          });
+
+          if (response.ok) {
+            alert('Message sent successfully!');
+          } else {
+            const data = await response.json();
+            alert(data.message || 'Failed to send message');
+          }
+        } catch (error) {
+          alert('Error sending message');
+        }
+      }
+    </script>
+  </body>
+</html>

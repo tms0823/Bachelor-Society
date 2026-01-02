@@ -1,0 +1,398 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Messages - Bachelor Society</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
+    <script src="/js/auth.js"></script>
+    <style>
+      .sidebar-transition {
+        transition: transform 0.3s ease-in-out;
+      }
+      .nav-item {
+        transition: all 0.2s ease-in-out;
+      }
+      .nav-item.active {
+        background-color: rgba(59, 130, 246, 0.1);
+        border-left: 3px solid #3b82f6;
+      }
+    </style>
+  </head>
+  <body class="bg-gray-50 font-sans">
+    <!-- Include Sidebar -->
+    <%- include('partials/sidebar', { user: user }) %>
+
+    <!-- Main Content -->
+    <div class="lg:ml-80 min-h-screen">
+      <!-- Top Bar (Mobile) -->
+      <div class="lg:hidden bg-white shadow-sm border-b border-gray-200 px-4 py-3 flex items-center justify-between">
+        <button onclick="toggleSidebar()" class="text-gray-600 hover:text-gray-800">
+          <i data-lucide="menu" class="w-6 h-6"></i>
+        </button>
+        <h1 class="text-lg font-semibold text-gray-800">Messages</h1>
+        <div class="w-6"></div> <!-- Spacer -->
+      </div>
+
+      <!-- Page Content -->
+      <div class="p-6 lg:p-8">
+        <div class="max-w-4xl mx-auto">
+          <h1 class="text-3xl font-bold text-gray-900 mb-6">Messages</h1>
+
+          <!-- Messages Container -->
+          <div id="messagesContainer" class="space-y-4">
+            <!-- Loading State -->
+            <div id="loadingMessages" class="bg-white rounded-xl shadow-sm border border-gray-200 p-8 text-center">
+              <div class="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600 mx-auto mb-4"></div>
+              <p class="text-gray-600">Loading your messages...</p>
+            </div>
+
+            <!-- Messages List -->
+            <div id="messagesList" class="hidden space-y-4"></div>
+
+            <!-- Empty State -->
+            <div id="emptyMessages" class="hidden bg-white rounded-xl shadow-sm border border-gray-200 p-8 text-center">
+              <i data-lucide="message-square" class="w-16 h-16 text-gray-400 mx-auto mb-4"></i>
+              <h2 class="text-xl font-semibold text-gray-900 mb-2">No Messages Yet</h2>
+              <p class="text-gray-600">When someone contacts you about your posts, messages will appear here.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <script>
+      // Initialize Lucide icons
+      lucide.createIcons();
+
+      // Sidebar toggle for mobile
+      function toggleSidebar() {
+        const sidebar = document.getElementById('sidebar');
+        const overlay = document.getElementById('sidebar-overlay');
+
+        if (sidebar.classList.contains('-translate-x-full')) {
+          sidebar.classList.remove('-translate-x-full');
+          overlay.classList.remove('hidden');
+        } else {
+          sidebar.classList.add('-translate-x-full');
+          overlay.classList.add('hidden');
+        }
+      }
+
+      // Set active navigation item and load messages
+      document.addEventListener('DOMContentLoaded', function() {
+        const currentPath = window.location.pathname;
+        const navItems = document.querySelectorAll('.nav-item');
+        navItems.forEach(item => {
+          const href = item.getAttribute('href');
+          if (href === currentPath) {
+            item.classList.add('active');
+          }
+        });
+
+        // Load messages
+        loadMessages();
+      });
+
+      async function loadMessages() {
+        const loadingMessages = document.getElementById('loadingMessages');
+        const messagesList = document.getElementById('messagesList');
+        const emptyMessages = document.getElementById('emptyMessages');
+
+        try {
+          const response = await fetch('/api/messages');
+          const data = await response.json();
+
+          loadingMessages.classList.add('hidden');
+
+          if (response.ok && data.conversations && data.conversations.length > 0) {
+            renderConversations(data.conversations);
+            messagesList.classList.remove('hidden');
+          } else {
+            emptyMessages.classList.remove('hidden');
+          }
+        } catch (error) {
+          console.error('Error loading conversations:', error);
+          loadingMessages.innerHTML = '<p class="text-red-600">Error loading conversations. Please try again.</p>';
+        }
+      }
+
+      // Helper function to create display names from usernames/emails
+      function getDisplayName(username) {
+        if (!username) return 'User';
+
+        // If it's an email, extract the part before @
+        if (username.includes('@')) {
+          const emailPart = username.split('@')[0];
+          // Capitalize first letter
+          return emailPart.charAt(0).toUpperCase() + emailPart.slice(1);
+        }
+
+        // If it's already a proper username, return as-is
+        return username;
+      }
+
+      function renderConversations(conversations) {
+        const container = document.getElementById('messagesList');
+
+        conversations.forEach(conversation => {
+          const conversationDiv = document.createElement('div');
+          conversationDiv.className = `bg-white rounded-xl shadow-sm border border-gray-200 p-6 ${conversation.unread_count > 0 ? 'border-l-4 border-l-blue-500' : ''}`;
+
+          // Format the conversation context
+          let contextText = '';
+          if (conversation.related_type === 'buddy') {
+            contextText = 'Activity Discussion';
+          } else if (conversation.related_type === 'housing') {
+            contextText = 'Housing Inquiry';
+          } else if (conversation.related_type === 'roommate') {
+            contextText = 'Roommate Request';
+          } else {
+            contextText = 'General Message';
+          }
+
+          const displayName = getDisplayName(conversation.other_username);
+
+          const conversationHTML = `
+            <div class="flex items-start justify-between">
+              <div class="flex-1">
+                <div class="flex items-center space-x-2 mb-2">
+                  <h3 class="font-semibold text-gray-900">Conversation with ${displayName}</h3>
+                  ${conversation.unread_count > 0 ? `<span class="bg-blue-100 text-blue-800 text-xs px-2 py-1 rounded-full">${conversation.unread_count} new</span>` : ''}
+                  <span class="text-xs px-2 py-1 rounded-full bg-gray-100 text-gray-700">${contextText}</span>
+                </div>
+                <p class="text-gray-700 mb-2">${conversation.latest_message.length > 150 ? conversation.latest_message.substring(0, 150) + '...' : conversation.latest_message}</p>
+                <div class="flex items-center justify-between">
+                  <p class="text-xs text-gray-500">${conversation.total_messages} messages • ${new Date(conversation.latest_message_time).toLocaleString()}</p>
+                </div>
+              </div>
+              <div class="ml-4">
+                <button onclick="viewConversation(${conversation.other_user_id}, '${conversation.related_type || ''}', '${conversation.related_id || ''}', ${conversation.unread_count})" class="bg-blue-600 text-white px-3 py-1 rounded text-sm hover:bg-blue-700 transition-colors">
+                  View Conversation
+                </button>
+              </div>
+            </div>
+          `;
+
+          conversationDiv.innerHTML = conversationHTML;
+          container.appendChild(conversationDiv);
+        });
+      }
+
+      async function viewConversation(otherUserId, relatedType, relatedId, unreadCount = 0) {
+        // Immediately update UI when clicking View Conversation
+        // Hide the "new" badge for this conversation in the list
+        const conversationElements = document.querySelectorAll('#messagesList > div');
+        conversationElements.forEach(element => {
+          const viewButton = element.querySelector('button[onclick*="viewConversation"]');
+          if (viewButton && viewButton.getAttribute('onclick').includes(otherUserId.toString())) {
+            // Remove the unread count badge
+            const badge = element.querySelector('.bg-blue-100');
+            if (badge) badge.remove();
+            // Remove the blue border
+            element.classList.remove('border-l-4', 'border-l-blue-500');
+          }
+        });
+
+        // Mark the conversation as read on the server
+        let markReadUrl = `/api/messages/conversation/${otherUserId}/read`;
+        // Always pass related_type and related_id for consistency
+        markReadUrl += `?related_type=${relatedType || ''}&related_id=${relatedId || ''}`;
+
+        try {
+          const markReadResponse = await fetch(markReadUrl, {
+            method: 'PUT',
+            headers: {
+              'Authorization': `Bearer ${localStorage.getItem('token')}`
+            }
+          });
+
+          if (markReadResponse.ok) {
+            // Successfully marked as read, immediately refresh sidebar counter
+            updateSidebarMessageBadge();
+          } else {
+            console.error('Failed to mark conversation as read:', markReadResponse.status, markReadUrl);
+          }
+        } catch (error) {
+          console.error('Error marking conversation as read:', error);
+          alert('Error marking messages as read. Please refresh the page.');
+        }
+
+        // Create conversation modal
+        const modal = document.createElement('div');
+        modal.className = 'fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50';
+        modal.innerHTML = `
+          <div class="bg-white rounded-2xl shadow-2xl max-w-2xl w-full mx-4 max-h-[80vh] flex flex-col">
+            <div class="p-6 border-b border-gray-200">
+              <div class="flex items-center justify-between">
+                <h3 class="text-lg font-semibold text-gray-900">Conversation</h3>
+                <button onclick="this.closest('.fixed').remove()" class="text-gray-400 hover:text-gray-600">
+                  <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                  </svg>
+                </button>
+              </div>
+            </div>
+            <div id="conversationMessages" class="flex-1 overflow-y-auto p-6 space-y-4">
+              <div class="text-center text-gray-500">
+                <div class="animate-spin rounded-full h-6 w-6 border-b-2 border-blue-600 mx-auto mb-2"></div>
+                Loading conversation...
+              </div>
+            </div>
+            <div class="p-6 border-t border-gray-200">
+              <form id="replyForm" class="flex space-x-3">
+                <input type="text" id="replyMessage" placeholder="Type your reply..." class="flex-1 border border-gray-300 rounded-lg px-4 py-2 focus:ring-2 focus:ring-blue-500 focus:border-blue-500" required />
+                <button type="submit" class="bg-blue-600 text-white px-6 py-2 rounded-lg hover:bg-blue-700 transition-colors">
+                  Send
+                </button>
+              </form>
+            </div>
+          </div>
+        `;
+
+        document.body.appendChild(modal);
+
+        // Build conversation URL
+        let conversationUrl = `/api/messages/conversation/${otherUserId}`;
+        // Always pass related_type and related_id, even if empty for general conversations
+        conversationUrl += `?related_type=${relatedType || ''}&related_id=${relatedId || ''}`;
+
+        // Load conversation messages
+        try {
+          const response = await fetch(conversationUrl);
+          const data = await response.json();
+
+          if (response.ok) {
+            renderConversationMessages(data.messages, otherUserId);
+            // Conversation already marked as read at the beginning, no need to do it again
+          } else {
+            document.getElementById('conversationMessages').innerHTML = '<p class="text-red-600 text-center">Failed to load conversation</p>';
+          }
+        } catch (error) {
+          console.error('Error loading conversation:', error);
+          document.getElementById('conversationMessages').innerHTML = '<p class="text-red-600 text-center">Error loading conversation</p>';
+        }
+
+        // Handle reply form
+        document.getElementById('replyForm').addEventListener('submit', async (e) => {
+          e.preventDefault();
+          const message = document.getElementById('replyMessage').value.trim();
+          if (!message) return;
+
+          const replyBtn = e.target.querySelector('button[type="submit"]');
+          const originalText = replyBtn.textContent;
+          replyBtn.disabled = true;
+          replyBtn.textContent = 'Sending...';
+
+          try {
+            // Use JSON instead of FormData for more reliable data transmission
+            const requestData = {
+              receiver_id: parseInt(otherUserId),
+              message: message
+            };
+
+            if (relatedType && relatedId) {
+              requestData.related_type = relatedType;
+              requestData.related_id = parseInt(relatedId);
+            }
+
+            console.log('Sending reply with data:', requestData);
+
+            const response = await fetch('/api/messages', {
+              method: 'POST',
+              headers: {
+                'Authorization': `Bearer ${localStorage.getItem('token')}`,
+                'Content-Type': 'application/json'
+              },
+              body: JSON.stringify(requestData)
+            });
+
+            const result = await response.json();
+
+            if (response.ok) {
+              console.log('Reply sent successfully');
+              document.getElementById('replyMessage').value = '';
+              // Reload conversation
+              const convResponse = await fetch(conversationUrl);
+              const convData = await convResponse.json();
+              if (convResponse.ok) {
+                renderConversationMessages(convData.messages, otherUserId);
+              }
+            } else {
+              console.error('Failed to send message:', result);
+              alert(`Failed to send message: ${result.message || 'Unknown error'}`);
+            }
+          } catch (error) {
+            console.error('Error sending reply:', error);
+            alert('Error sending message');
+          } finally {
+            replyBtn.disabled = false;
+            replyBtn.textContent = originalText;
+          }
+        });
+      }
+
+      function renderConversationMessages(messages, otherUserId) {
+        const container = document.getElementById('conversationMessages');
+
+        if (!messages || messages.length === 0) {
+          container.innerHTML = '<p class="text-gray-500 text-center">No messages in this conversation</p>';
+          return;
+        }
+
+        container.innerHTML = '';
+
+        messages.forEach(message => {
+          const messageDiv = document.createElement('div');
+          const isFromMe = message.sender_id !== otherUserId; // Assuming current user is not the otherUserId
+
+          messageDiv.className = `flex ${isFromMe ? 'justify-end' : 'justify-start'}`;
+          messageDiv.innerHTML = `
+            <div class="max-w-xs lg:max-w-md px-4 py-2 rounded-lg ${
+              isFromMe
+                ? 'bg-blue-600 text-white'
+                : 'bg-gray-200 text-gray-800'
+            }">
+              <p class="text-sm">${message.message}</p>
+              <p class="text-xs mt-1 opacity-70">${new Date(message.created_at).toLocaleString()}</p>
+            </div>
+          `;
+
+          container.appendChild(messageDiv);
+        });
+
+        // Scroll to bottom
+        container.scrollTop = container.scrollHeight;
+      }
+
+      // Update sidebar message badge by fetching current unread count
+      async function updateSidebarMessageBadge() {
+        try {
+          const response = await fetch('/api/messages/unread-count', {
+            headers: {
+              'Authorization': `Bearer ${localStorage.getItem('token')}`
+            }
+          });
+
+          if (response.ok) {
+            const data = await response.json();
+            const badge = document.getElementById('messagesBadge');
+            if (badge) {
+              if (data.unreadCount > 0) {
+                badge.textContent = data.unreadCount > 99 ? '99+' : data.unreadCount;
+                badge.classList.remove('hidden');
+              } else {
+                badge.classList.add('hidden');
+              }
+            }
+          }
+        } catch (error) {
+          console.error('Error updating message badge:', error);
+        }
+      }
+
+
+    </script>
+  </body>
+</html>

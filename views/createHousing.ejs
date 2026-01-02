@@ -1,0 +1,317 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Create Housing Listing - Bachelor Society</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
+    <script src="/js/auth.js"></script>
+    <style>
+      .sidebar-transition {
+        transition: transform 0.3s ease-in-out;
+      }
+      .nav-item {
+        transition: all 0.2s ease-in-out;
+      }
+      .nav-item.active {
+        background-color: rgba(59, 130, 246, 0.1);
+        border-left: 3px solid #3b82f6;
+      }
+    </style>
+  </head>
+  <body class="bg-gray-50 font-sans">
+    <!-- Include Sidebar -->
+    <%- include('partials/sidebar') %>
+
+    <!-- Main Content -->
+    <div class="lg:ml-80 min-h-screen">
+      <!-- Top Bar (Mobile) -->
+      <div class="lg:hidden bg-white shadow-sm border-b border-gray-200 px-4 py-3 flex items-center justify-between">
+        <button onclick="toggleSidebar()" class="text-gray-600 hover:text-gray-800">
+          <i data-lucide="menu" class="w-6 h-6"></i>
+        </button>
+        <h1 class="text-lg font-semibold text-gray-800">Create Housing Listing</h1>
+        <div class="w-6"></div> <!-- Spacer -->
+      </div>
+
+      <!-- Page Content -->
+      <div class="p-6 lg:p-8">
+        <div class="max-w-4xl mx-auto bg-white p-8 rounded-lg shadow-lg">
+          <h2 class="text-2xl font-bold mb-6 text-gray-800">Create Housing Listing</h2>
+
+          <form id="createHousingForm" action="/api/housing" method="POST" enctype="multipart/form-data" class="space-y-6">
+            <input type="hidden" name="token" id="tokenField" value="" />
+
+            <!-- Basic Information -->
+            <div class="bg-gray-50 p-6 rounded-lg">
+              <h3 class="text-lg font-semibold mb-4 text-gray-700">Basic Information</h3>
+              <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                  <label class="block text-sm font-medium text-gray-700 mb-1">Area/Location *</label>
+                  <div class="relative">
+                    <select id="areaSelect" name="area" class="w-full border border-gray-300 px-3 py-2 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent appearance-none bg-white" required>
+                      <option value="">Select an area</option>
+                      <optgroup label="Dhaka Areas">
+                        <option value="Dhanmondi, Dhaka">Dhanmondi, Dhaka</option>
+                        <option value="Bashundhara, Dhaka">Bashundhara, Dhaka</option>
+                        <option value="Gulshan, Dhaka">Gulshan, Dhaka</option>
+                        <option value="Banani, Dhaka">Banani, Dhaka</option>
+                        <option value="Uttara, Dhaka">Uttara, Dhaka</option>
+                        <option value="Mirpur, Dhaka">Mirpur, Dhaka</option>
+                        <option value="Mohammadpur, Dhaka">Mohammadpur, Dhaka</option>
+                        <option value="Lalmatia, Dhaka">Lalmatia, Dhaka</option>
+                        <option value="Badda, Dhaka">Badda, Dhaka</option>
+                        <option value="Wari, Dhaka">Wari, Dhaka</option>
+                      </optgroup>
+                      <optgroup label="Other Cities">
+                        <option value="Agrabad, Chittagong">Agrabad, Chittagong</option>
+                        <option value="Lake Circus, Khulna">Lake Circus, Khulna</option>
+                        <option value="Circuit House, Rajshahi">Circuit House, Rajshahi</option>
+                        <option value="Sylhet Sadar, Sylhet">Sylhet Sadar, Sylhet</option>
+                        <option value="Barisal Sadar, Barisal">Barisal Sadar, Barisal</option>
+                        <option value="Rangpur Sadar, Rangpur">Rangpur Sadar, Rangpur</option>
+                        <option value="Comilla Sadar, Comilla">Comilla Sadar, Comilla</option>
+                        <option value="Narayanganj Sadar, Narayanganj">Narayanganj Sadar, Narayanganj</option>
+                        <option value="Gazipur Sadar, Gazipur">Gazipur Sadar, Gazipur</option>
+                      </optgroup>
+                    </select>
+                    <div class="absolute inset-y-0 right-0 flex items-center px-2 pointer-events-none">
+                      <svg class="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+                      </svg>
+                    </div>
+                  </div>
+                  <p id="area_error" class="text-red-600 text-sm mt-1 hidden"></p>
+                </div>
+                <div>
+                  <label class="block text-sm font-medium text-gray-700 mb-1">Full Address *</label>
+                  <input id="address" name="address" class="w-full border border-gray-300 px-3 py-2 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent" placeholder="Enter complete address (e.g., House 45, Road 27)" required />
+                  <p id="address_error" class="text-red-600 text-sm mt-1 hidden"></p>
+                </div>
+                <div>
+                  <label class="block text-sm font-medium text-gray-700 mb-1">Rent (monthly) *</label>
+                  <input id="rent" name="rent" type="number" class="w-full border border-gray-300 px-3 py-2 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent" placeholder="0" min="0" required />
+                  <p id="rent_error" class="text-red-600 text-sm mt-1 hidden"></p>
+                </div>
+                <div>
+                  <label class="block text-sm font-medium text-gray-700 mb-1">Available From *</label>
+                  <input id="available_from" name="available_from" type="date" class="w-full border border-gray-300 px-3 py-2 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent" required />
+                  <p id="available_from_error" class="text-red-600 text-sm mt-1 hidden"></p>
+                </div>
+                <div>
+                  <label class="block text-sm font-medium text-gray-700 mb-1">Number of Rooms *</label>
+                  <input id="rooms" name="rooms" type="number" class="w-full border border-gray-300 px-3 py-2 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent" min="1" required />
+                  <p id="rooms_error" class="text-red-600 text-sm mt-1 hidden"></p>
+                </div>
+              </div>
+            </div>
+
+            <!-- Property Details -->
+            <div class="bg-gray-50 p-6 rounded-lg">
+              <h3 class="text-lg font-semibold mb-4 text-gray-700">Property Details</h3>
+              <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                  <label class="block text-sm font-medium text-gray-700 mb-1">Property Type</label>
+                  <select id="property_type" name="property_type" class="w-full border border-gray-300 px-3 py-2 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+                    <option value="apartment">Apartment</option>
+                    <option value="house">House</option>
+                    <option value="room">Room</option>
+                    <option value="studio">Studio</option>
+                  </select>
+                </div>
+                <div>
+                  <label class="block text-sm font-medium text-gray-700 mb-1">Lease Duration (months)</label>
+                  <input id="lease_duration_months" name="lease_duration_months" type="number" class="w-full border border-gray-300 px-3 py-2 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent" min="1" max="24" value="12" />
+                </div>
+                <div>
+                  <label class="block text-sm font-medium text-gray-700 mb-1">Maximum Occupants</label>
+                  <input id="max_occupants" name="max_occupants" type="number" class="w-full border border-gray-300 px-3 py-2 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent" min="1" />
+                </div>
+                <div>
+                  <label class="block text-sm font-medium text-gray-700 mb-1">Institutional Preference</label>
+                  <input id="university_preference" name="university_preference" class="w-full border border-gray-300 px-3 py-2 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent" placeholder="e.g., University of Dhaka" />
+                </div>
+              </div>
+            </div>
+
+            <!-- Preferences & Restrictions -->
+            <div class="bg-gray-50 p-6 rounded-lg">
+              <h3 class="text-lg font-semibold mb-4 text-gray-700">Tenant Preferences</h3>
+              <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                  <label class="block text-sm font-medium text-gray-700 mb-1">Gender Preference</label>
+                  <select id="gender_preference" name="gender_preference" class="w-full border border-gray-300 px-3 py-2 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+                    <option value="any">Any</option>
+                    <option value="male">Male</option>
+                    <option value="female">Female</option>
+                  </select>
+                </div>
+                <div>
+                  <label class="block text-sm font-medium text-gray-700 mb-1">Allowed Residents</label>
+                  <select id="allowed_residents" name="allowed_residents" class="w-full border border-gray-300 px-3 py-2 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+                    <option value="anyone">Anyone</option>
+                    <option value="students">Students Only</option>
+                    <option value="working">Working Professionals</option>
+                    <option value="families">Families</option>
+                  </select>
+                </div>
+                <div>
+                  <label class="block text-sm font-medium text-gray-700 mb-1">Religion Preference</label>
+                  <input id="religion_preference" name="religion_preference" class="w-full border border-gray-300 px-3 py-2 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent" placeholder="Optional" />
+                </div>
+              </div>
+
+              <div class="mt-4">
+                <label class="block text-sm font-medium text-gray-700 mb-2">Property Rules</label>
+                <div class="space-y-2">
+                  <label class="flex items-center">
+                    <input id="smoking_allowed" name="smoking_allowed" type="checkbox" class="rounded border-gray-300 text-blue-600 focus:ring-blue-500" checked />
+                    <span class="ml-2 text-sm text-gray-700">Smoking Allowed</span>
+                  </label>
+                  <label class="flex items-center">
+                    <input id="pets_allowed" name="pets_allowed" type="checkbox" class="rounded border-gray-300 text-blue-600 focus:ring-blue-500" checked />
+                    <span class="ml-2 text-sm text-gray-700">Pets Allowed</span>
+                  </label>
+                </div>
+              </div>
+            </div>
+
+            <!-- Photos -->
+            <div class="bg-gray-50 p-6 rounded-lg">
+              <h3 class="text-lg font-semibold mb-4 text-gray-700">Photos</h3>
+              <div>
+                <label class="block text-sm font-medium text-gray-700 mb-1">Upload Photos (max 10)</label>
+                <input id="photos" name="photos" type="file" multiple accept="image/*" class="w-full border border-gray-300 px-3 py-2 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent" />
+                <p class="text-sm text-gray-500 mt-1">You can select multiple photos. Supported formats: JPG, PNG, GIF</p>
+                <div id="photo-preview" class="mt-4 grid grid-cols-2 md:grid-cols-4 gap-4"></div>
+              </div>
+            </div>
+
+
+
+            <!-- Submit -->
+            <div class="flex justify-end space-x-4">
+              <a href="/housing" class="bg-gray-500 text-white px-6 py-2 rounded-md hover:bg-gray-600 transition-colors">Cancel</a>
+              <button type="submit" class="bg-blue-600 text-white px-6 py-2 rounded-md hover:bg-blue-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed">
+                Create Listing
+              </button>
+            </div>
+          </form>
+
+          <div id="createMsg" class="mt-6"></div>
+        </div>
+      </div>
+    </div>
+
+    <script>
+      // Initialize Lucide icons
+      lucide.createIcons();
+
+      // Sidebar toggle for mobile
+      function toggleSidebar() {
+        const sidebar = document.getElementById('sidebar');
+        const overlay = document.getElementById('sidebar-overlay');
+
+        if (sidebar.classList.contains('-translate-x-full')) {
+          sidebar.classList.remove('-translate-x-full');
+          overlay.classList.remove('hidden');
+        } else {
+          sidebar.classList.add('-translate-x-full');
+          overlay.classList.add('hidden');
+        }
+      }
+
+      // Navigation
+      document.addEventListener('DOMContentLoaded', function() {
+        const currentPath = window.location.pathname;
+        const navItems = document.querySelectorAll('.nav-item');
+        navItems.forEach(item => {
+          const href = item.getAttribute('href');
+          if (href === currentPath || (href !== '/dashboard' && currentPath.startsWith(href))) {
+            item.classList.add('active');
+          }
+        });
+
+        // Set token field value
+        const tokenField = document.getElementById('tokenField');
+        if (tokenField) {
+          tokenField.value = localStorage.getItem('token') || '';
+        }
+
+        // Form validation for area and address fields
+        const form = document.getElementById('createHousingForm');
+        const areaSelect = document.getElementById('areaSelect');
+        const addressInput = document.getElementById('address');
+
+        form.addEventListener('submit', function(e) {
+          let hasErrors = false;
+
+          // Validate area selection
+          if (!areaSelect.value) {
+            e.preventDefault();
+            const errorMsg = document.getElementById('area_error');
+            errorMsg.textContent = 'Please select an area.';
+            errorMsg.classList.remove('hidden');
+            areaSelect.focus();
+            hasErrors = true;
+          } else {
+            document.getElementById('area_error').classList.add('hidden');
+          }
+
+          // Validate address input
+          if (!addressInput.value.trim()) {
+            e.preventDefault();
+            const errorMsg = document.getElementById('address_error');
+            errorMsg.textContent = 'Please enter a complete address.';
+            errorMsg.classList.remove('hidden');
+            if (!hasErrors) addressInput.focus();
+            hasErrors = true;
+          } else {
+            document.getElementById('address_error').classList.add('hidden');
+          }
+
+          if (hasErrors) {
+            return false;
+          }
+        });
+      });
+
+      // Photo preview functionality
+      document.getElementById('photos').addEventListener('change', function(e) {
+        const preview = document.getElementById('photo-preview');
+        preview.innerHTML = '';
+
+        Array.from(e.target.files).forEach((file, index) => {
+          if (index >= 10) return; // Max 10 photos
+
+          const reader = new FileReader();
+          reader.onload = function(e) {
+            const div = document.createElement('div');
+            div.className = 'relative';
+            div.innerHTML = '<img src="' + e.target.result + '" class="w-full h-24 object-cover rounded-md" /><button type="button" class="absolute top-1 right-1 bg-red-500 text-white rounded-full w-6 h-6 flex items-center justify-center text-xs hover:bg-red-600" onclick="removePhoto(' + index + ')">×</button>';
+            preview.appendChild(div);
+          };
+          reader.readAsDataURL(file);
+        });
+      });
+
+      function removePhoto(index) {
+        const input = document.getElementById('photos');
+        const preview = document.getElementById('photo-preview');
+
+        // Remove from preview
+        preview.children[index].remove();
+
+        // Create new FileList without the removed file
+        const dt = new DataTransfer();
+        const files = Array.from(input.files);
+        files.splice(index, 1);
+        files.forEach(file => dt.items.add(file));
+        input.files = dt.files;
+      }
+    </script>
+
+    <script src="/js/housing.js"></script>
+  </body>
+</html>
