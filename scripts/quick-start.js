@@ -61,11 +61,18 @@ try {
   execSync('node scripts/setup.js', { stdio: 'inherit', cwd: path.join(__dirname, '..') });
   console.log('✅ Database setup complete');
 } catch (error) {
-  console.error('❌ Database setup failed. You may need to:');
-  console.error('   1. Install MySQL/MariaDB');
-  console.error('   2. Create a database user');
+  console.error('❌ Database setup failed.');
+  console.error('');
+  console.error('🔧 Common solutions:');
+  console.error('   1. Install MySQL/MariaDB: https://dev.mysql.com/downloads/mysql/');
+  console.error('   2. Start MySQL service: sudo systemctl start mysql (Linux/Mac)');
   console.error('   3. Update .env with correct database credentials');
-  console.error('   4. Run: npm run setup');
+  console.error('   4. Run: npm run setup (to retry)');
+  console.error('');
+  console.error('💡 Default .env settings assume:');
+  console.error('   - MySQL running on localhost');
+  console.error('   - Root user with no password');
+  console.error('   - Database: bachelor_society');
   process.exit(1);
 }
 
