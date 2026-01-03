@@ -61,36 +61,38 @@ Third-party services for file uploads and messaging are available.
 ### 3.1 Functional Requirements
 
 #### 3.1.1 Authentication & Authorization
-FR-1: The system shall support user registration and login with JWT tokens.
+FR-1: The system shall support user registration with JWT tokens.
+FR-2: The system shall support user login with JWT tokens.
+FR-3: The system shall support user logout functionality.
 
 #### 3.1.2 Housing Features
-FR-2: Users shall be able to create housing listings.
-FR-3: Users shall be able to edit their housing listings.
-FR-4: Users shall be able to delete their housing listings.
-FR-5: Users shall be able to search housing listings.
-FR-6: Users shall be able to view housing listing details.
+FR-4: Users shall be able to create housing listings.
+FR-5: Users shall be able to edit their housing listings.
+FR-6: Users shall be able to delete their housing listings.
+FR-7: Users shall be able to search housing listings.
+FR-8: Users shall be able to view housing listing details.
 
 #### 3.1.3 Roommate Features
-FR-7: Users shall be able to post roommate requests.
-FR-8: Users shall be able to edit their roommate requests.
-FR-9: Users shall be able to delete their roommate requests.
-FR-10: Users shall be able to search roommate requests.
-FR-11: Users shall be able to browse existing roommate requests.
+FR-9: Users shall be able to post roommate requests.
+FR-10: Users shall be able to edit their roommate requests.
+FR-11: Users shall be able to delete their roommate requests.
+FR-12: Users shall be able to search roommate requests.
+FR-13: Users shall be able to browse existing roommate requests.
 
 #### 3.1.4 Activity Features
-FR-12: Users shall be able to create social activities.
-FR-13: Users shall be able to edit their social activities.
-FR-14: Users shall be able to delete their social activities.
-FR-15: Users shall be able to search social activities.
-FR-16: Users shall be able to join social activities.
+FR-14: Users shall be able to create social activities.
+FR-15: Users shall be able to edit their social activities.
+FR-16: Users shall be able to delete their social activities.
+FR-17: Users shall be able to search social activities.
+FR-18: Users shall be able to join social activities.
 
 #### 3.1.5 Communication Features
-FR-17: The system shall facilitate messaging between users.
+FR-19: The system shall facilitate messaging between users.
 
 #### 3.1.6 Media Features
-FR-18: The system shall support photo uploads for listings and activities.
-FR-19: The system shall support photo editing for listings and activities.
-FR-20: The system shall support photo deletion for listings and activities.
+FR-20: The system shall support photo uploads for listings and activities.
+FR-21: The system shall support photo editing for listings and activities.
+FR-22: The system shall support photo deletion for listings and activities.
 
 ### 3.2 Non-Functional Requirements
 
