@@ -63,12 +63,32 @@ Third-party services for file uploads and messaging are available.
 #### 3.1.1 Authentication & Authorization
 FR-1: The system shall support user registration and login with JWT tokens.
 
-#### 3.1.2 Core Features
-FR-2: Users shall be able to create, edit, delete, search, and view housing listings.
-FR-3: Users shall be able to post, edit, delete roommate requests and browse existing ones.
-FR-4: Users shall be able to create, edit, delete and join social activities.
-FR-5: The system shall facilitate messaging between users.
-FR-6: The system shall support photo uploads, editing, and deletion for listings and activities.
+#### 3.1.2 Housing Features
+FR-2: Users shall be able to create housing listings.
+FR-3: Users shall be able to edit their housing listings.
+FR-4: Users shall be able to delete their housing listings.
+FR-5: Users shall be able to search housing listings.
+FR-6: Users shall be able to view housing listing details.
+
+#### 3.1.3 Roommate Features
+FR-7: Users shall be able to post roommate requests.
+FR-8: Users shall be able to edit their roommate requests.
+FR-9: Users shall be able to delete their roommate requests.
+FR-10: Users shall be able to browse existing roommate requests.
+
+#### 3.1.4 Activity Features
+FR-11: Users shall be able to create social activities.
+FR-12: Users shall be able to edit their social activities.
+FR-13: Users shall be able to delete their social activities.
+FR-14: Users shall be able to join social activities.
+
+#### 3.1.5 Communication Features
+FR-15: The system shall facilitate messaging between users.
+
+#### 3.1.6 Media Features
+FR-16: The system shall support photo uploads for listings and activities.
+FR-17: The system shall support photo editing for listings and activities.
+FR-18: The system shall support photo deletion for listings and activities.
 
 ### 3.2 Non-Functional Requirements
 
