@@ -3,17 +3,17 @@ const db = require('../config/db');
 const BuddyModel = {
   create: (data, cb) => {
     const {
-      owner_id, activity_type, location, date_time, description, max_participants,
+      owner_id, activity_type, location, address, date_time, description, max_participants,
       gender_preference, min_age, max_age, cost_per_person, photos, is_private
     } = data;
 
     const sql = `INSERT INTO buddies (
-      owner_id, activity_type, location, date_time, description, max_participants,
+      owner_id, activity_type, location, address, date_time, description, max_participants,
       gender_preference, min_age, max_age, cost_per_person, photos, is_private
-    ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`;
+    ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`;
 
     const values = [
-      owner_id, activity_type, location, date_time, description, max_participants || 10,
+      owner_id, activity_type, location, address, date_time, description, max_participants || 10,
       gender_preference || 'any',
       min_age || 18,
       max_age || 99,

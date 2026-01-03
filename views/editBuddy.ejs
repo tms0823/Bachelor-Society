@@ -69,6 +69,19 @@
           </div>
         </div>
 
+        <div>
+          <label for="address" class="block text-sm font-semibold text-gray-700 mb-2">
+            Full Address
+          </label>
+          <input
+            id="address"
+            name="address"
+            type="text"
+            placeholder="Enter complete address (e.g., House 45, Road 27, Dhanmondi)"
+            class="w-full border border-gray-300 rounded-xl px-4 py-3 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200 bg-white/50 backdrop-blur-sm"
+          />
+        </div>
+
         <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
           <div>
             <label for="date_time" class="block text-sm font-semibold text-gray-700 mb-2">
@@ -406,6 +419,7 @@
           // Populate form fields
           document.getElementById('activity_type').value = activity.activity_type;
           document.getElementById('location').value = activity.location;
+          document.getElementById('address').value = activity.address || '';
           document.getElementById('date_time').value = new Date(activity.date_time).toISOString().slice(0, 16);
           document.getElementById('max_participants').value = activity.max_participants || '';
           document.getElementById('gender_preference').value = activity.gender_preference || 'any';

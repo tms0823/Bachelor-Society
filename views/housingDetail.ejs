@@ -299,7 +299,7 @@ function displayListingDetails() {
 
     // Basic information
     document.getElementById('address').textContent = currentListing.address || 'Address not specified';
-    document.getElementById('rent').textContent = currentListing.rent ? `$${currentListing.rent}` : 'Price not specified';
+    document.getElementById('rent').textContent = currentListing.rent ? `${new Intl.NumberFormat('en-US').format(currentListing.rent)} BDT` : 'Price not specified';
     document.getElementById('propertyType').textContent = currentListing.property_type || 'Property';
     document.getElementById('rooms').textContent = `${currentListing.rooms || 'N/A'} rooms`;
     document.getElementById('occupants').textContent = `${currentListing.max_occupants || 'N/A'} max occupants`;
@@ -376,7 +376,7 @@ function displayListingDetails() {
     }
 
     // Stats
-    document.getElementById('rentStat').textContent = currentListing.rent ? `$${currentListing.rent}` : 'N/A';
+    document.getElementById('rentStat').textContent = currentListing.rent ? `${new Intl.NumberFormat('en-US').format(currentListing.rent)} BDT` : 'N/A';
     document.getElementById('roomsStat').textContent = currentListing.rooms || 'N/A';
 
     try {

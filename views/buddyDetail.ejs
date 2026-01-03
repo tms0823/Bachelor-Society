@@ -83,6 +83,9 @@
               Location
             </span>
           </div>
+          <div id="addressContainer" class="text-sm text-gray-600 mt-1 hidden">
+            <span>Address: </span><span id="address" class="flex items-center"></span>
+          </div>
         </div>
         <div class="text-right">
           <div id="cost" class="text-3xl font-bold text-blue-600 mb-1"></div>
@@ -313,6 +316,14 @@ function displayBuddyDetails() {
   const formattedActivityType = currentBuddy.activity_type.charAt(0).toUpperCase() + currentBuddy.activity_type.slice(1) + ' Activity';
   document.getElementById('buddyTitle').textContent = formattedActivityType;
   document.getElementById('location').textContent = currentBuddy.location;
+  const address = currentBuddy.address || '';
+  document.getElementById('address').textContent = address;
+  const addressContainer = document.getElementById('addressContainer');
+  if (address.trim()) {
+    addressContainer.classList.remove('hidden');
+  } else {
+    addressContainer.classList.add('hidden');
+  }
 
   const costDisplay = currentBuddy.cost_per_person > 0 ?
     `${currentBuddy.cost_per_person} BDT` :
@@ -538,6 +549,37 @@ document.getElementById('messageForm').addEventListener('submit', async (e) => {
 
 // Initialize
 loadBuddyDetail();
+
+// Delete button handler
+document.getElementById('deleteBtn').addEventListener('click', async () => {
+  if (!confirm('Are you sure you want to delete this activity? This action cannot be undone.')) return;
+
+  const deleteBtn = document.getElementById('deleteBtn');
+  const originalText = deleteBtn.textContent;
+  deleteBtn.disabled = true;
+  deleteBtn.textContent = 'Deleting...';
+
+  try {
+    const token = localStorage.getItem('token');
+    const response = await fetch(`/api/buddies/${currentBuddy.id}`, {
+      method: 'DELETE',
+      headers: { Authorization: `Bearer ${token}` }
+    });
+
+    if (response.ok) {
+      alert('Activity deleted successfully');
+      window.location.href = '/buddies';
+    } else {
+      const json = await response.json();
+      alert(json.message || 'Failed to delete activity');
+    }
+  } catch (error) {
+    alert('Network error. Please try again.');
+  } finally {
+    deleteBtn.disabled = false;
+    deleteBtn.textContent = originalText;
+  }
+});
 </script>
 
 <script>

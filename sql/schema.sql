@@ -46,6 +46,7 @@ CREATE TABLE IF NOT EXISTS buddies (
   owner_id INT,
   activity_type VARCHAR(100) NOT NULL,
   location VARCHAR(255) NOT NULL,
+  address VARCHAR(500),
   date_time DATETIME NOT NULL,
   description TEXT,
   max_participants INT DEFAULT 10,

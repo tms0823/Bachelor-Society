@@ -271,10 +271,8 @@ async function main() {
       console.log('✅ Schema created');
     }
 
-    // Always insert seed data (safe to re-run)
-    console.log('🌱 Inserting seed data...');
-    await runSqlFile(path.join(__dirname, '..', 'sql', 'seed.sql'));
-    console.log('✅ Seed data inserted');
+    // Seed data insertion removed for clean installs
+    console.log('🌱 Skipping seed data insertion for clean database...');
 
     console.log('');
     console.log('🎉 Fresh database install completed successfully!');
