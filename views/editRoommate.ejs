@@ -75,6 +75,11 @@
                 <p id="preferred_location_error" class="text-red-600 text-sm mt-1 hidden"></p>
               </div>
               <div>
+                <label class="block text-sm font-medium text-gray-700 mb-1">Full Address</label>
+                <input id="address" name="address" class="w-full border border-gray-300 px-3 py-2 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent" placeholder="Enter complete address (e.g., House 45, Road 27)" />
+                <p id="address_error" class="text-red-600 text-sm mt-1 hidden"></p>
+              </div>
+              <div>
                 <label class="block text-sm font-medium text-gray-700 mb-1">Move-in Date</label>
                 <input id="move_in_date" name="move_in_date" type="date" class="w-full border border-gray-300 px-3 py-2 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent" />
                 <p id="move_in_date_error" class="text-red-600 text-sm mt-1 hidden"></p>
@@ -400,7 +405,7 @@
           e.preventDefault();
 
           // Clear previous errors
-          ['preferred_location_error', 'move_in_date_error', 'budget_min_error', 'budget_max_error'].forEach(id => {
+          ['preferred_location_error', 'address_error', 'move_in_date_error', 'budget_min_error', 'budget_max_error'].forEach(id => {
             const el = document.getElementById(id);
             if (el) { el.textContent = ''; el.classList.add('hidden'); }
           });
@@ -498,6 +503,7 @@
                 document.getElementById('preferred_location').classList.remove('hidden');
               }
 
+              document.getElementById('address').value = roommate.address || '';
               document.getElementById('move_in_date').value = roommate.move_in_date ? new Date(roommate.move_in_date).toISOString().split('T')[0] : '';
               document.getElementById('budget_min').value = roommate.budget_min || '';
               document.getElementById('budget_max').value = roommate.budget_max || '';

@@ -3,25 +3,25 @@ const db = require('../config/db');
 const RoommateModel = {
   create: (data, cb) => {
     const {
-      owner_id, preferred_location, budget_min, budget_max, lifestyle, move_in_date, description,
+      owner_id, preferred_location, address, budget_min, budget_max, lifestyle, move_in_date, description,
       gender_preference, room_type, lease_duration_preference, occupation,
       smoking_preference, religion, pet_preference, max_roommates, photos, is_private
     } = data;
 
     const sql = `INSERT INTO roommate_requests (
-      owner_id, preferred_location, budget_min, budget_max, lifestyle, move_in_date, description,
+      owner_id, preferred_location, address, budget_min, budget_max, lifestyle, move_in_date, description,
       gender_preference, room_type, lease_duration_preference, occupation,
       smoking_preference, religion, pet_preference, max_roommates, photos, is_private
-    ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`;
+    ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`;
 
     const values = [
-      owner_id, preferred_location, budget_min, budget_max, lifestyle, move_in_date, description,
+      owner_id, preferred_location, address, budget_min, budget_max, lifestyle, move_in_date, description,
       gender_preference || 'any',
       room_type || 'any',
       lease_duration_preference || 12,
-      occupation || null,
+      occupation,
       smoking_preference || 'any',
-      religion || null,
+      religion,
       pet_preference || 'any_pets',
       max_roommates || 1,
       photos ? JSON.stringify(photos) : null,

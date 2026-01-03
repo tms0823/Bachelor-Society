@@ -79,6 +79,11 @@
           <p id="preferred_location_error" class="text-red-600 text-sm mt-1 hidden"></p>
         </div>
         <div>
+          <label class="block text-sm font-medium text-gray-700 mb-1">Full Address</label>
+          <input id="address" name="address" class="w-full border border-gray-300 px-3 py-2 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent" placeholder="Enter complete address (e.g., House 45, Road 27)" />
+          <p id="address_error" class="text-red-600 text-sm mt-1 hidden"></p>
+        </div>
+        <div>
           <label class="block text-sm font-medium text-gray-700 mb-1">Move-in Date</label>
           <input id="move_in_date" name="move_in_date" type="date" class="w-full border border-gray-300 px-3 py-2 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent" />
           <p id="move_in_date_error" class="text-red-600 text-sm mt-1 hidden"></p>
@@ -404,6 +409,8 @@ function updatePhotoCount() {
           document.getElementById('preferred_location').focus();
           return false;
         }
+
+
 
         // Clear previous messages
         createMsg.innerHTML = '';

@@ -82,6 +82,7 @@ CREATE TABLE IF NOT EXISTS roommate_requests (
   id INT AUTO_INCREMENT PRIMARY KEY,
   owner_id INT,
   preferred_location VARCHAR(255) NOT NULL,
+  address VARCHAR(500),
   budget_min DECIMAL(10,2),
   budget_max DECIMAL(10,2),
   lifestyle TEXT,

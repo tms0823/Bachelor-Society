@@ -310,7 +310,8 @@ function displayBuddyDetails() {
   setupPhotoGallery();
 
   // Basic information
-  document.getElementById('buddyTitle').textContent = currentBuddy.activity_type;
+  const formattedActivityType = currentBuddy.activity_type.charAt(0).toUpperCase() + currentBuddy.activity_type.slice(1) + ' Activity';
+  document.getElementById('buddyTitle').textContent = formattedActivityType;
   document.getElementById('location').textContent = currentBuddy.location;
 
   const costDisplay = currentBuddy.cost_per_person > 0 ?
@@ -321,7 +322,7 @@ function displayBuddyDetails() {
   // Buddy details
   document.getElementById('dateTime').textContent = new Date(currentBuddy.date_time).toLocaleDateString() + ' at ' + new Date(currentBuddy.date_time).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
   document.getElementById('locationDetail').textContent = currentBuddy.location;
-  document.getElementById('activityTypeDetail').textContent = currentBuddy.activity_type;
+  document.getElementById('activityTypeDetail').textContent = formattedActivityType;
   document.getElementById('maxParticipants').textContent = currentBuddy.max_participants || 'Unlimited';
 
   // Preferences

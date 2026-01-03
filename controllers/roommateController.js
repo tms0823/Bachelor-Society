@@ -6,7 +6,7 @@ const RoommateController = {
     try {
       const owner_id = req.user?.id || null;
       const {
-        preferred_location, budget_min, budget_max, lifestyle, move_in_date, description,
+        preferred_location, address, budget_min, budget_max, lifestyle, move_in_date, description,
         gender_preference, room_type, lease_duration_preference, occupation,
         smoking_preference, religion, pet_preference, max_roommates, is_private
       } = req.body;
@@ -30,7 +30,7 @@ const RoommateController = {
       }
 
       const roommateData = {
-        owner_id, preferred_location, budget_min, budget_max, lifestyle, move_in_date, description,
+        owner_id, preferred_location, address, budget_min, budget_max, lifestyle, move_in_date, description,
         gender_preference: gender_preference || 'any',
         room_type: room_type || 'any',
         lease_duration_preference: lease_duration_preference || 12,
@@ -216,7 +216,7 @@ const RoommateController = {
 
       // Validate input data
       const {
-        preferred_location, budget_min, budget_max, lifestyle, move_in_date, description,
+        preferred_location, address, budget_min, budget_max, lifestyle, move_in_date, description,
         gender_preference, room_type, lease_duration_preference, occupation,
         smoking_preference, religion, pet_preference, max_roommates
       } = req.body;

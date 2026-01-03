@@ -141,6 +141,10 @@
               <span id="locationDetail" class="text-gray-800"></span>
             </div>
             <div>
+              <span class="block text-sm font-medium text-gray-500">Full Address</span>
+              <span id="addressDetail" class="text-gray-800"></span>
+            </div>
+            <div>
               <span class="block text-sm font-medium text-gray-500">Move-in Date</span>
               <span id="moveInDate" class="text-gray-800"></span>
             </div>
@@ -345,6 +349,7 @@ function displayRoommateDetails() {
 
   // Roommate details
   document.getElementById('locationDetail').textContent = currentRoommate.preferred_location || 'Not specified';
+  document.getElementById('addressDetail').textContent = currentRoommate.address || 'Not specified';
   document.getElementById('moveInDate').textContent = currentRoommate.move_in_date ? new Date(currentRoommate.move_in_date).toLocaleDateString() : 'Flexible';
   document.getElementById('roomType').textContent = currentRoommate.room_type === 'any' ? 'Any room type' : currentRoommate.room_type;
   document.getElementById('leaseDuration').textContent = `${currentRoommate.lease_duration_preference || 12} months`;
