@@ -74,21 +74,23 @@ FR-6: Users shall be able to view housing listing details.
 FR-7: Users shall be able to post roommate requests.
 FR-8: Users shall be able to edit their roommate requests.
 FR-9: Users shall be able to delete their roommate requests.
-FR-10: Users shall be able to browse existing roommate requests.
+FR-10: Users shall be able to search roommate requests.
+FR-11: Users shall be able to browse existing roommate requests.
 
 #### 3.1.4 Activity Features
-FR-11: Users shall be able to create social activities.
-FR-12: Users shall be able to edit their social activities.
-FR-13: Users shall be able to delete their social activities.
-FR-14: Users shall be able to join social activities.
+FR-12: Users shall be able to create social activities.
+FR-13: Users shall be able to edit their social activities.
+FR-14: Users shall be able to delete their social activities.
+FR-15: Users shall be able to search social activities.
+FR-16: Users shall be able to join social activities.
 
 #### 3.1.5 Communication Features
-FR-15: The system shall facilitate messaging between users.
+FR-17: The system shall facilitate messaging between users.
 
 #### 3.1.6 Media Features
-FR-16: The system shall support photo uploads for listings and activities.
-FR-17: The system shall support photo editing for listings and activities.
-FR-18: The system shall support photo deletion for listings and activities.
+FR-18: The system shall support photo uploads for listings and activities.
+FR-19: The system shall support photo editing for listings and activities.
+FR-20: The system shall support photo deletion for listings and activities.
 
 ### 3.2 Non-Functional Requirements
 
