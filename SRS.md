@@ -29,12 +29,12 @@ Section 2 provides an overall description of the product. Section 3 details the 
 Bachelor Society is a standalone web application built with Node.js, Express, MySQL, and EJS templates. It provides a secure platform for housing and social connections.
 
 ### 2.2 Product Features
-- Housing Listings: Post and find rental properties
-- Roommate Matching: Connect with compatible roommates
-- Activity Buddies: Find people for social events
+- Housing Listings: Create, edit, delete and search rental property listings
+- Roommate Matching: Post, edit, delete and browse roommate requests
+- Activity Buddies: Create, edit, delete and join social activities
 - Messaging System: Direct communication between users
-- Photo Uploads: Multiple images for listings
-- Secure Authentication: JWT-based login system
+- Photo Uploads: Multiple images for listings and activities
+- Secure Authentication: JWT-based login and registration
 - Responsive Design: Works on all devices
 
 ### 2.3 User Classes and Characteristics
@@ -64,11 +64,11 @@ Third-party services for file uploads and messaging are available.
 FR-1: The system shall support user registration and login with JWT tokens.
 
 #### 3.1.2 Core Features
-FR-2: Users shall be able to create, search, and view housing listings.
-FR-3: Users shall be able to post roommate requests and browse existing ones.
-FR-4: Users shall be able to create and join social activities.
+FR-2: Users shall be able to create, edit, delete, search, and view housing listings.
+FR-3: Users shall be able to post, edit, delete roommate requests and browse existing ones.
+FR-4: Users shall be able to create, edit, delete and join social activities.
 FR-5: The system shall facilitate messaging between users.
-FR-6: The system shall support photo uploads for listings and activities.
+FR-6: The system shall support photo uploads, editing, and deletion for listings and activities.
 
 ### 3.2 Non-Functional Requirements
 
