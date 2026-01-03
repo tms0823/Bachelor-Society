@@ -6,19 +6,12 @@
 This Software Requirement Specification (SRS) document outlines the requirements for developing "Bachelor Society" - a social platform connecting people for housing, roommates, and activities. The primary goal of this application is to facilitate efficient roommate and housing matching, event organization, and community building for students and young professionals.
 
 ### 1.2 Scope
-The scope of this project includes the design, development, testing, and deployment of the Bachelor Society web application, catering to:
-- Users seeking housing and roommates
-- Property owners listing accommodations
-- Activity organizers creating social events
-- Administrators managing the platform
+The scope of this project includes the design, development, testing, and deployment of the Bachelor Society web application for users to find housing, roommates, and social activities.
 
 This SRS covers the functional and non-functional requirements for the project, the constraints, assumptions, high-level design, and the development plan.
 
 ### 1.3 Definitions, Acronyms, and Abbreviations
 JWT: JSON Web Token
-RBAC: Role-Based Access Control
-EMR: Not applicable (kept for reference)
-OTP: One-Time Password
 
 ### 1.4 References
 - Node.js Documentation
@@ -45,9 +38,7 @@ Bachelor Society is a standalone web application built with Node.js, Express, My
 - Responsive Design: Works on all devices
 
 ### 2.3 User Classes and Characteristics
-Users: Individuals seeking housing, roommates, or social activities. Require user-friendly interface.
-Providers: Property owners and event organizers who list accommodations and activities.
-Administrators: System overseers responsible for user management and platform maintenance.
+Users: All registered individuals who can create housing listings, roommate requests, activities, and communicate with others through the messaging system.
 
 ### 2.4 Operating Environment
 Web Application: Accessible on modern web browsers.
@@ -71,18 +62,13 @@ Third-party services for file uploads and messaging are available.
 
 #### 3.1.1 Authentication & Authorization
 FR-1: The system shall support user registration and login with JWT tokens.
-FR-2: The system shall provide role-based access for users, providers, and admins.
 
-#### 3.1.2 Housing & Roommate Services
-FR-3: Users shall be able to search and view housing listings.
-FR-4: Providers shall be able to create and manage housing listings.
-FR-5: Users shall be able to post roommate requests.
-FR-6: The system shall facilitate messaging between users.
-
-#### 3.1.3 Activity Management
-FR-7: Users shall be able to create and join social activities.
-FR-8: Providers shall be able to organize events and manage participants.
-FR-9: The system shall support photo uploads for listings.
+#### 3.1.2 Core Features
+FR-2: Users shall be able to create, search, and view housing listings.
+FR-3: Users shall be able to post roommate requests and browse existing ones.
+FR-4: Users shall be able to create and join social activities.
+FR-5: The system shall facilitate messaging between users.
+FR-6: The system shall support photo uploads for listings and activities.
 
 ### 3.2 Non-Functional Requirements
 
@@ -103,7 +89,7 @@ NFR-7: Data backups shall be implemented.
 
 #### 3.3.1 User Interfaces
 UI-1: Responsive web interface using EJS templates and Tailwind CSS.
-UI-2: Intuitive navigation with role-based dashboards.
+UI-2: Intuitive navigation with user dashboard.
 
 #### 3.3.2 Hardware Interfaces
 HI-1: Standard server hardware.
